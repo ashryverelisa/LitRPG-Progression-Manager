@@ -3,7 +3,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:ProgressionManager.ViewModels"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             xmlns:models="using:ProgressionManager.Models.WorldRules"
+             xmlns:conv="using:ProgressionManager.Converters"
+             mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="800"
              x:DataType="vm:WorldRulesViewModel"
              x:Class="ProgressionManager.Views.WorldRulesView">
 
@@ -11,165 +13,487 @@
         <vm:WorldRulesViewModel/>
     </Design.DataContext>
 
-    <ScrollViewer>
-        <StackPanel Spacing="24">
+    <UserControl.Resources>
+        <conv:ValidityToColorConverter x:Key="ValidityToColor"/>
+        <conv:ValidityToBackgroundConverter x:Key="ValidityToBackground"/>
+        <conv:ValidityToStatusTextConverter x:Key="ValidityToStatusText"/>
+    </UserControl.Resources>
+
+    <UserControl.Styles>
+        <!-- Card style -->
+        <Style Selector="Border.Card">
+            <Setter Property="Background" Value="#12151B"/>
+            <Setter Property="CornerRadius" Value="14"/>
+            <Setter Property="Padding" Value="20"/>
+        </Style>
+
+        <!-- Section header -->
+        <Style Selector="TextBlock.SectionHeader">
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#FFFFFF"/>
+        </Style>
+
+        <!-- Label text -->
+        <Style Selector="TextBlock.Label">
+            <Setter Property="Foreground" Value="#C0CAF5"/>
+            <Setter Property="FontSize" Value="13"/>
+        </Style>
+
+        <!-- Help text -->
+        <Style Selector="TextBlock.HelpText">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Foreground" Value="#7A7F99"/>
+        </Style>
+
+        <!-- Valid formula indicator -->
+        <Style Selector="Border.ValidIndicator">
+            <Setter Property="Background" Value="#1A3D2E"/>
+            <Setter Property="BorderBrush" Value="#2ECC71"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="Padding" Value="6,2"/>
+        </Style>
+
+        <!-- Invalid formula indicator -->
+        <Style Selector="Border.InvalidIndicator">
+            <Setter Property="Background" Value="#3D1A1A"/>
+            <Setter Property="BorderBrush" Value="#E74C3C"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="Padding" Value="6,2"/>
+        </Style>
+
+        <!-- Action button -->
+        <Style Selector="Button.ActionBtn">
+            <Setter Property="Background" Value="#1F2A44"/>
+            <Setter Property="Foreground" Value="#C0CAF5"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+        <Style Selector="Button.ActionBtn:pointerover">
+            <Setter Property="Background" Value="#2A3A5C"/>
+        </Style>
+
+        <!-- Primary button -->
+        <Style Selector="Button.PrimaryBtn">
+            <Setter Property="Background" Value="#7AA2F7"/>
+            <Setter Property="Foreground" Value="#FFFFFF"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+        <Style Selector="Button.PrimaryBtn:pointerover">
+            <Setter Property="Background" Value="#8AB4FF"/>
+        </Style>
+
+        <!-- Danger button -->
+        <Style Selector="Button.DangerBtn">
+            <Setter Property="Background" Value="#3D1A1A"/>
+            <Setter Property="Foreground" Value="#E74C3C"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#E74C3C"/>
+        </Style>
+        <Style Selector="Button.DangerBtn:pointerover">
+            <Setter Property="Background" Value="#5D2A2A"/>
+        </Style>
+
+        <!-- Inner card -->
+        <Style Selector="Border.InnerCard">
+            <Setter Property="Background" Value="#0F1115"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Padding" Value="14"/>
+        </Style>
+    </UserControl.Styles>
+
+    <ScrollViewer HorizontalScrollBarVisibility="Disabled"
+                  VerticalScrollBarVisibility="Auto">
+        <StackPanel Spacing="24" Margin="0,0,20,20">
 
             <!-- HEADER -->
-            <StackPanel Spacing="6">
-                <TextBlock Text="World Rules"
-                           FontSize="28"
-                           FontWeight="Bold"
-                           Foreground="#FFFFFF"/>
-
-                <TextBlock Text="Define stats, formulas, and progression systems"
-                           FontSize="14"
-                           Foreground="#9AA5CE"/>
-            </StackPanel>
-
-            <!-- STATS SECTION -->
-            <Border Background="#12151B"
-                    CornerRadius="14"
-                    Padding="20">
-
-                <StackPanel Spacing="16">
-
-                    <TextBlock Text="Base and Derived Stats"
-                               FontSize="18"
-                               FontWeight="SemiBold"
+            <Grid ColumnDefinitions="*,Auto">
+                <StackPanel Spacing="6">
+                    <TextBlock Text="World Rules"
+                               FontSize="28"
+                               FontWeight="Bold"
                                Foreground="#FFFFFF"/>
 
+                    <TextBlock Text="Define stats, formulas, and progression systems for your LitRPG world"
+                               FontSize="14"
+                               Foreground="#9AA5CE"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                    <Button Classes="ActionBtn" Content="⟲ Reset to Defaults"
+                            Command="{Binding ResetToDefaultsCommand}"/>
+                    <Button Classes="PrimaryBtn" Content="✓ Validate All"
+                            Command="{Binding ValidateAllFormulasCommand}"/>
+                </StackPanel>
+            </Grid>
+
+            <!-- PREVIEW LEVEL SLIDER -->
+            <Border Classes="Card">
+                <StackPanel Spacing="12">
+                    <Grid ColumnDefinitions="Auto,*,Auto">
+                        <TextBlock Text="Preview Level" Classes="Label" VerticalAlignment="Center"/>
+                        <Slider Grid.Column="1"
+                                Minimum="1" Maximum="100"
+                                Value="{Binding PreviewLevel}"
+                                Margin="16,0"/>
+                        <TextBlock Grid.Column="2"
+                                   Text="{Binding PreviewLevel, StringFormat='Level {0}'}"
+                                   Foreground="#7AA2F7"
+                                   FontWeight="SemiBold"
+                                   FontSize="16"
+                                   VerticalAlignment="Center"/>
+                    </Grid>
+                    <TextBlock Classes="HelpText"
+                               Text="Adjust the preview level to see calculated stat and XP values at different levels"/>
+                </StackPanel>
+            </Border>
+
+            <!-- STATS SECTION -->
+            <Border Classes="Card">
+                <StackPanel Spacing="16">
+
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="Base and Derived Stats" Classes="SectionHeader"/>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
+                            <Button Classes="ActionBtn" Content="+ Base Stat"
+                                    Command="{Binding AddBaseStatCommand}"/>
+                            <Button Classes="ActionBtn" Content="+ Derived Stat"
+                                    Command="{Binding AddDerivedStatCommand}"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Stats DataGrid -->
                     <DataGrid AutoGenerateColumns="False"
                               GridLinesVisibility="None"
-                              RowHeight="44"
+                              HeadersVisibility="Column"
+                              RowHeight="52"
                               ItemsSource="{Binding Stats}"
+                              SelectedItem="{Binding SelectedStat}"
                               Background="#0F1115"
-                              BorderThickness="0">
+                              BorderThickness="0"
+                              CornerRadius="10">
 
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Stat"
+                            <DataGridTextColumn Header="Name"
                                                 Binding="{Binding Name}"
-                                                Width="1.2*"/>
+                                                Width="100"/>
+
                             <DataGridTextColumn Header="Base"
                                                 Binding="{Binding BaseValue}"
-                                                Width="*"/>
+                                                Width="70"/>
+
+                            <DataGridTextColumn Header="Growth/Lvl"
+                                                Binding="{Binding GrowthPerLevel}"
+                                                Width="90"/>
+
                             <DataGridTextColumn Header="Formula"
                                                 Binding="{Binding Formula}"
-                                                Width="2*"/>
-                        </DataGrid.Columns>
+                                                Width="*"/>
 
+                            <DataGridTemplateColumn Header="Status" Width="100">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate x:DataType="models:StatDefinition">
+                                        <Border CornerRadius="4"
+                                                Padding="6,2"
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                Background="{Binding IsFormulaValid, Converter={StaticResource ValidityToBackground}}">
+                                            <TextBlock Text="{Binding IsFormulaValid, Converter={StaticResource ValidityToStatusText}}"
+                                                       FontSize="11"
+                                                       Foreground="{Binding IsFormulaValid, Converter={StaticResource ValidityToColor}}"/>
+                                        </Border>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <DataGridTextColumn Header="Preview"
+                                                Binding="{Binding SampleValue, StringFormat={}{0:N0}}"
+                                                Width="80"/>
+                        </DataGrid.Columns>
                     </DataGrid>
 
-                    <TextBlock Text="Derived stats use formulas (e.g. HP = VIT × 12 + Level × 5)"
-                               FontSize="12"
-                               Foreground="#7A7F99"/>
+                    <!-- Selected Stat Editor -->
+                    <Border Classes="InnerCard"
+                            IsVisible="{Binding SelectedStat, Converter={x:Static ObjectConverters.IsNotNull}}">
+                        <StackPanel Spacing="16">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <TextBlock Text="Edit Selected Stat"
+                                           FontSize="15"
+                                           FontWeight="SemiBold"
+                                           Foreground="#C0CAF5"/>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
+                                    <Button Classes="ActionBtn" Content="⬆" ToolTip.Tip="Move Up"
+                                            Command="{Binding MoveStatUpCommand}"
+                                            CommandParameter="{Binding SelectedStat}"/>
+                                    <Button Classes="ActionBtn" Content="⬇" ToolTip.Tip="Move Down"
+                                            Command="{Binding MoveStatDownCommand}"
+                                            CommandParameter="{Binding SelectedStat}"/>
+                                    <Button Classes="ActionBtn" Content="⧉ Duplicate"
+                                            Command="{Binding DuplicateStatCommand}"
+                                            CommandParameter="{Binding SelectedStat}"/>
+                                    <Button Classes="DangerBtn" Content="🗑 Delete"
+                                            Command="{Binding DeleteStatCommand}"
+                                            CommandParameter="{Binding SelectedStat}"/>
+                                </StackPanel>
+                            </Grid>
+
+                            <Grid ColumnDefinitions="*,*,*,*" RowDefinitions="Auto,Auto"
+                                  HorizontalAlignment="Stretch">
+
+                                <!-- Row 1: Name, Description -->
+                                <StackPanel Grid.Row="0" Grid.Column="0" Spacing="4" Margin="0,0,12,12">
+                                    <TextBlock Text="Name" Classes="Label"/>
+                                    <TextBox Text="{Binding SelectedStat.Name}"
+                                             Watermark="STAT_NAME"/>
+                                </StackPanel>
+
+                                <StackPanel Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" Spacing="4" Margin="0,0,0,12">
+                                    <TextBlock Text="Description" Classes="Label"/>
+                                    <TextBox Text="{Binding SelectedStat.Description}"
+                                             Watermark="What does this stat represent?"/>
+                                </StackPanel>
+
+                                <!-- Row 2: Base Value, Growth, Min, Max -->
+                                <StackPanel Grid.Row="1" Grid.Column="0" Spacing="4" Margin="0,0,12,0">
+                                    <TextBlock Text="Base Value" Classes="Label"/>
+                                    <NumericUpDown Value="{Binding SelectedStat.BaseValue}"
+                                                   Minimum="0"
+                                                   Watermark="10"
+                                                   IsEnabled="{Binding SelectedStat.IsDerived, Converter={x:Static BoolConverters.Not}}"/>
+                                </StackPanel>
+
+                                <StackPanel Grid.Row="1" Grid.Column="1" Spacing="4" Margin="0,0,12,0">
+                                    <TextBlock Text="Growth/Level" Classes="Label"/>
+                                    <NumericUpDown Value="{Binding SelectedStat.GrowthPerLevel}"
+                                                   Minimum="0"
+                                                   Watermark="1"
+                                                   IsEnabled="{Binding SelectedStat.IsDerived, Converter={x:Static BoolConverters.Not}}"/>
+                                </StackPanel>
+
+                                <StackPanel Grid.Row="1" Grid.Column="2" Spacing="4" Margin="0,0,12,0">
+                                    <TextBlock Text="Min Value" Classes="Label"/>
+                                    <NumericUpDown Value="{Binding SelectedStat.MinValue}"
+                                                   Watermark="0"/>
+                                </StackPanel>
+
+                                <StackPanel Grid.Row="1" Grid.Column="3" Spacing="4">
+                                    <TextBlock Text="Max Value" Classes="Label"/>
+                                    <NumericUpDown Value="{Binding SelectedStat.MaxValue}"
+                                                   Watermark="999"/>
+                                </StackPanel>
+                            </Grid>
+
+                            <!-- Formula Editor (for derived stats) -->
+                            <Border Background="#0A0C10"
+                                    CornerRadius="8"
+                                    Padding="14"
+                                    IsVisible="{Binding SelectedStat.IsDerived}">
+                                <StackPanel Spacing="10">
+                                    <Grid ColumnDefinitions="Auto,*,Auto">
+                                        <TextBlock Text="Formula" Classes="Label" VerticalAlignment="Center"/>
+
+                                        <Border Grid.Column="2"
+                                                CornerRadius="4"
+                                                Padding="8,4"
+                                                Background="{Binding SelectedStat.IsFormulaValid, Converter={StaticResource ValidityToBackground}}">
+                                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                                <TextBlock Text="{Binding SelectedStat.IsFormulaValid, Converter={StaticResource ValidityToStatusText}, ConverterParameter=✓;✗}"
+                                                           Foreground="{Binding SelectedStat.IsFormulaValid, Converter={StaticResource ValidityToColor}}"/>
+                                                <TextBlock Text="{Binding SelectedStat.SampleValue, StringFormat='= {0:N0}'}"
+                                                           Foreground="#7AA2F7"
+                                                           IsVisible="{Binding SelectedStat.IsFormulaValid}"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </Grid>
+
+                                    <TextBox Text="{Binding SelectedStat.Formula}"
+                                             FontFamily="Consolas, monospace"
+                                             Watermark="VIT * 12 + Level * 5"/>
+
+                                    <!-- Validation Error Message -->
+                                    <TextBlock Text="{Binding SelectedStat.FormulaValidationError}"
+                                               Foreground="#E74C3C"
+                                               FontSize="12"
+                                               IsVisible="{Binding SelectedStat.IsFormulaValid, Converter={x:Static BoolConverters.Not}}"/>
+
+                                    <TextBlock Classes="HelpText"
+                                               Text="Available: stat names (STR, VIT, INT, etc.), Level, BaseValue. Operators: + - * / ^ Functions: floor(), ceil(), round(), abs(), min(), max(), sqrt(), pow()"/>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </Border>
+
+                    <TextBlock Classes="HelpText"
+                               Text="Base stats grow linearly with level. Derived stats are calculated from formulas using other stats."/>
 
                 </StackPanel>
             </Border>
 
             <!-- XP CURVE SECTION -->
-            <Border Background="#12151B"
-                    CornerRadius="14"
-                    Padding="20">
-
+            <Border Classes="Card">
                 <StackPanel Spacing="18">
 
-                    <TextBlock Text="Experience and Level Curve"
-                               FontSize="18"
-                               FontWeight="SemiBold"
-                               Foreground="#FFFFFF"/>
+                    <TextBlock Text="Experience and Level Curve" Classes="SectionHeader"/>
 
-                    <!-- Curve Type -->
-                    <StackPanel Orientation="Horizontal"
-                                Spacing="12">
-                        <TextBlock Text="Curve Type"
-                                   VerticalAlignment="Center"
-                                   Foreground="#C0CAF5"/>
+                    <!-- Curve Type and Parameters -->
+                    <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto">
 
-                        <ComboBox Width="220"
-                                  SelectedItem="{Binding SelectedCurveType}">
-                            <ComboBoxItem Content="Linear"/>
-                            <ComboBoxItem Content="Exponential"/>
-                            <ComboBoxItem Content="Custom Formula"/>
-                        </ComboBox>
-                    </StackPanel>
+                        <StackPanel Grid.Column="0" Spacing="4" Margin="0,0,12,0">
+                            <TextBlock Text="Curve Type" Classes="Label"/>
+                            <ComboBox ItemsSource="{Binding CurveTypes}"
+                                      SelectedItem="{Binding SelectedCurveType}"
+                                      HorizontalAlignment="Stretch"/>
+                        </StackPanel>
 
-                    <!-- Graph -->
-                    <Border Height="260"
-                            Background="#0F1115"
-                            CornerRadius="12">
+                        <StackPanel Grid.Column="1" Spacing="4" Margin="0,0,12,0">
+                            <TextBlock Text="Base XP (Level 1)" Classes="Label"/>
+                            <NumericUpDown Value="{Binding XpCurve.BaseXp}"
+                                           Minimum="1"
+                                           Increment="10"/>
+                        </StackPanel>
 
-                        <Grid>
-                            <TextBlock Text="XP Curve Visualization"
-                                       Foreground="#5C6370"
-                                       HorizontalAlignment="Center"
-                                       VerticalAlignment="Center"/>
-                        </Grid>
+                        <StackPanel Grid.Column="2" Spacing="4"
+                                    IsVisible="{Binding SelectedCurveType, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static models:XpCurveType.Linear}}">
+                            <TextBlock Text="Linear Multiplier" Classes="Label"/>
+                            <NumericUpDown Value="{Binding XpCurve.LinearMultiplier}"
+                                           Minimum="1"
+                                           Increment="10"
+                                           FormatString="N0"/>
+                        </StackPanel>
 
+                        <StackPanel Grid.Column="2" Spacing="4"
+                                    IsVisible="{Binding SelectedCurveType, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static models:XpCurveType.Exponential}}">
+                            <TextBlock Text="Exponential Base" Classes="Label"/>
+                            <NumericUpDown Value="{Binding XpCurve.ExponentialBase}"
+                                           Minimum="1.01"
+                                           Maximum="2.0"
+                                           Increment="0.01"
+                                           FormatString="N2"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Custom Formula Editor -->
+                    <Border Background="#0A0C10"
+                            CornerRadius="8"
+                            Padding="14"
+                            IsVisible="{Binding SelectedCurveType, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static models:XpCurveType.CustomFormula}}">
+                        <StackPanel Spacing="10">
+                            <Grid ColumnDefinitions="Auto,*,Auto">
+                                <TextBlock Text="XP Formula" Classes="Label" VerticalAlignment="Center"/>
+
+                                <Border Grid.Column="2"
+                                        CornerRadius="4"
+                                        Padding="8,4"
+                                        Background="{Binding XpCurve.IsFormulaValid, Converter={StaticResource ValidityToBackground}}">
+                                    <TextBlock Text="{Binding XpCurve.IsFormulaValid, Converter={StaticResource ValidityToStatusText}, ConverterParameter=✓ Valid Formula;✗ Invalid Formula}"
+                                               Foreground="{Binding XpCurve.IsFormulaValid, Converter={StaticResource ValidityToColor}}"/>
+                                </Border>
+                            </Grid>
+
+                            <TextBox Text="{Binding XpCurve.Formula}"
+                                     FontFamily="Consolas, monospace"
+                                     Watermark="Level^2 * 100"/>
+
+                            <TextBlock Text="{Binding XpCurve.FormulaValidationError}"
+                                       Foreground="#E74C3C"
+                                       FontSize="12"
+                                       IsVisible="{Binding XpCurve.IsFormulaValid, Converter={x:Static BoolConverters.Not}}"/>
+
+                            <TextBlock Classes="HelpText"
+                                       Text="Available: Level, BaseXP. Operators: + - * / ^ Functions: floor(), ceil(), round(), pow()"/>
+                        </StackPanel>
                     </Border>
 
-                    <!-- Formula -->
-                    <StackPanel Spacing="6">
-                        <TextBlock Text="XP Formula"
-                                   Foreground="#C0CAF5"/>
-                        <TextBox Watermark="XP = Level^2 × 100"
-                                 FontFamily="Consolas"/>
-                    </StackPanel>
+                    <!-- XP Preview Table -->
+                    <Border Classes="InnerCard">
+                        <StackPanel Spacing="12">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <TextBlock Text="XP Requirements Preview"
+                                           FontSize="14"
+                                           FontWeight="SemiBold"
+                                           Foreground="#C0CAF5"/>
+                                <Button Grid.Column="1" Classes="ActionBtn" Content="↻ Refresh"
+                                        Command="{Binding UpdateXpCurvePreviewsCommand}"/>
+                            </Grid>
+
+                            <DataGrid AutoGenerateColumns="False"
+                                      GridLinesVisibility="None"
+                                      HeadersVisibility="Column"
+                                      RowHeight="32"
+                                      MaxHeight="250"
+                                      ItemsSource="{Binding XpCurve.LevelPreviews}"
+                                      Background="#0A0C10"
+                                      BorderThickness="0"
+                                      CornerRadius="8">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Level"
+                                                        Binding="{Binding Level}"
+                                                        Width="80"/>
+                                    <DataGridTextColumn Header="XP Required"
+                                                        Binding="{Binding XpRequired, StringFormat={}{0:N0}}"
+                                                        Width="*"/>
+                                    <DataGridTextColumn Header="Total XP"
+                                                        Binding="{Binding TotalXp, StringFormat={}{0:N0}}"
+                                                        Width="*"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </StackPanel>
+                    </Border>
 
                 </StackPanel>
             </Border>
 
             <!-- LEVEL-UP RULES -->
-            <Border Background="#12151B"
-                    CornerRadius="14"
-                    Padding="20">
-
+            <Border Classes="Card">
                 <StackPanel Spacing="16">
 
-                    <TextBlock Text="Level-Up Rules"
-                               FontSize="18"
-                               FontWeight="SemiBold"
-                               Foreground="#FFFFFF"/>
+                    <TextBlock Text="Level-Up Rules" Classes="SectionHeader"/>
 
-                    <UniformGrid Columns="3"
-                                 Rows="1"
-                                 HorizontalAlignment="Stretch">
+                    <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto">
 
                         <!-- Stat Points -->
-                        <Border Background="#0F1115"
-                                CornerRadius="12"
-                                Padding="16"
-                                Margin="0,0,12,0">
-                            <StackPanel Spacing="6">
-                                <TextBlock Text="Stat Points / Level"
-                                           Foreground="#C0CAF5"/>
-                                <TextBox Text="5"/>
+                        <Border Grid.Column="0" Classes="InnerCard" Margin="0,0,12,0">
+                            <StackPanel Spacing="8">
+                                <TextBlock Text="Stat Points / Level" Classes="Label"/>
+                                <NumericUpDown Value="{Binding LevelUpRules.StatPointsPerLevel}"
+                                               Minimum="0"
+                                               Maximum="100"/>
+                                <TextBlock Classes="HelpText" Text="Points to distribute among base stats"/>
                             </StackPanel>
                         </Border>
 
                         <!-- Skill Points -->
-                        <Border Background="#0F1115"
-                                CornerRadius="12"
-                                Padding="16"
-                                Margin="0,0,12,0">
-                            <StackPanel Spacing="6">
-                                <TextBlock Text="Skill Points / Level"
-                                           Foreground="#C0CAF5"/>
-                                <TextBox Text="1"/>
+                        <Border Grid.Column="1" Classes="InnerCard" Margin="0,0,12,0">
+                            <StackPanel Spacing="8">
+                                <TextBlock Text="Skill Points / Level" Classes="Label"/>
+                                <NumericUpDown Value="{Binding LevelUpRules.SkillPointsPerLevel}"
+                                               Minimum="0"
+                                               Maximum="100"/>
+                                <TextBlock Classes="HelpText" Text="Points to unlock or upgrade skills"/>
                             </StackPanel>
                         </Border>
 
                         <!-- Bonus Rule -->
-                        <Border Background="#0F1115"
-                                CornerRadius="12"
-                                Padding="16">
-                            <StackPanel Spacing="6">
-                                <TextBlock Text="Bonus Rule"
-                                           Foreground="#C0CAF5"/>
-                                <TextBox Watermark="Every 10 levels gain +1 Talent"/>
+                        <Border Grid.Column="2" Classes="InnerCard">
+                            <StackPanel Spacing="8">
+                                <TextBlock Text="Bonus Rule" Classes="Label"/>
+                                <TextBox Text="{Binding LevelUpRules.BonusRuleDescription}"
+                                         Watermark="Every 10 levels gain +1 Talent"
+                                         TextWrapping="Wrap"
+                                         AcceptsReturn="True"
+                                         MinHeight="60"/>
                             </StackPanel>
                         </Border>
 
-                    </UniformGrid>
+                    </Grid>
 
                 </StackPanel>
             </Border>
