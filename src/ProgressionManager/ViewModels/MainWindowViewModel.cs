@@ -8,7 +8,7 @@ public partial class MainWindowViewModel : ViewModelBase
     public ObservableCollection<NavigationItemViewModel> NavigationItems { get; }
 
     [ObservableProperty]
-    private ObservableObject? currentViewModel;
+    private ObservableObject? _currentViewModel;
 
     public MainWindowViewModel()
     {
