@@ -6,15 +6,109 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="ProgressionManager.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
+        Width="1200"
+        Height="800"
         Icon="/Assets/avalonia-logo.ico"
         Title="ProgressionManager">
 
     <Design.DataContext>
-        <!-- This only sets the DataContext for the previewer in an IDE,
-             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
-        <vm:MainWindowViewModel/>
+      <vm:MainWindowViewModel/>
     </Design.DataContext>
 
-    <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+    <DockPanel>
+        <!-- Bottom System Log -->
+        <Border DockPanel.Dock="Bottom"
+                Height="140"
+                Background="#1E1E1E"
+                Padding="10">
+            <StackPanel>
+                <TextBlock Text="SYSTEM LOG"
+                           FontWeight="Bold"
+                           Foreground="#9CDCFE"
+                           Margin="0,0,0,6"/>
+                <ScrollViewer>
+                    <TextBlock Text="[SYSTEM]: You have reached Level 10. [WARNING]: Mana exceeds maximum in Chapter 37."
+                               TextWrapping="Wrap"
+                               Foreground="#D4D4D4"/>
+                </ScrollViewer>
+            </StackPanel>
+        </Border>
 
+        <!-- Left Navigation -->
+        <Border DockPanel.Dock="Left"
+                Width="220"
+                Background="#252526"
+                Padding="10">
+            <StackPanel Spacing="6">
+
+                <TextBlock Text="NAVIGATION"
+                           FontWeight="Bold"
+                           Foreground="#C586C0"
+                           Margin="0,0,0,10"/>
+
+                <Button Content="🌍 World Rules"/>
+                <Button Content="⚔ Skills"/>
+                <Button Content="🧬 Classes"/>
+                <Button Content="🧝 Races"/>
+                <Button Content="👤 Characters"/>
+                <Button Content="📈 Timeline"/>
+                <Button Content="🔍 Validation"/>
+                <Button Content="⚙ Settings"/>
+            </StackPanel>
+        </Border>
+
+           <!-- Main Content -->
+        <Grid Background="#1E1E1E"
+              RowDefinitions="Auto,*"
+              ColumnDefinitions="*">
+
+            <!-- Header -->
+            <TextBlock Grid.Row="0"
+                       Text="World Rules – Stats and XP"
+                       FontSize="20"
+                       FontWeight="Bold"
+                       Foreground="#FFFFFF"
+                       Margin="0,0,0,12"/>
+
+            <!-- Content Area -->
+            <TabControl Grid.Row="1">
+                <!-- Stats Tab -->
+                <TabItem Header="Stats">
+                    <DataGrid AutoGenerateColumns="False" GridLinesVisibility="All">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Stat" Width="*"/>
+                            <DataGridTextColumn Header="Base" Width="*"/>
+                            <DataGridTextColumn Header="Growth" Width="*"/>
+                            <DataGridTextColumn Header="Min" Width="*"/>
+                            <DataGridTextColumn Header="Max" Width="*"/>
+                            <DataGridTextColumn Header="Formula" Width="2*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </TabItem>
+
+                <!-- XP Curve Tab -->
+                <TabItem Header="XP Curve">
+                    <StackPanel Spacing="10">
+                        <ComboBox SelectedIndex="0">
+                            <ComboBoxItem Content="Linear"/>
+                            <ComboBoxItem Content="Exponential"/>
+                            <ComboBoxItem Content="Custom Formula"/>
+                        </ComboBox>
+
+                        <Border Height="260"
+                                Background="#2D2D30"
+                                CornerRadius="6"
+                                HorizontalAlignment="Stretch">
+                            <TextBlock Text="XP Curve Graph Placeholder"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       Foreground="#808080"/>
+                        </Border>
+
+                        <TextBox Watermark="XP = Level^2 * 100"/>
+                    </StackPanel>
+                </TabItem>
+            </TabControl>
+        </Grid>
+    </DockPanel>
 </Window>
