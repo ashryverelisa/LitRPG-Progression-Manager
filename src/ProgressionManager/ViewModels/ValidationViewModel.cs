@@ -1,6 +1,6 @@
 ﻿namespace ProgressionManager.ViewModels;
 
-public class ValidationViewModel : ViewModelBase
+public partial class ValidationViewModel : ViewModelBase
 {
 
 }

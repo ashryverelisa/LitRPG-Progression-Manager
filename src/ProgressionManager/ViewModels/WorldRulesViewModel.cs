@@ -1,6 +1,6 @@
 ﻿namespace ProgressionManager.ViewModels;
 
-public class WorldRulesViewModel : ViewModelBase
+public partial class WorldRulesViewModel : ViewModelBase
 {
 
 }

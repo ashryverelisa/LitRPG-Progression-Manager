@@ -11,104 +11,116 @@
         Icon="/Assets/avalonia-logo.ico"
         Title="ProgressionManager">
 
+    <Window.Styles>
+        <Style Selector="ToggleButton.NavItem">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#C0CAF5"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Padding" Value="12"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+        </Style>
+
+        <!-- Hover -->
+        <Style Selector="ToggleButton.NavItem:pointerover">
+            <Setter Property="Background" Value="#1A1F2E"/>
+        </Style>
+
+        <!-- Selected -->
+        <Style Selector="ToggleButton.NavItem:checked">
+            <Setter Property="Background" Value="#1F2A44"/>
+            <Setter Property="Foreground" Value="#FFFFFF"/>
+        </Style>
+
+        <!-- Selected Accent Bar -->
+        <Style Selector="ToggleButton.NavItem:checked > ContentPresenter">
+            <Setter Property="BorderThickness" Value="0,0,0,0"/>
+        </Style>
+
+    </Window.Styles>
+
     <Design.DataContext>
       <vm:MainWindowViewModel/>
     </Design.DataContext>
 
     <DockPanel>
-        <!-- Bottom System Log -->
+        <!-- SYSTEM LOG (BOTTOM) -->
         <Border DockPanel.Dock="Bottom"
-                Height="140"
-                Background="#1E1E1E"
-                Padding="10">
-            <StackPanel>
-                <TextBlock Text="SYSTEM LOG"
+                Height="120"
+                Background="#12151B"
+                Padding="12">
+            <StackPanel Spacing="6">
+                <TextBlock Text="SYSTEM"
+                           FontSize="12"
                            FontWeight="Bold"
-                           Foreground="#9CDCFE"
-                           Margin="0,0,0,6"/>
+                           Foreground="#7AA2F7"/>
+
                 <ScrollViewer>
-                    <TextBlock Text="[SYSTEM]: You have reached Level 10. [WARNING]: Mana exceeds maximum in Chapter 37."
-                               TextWrapping="Wrap"
-                               Foreground="#D4D4D4"/>
+                    <TextBlock
+                        Text="[SYSTEM]: Level Up Detected [WARNING]: Mana exceeds max value in Chapter 37"
+                        TextWrapping="Wrap"
+                        Foreground="#C0CAF5"
+                        FontSize="13"/>
                 </ScrollViewer>
             </StackPanel>
         </Border>
 
-        <!-- Left Navigation -->
+        <!-- SIDEBAR -->
         <Border DockPanel.Dock="Left"
-                Width="220"
-                Background="#252526"
-                Padding="10">
-            <StackPanel Spacing="6">
+                Width="240"
+                Background="#12151B"
+                Padding="16">
 
-                <TextBlock Text="NAVIGATION"
+            <StackPanel Spacing="14">
+
+                <TextBlock Text="LitRPG SYSTEM"
+                           FontSize="18"
                            FontWeight="Bold"
-                           Foreground="#C586C0"
-                           Margin="0,0,0,10"/>
+                           Foreground="#FFFFFF"/>
 
-                <Button Content="🌍 World Rules"/>
-                <Button Content="⚔ Skills"/>
-                <Button Content="🧬 Classes"/>
-                <Button Content="🧝 Races"/>
-                <Button Content="👤 Characters"/>
-                <Button Content="📈 Timeline"/>
-                <Button Content="🔍 Validation"/>
-                <Button Content="⚙ Settings"/>
+                <TextBlock Text="World Manager"
+                           FontSize="12"
+                           Foreground="#7A7F99"
+                           Margin="0,-10,0,10"/>
+
+                <!-- NAV BUTTONS -->
+                <StackPanel Spacing="8">
+                    <ItemsControl ItemsSource="{Binding NavigationItems}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <ToggleButton Classes="NavItem"
+                                              IsChecked="{Binding IsSelected}"
+                                              Command="{Binding SelectCommand}">
+                                    <Grid ColumnDefinitions="4,*">
+
+                                        <!-- Accent Bar -->
+                                        <Border Grid.Column="0"
+                                                Width="4"
+                                                Background="#7AA2F7"
+                                                IsVisible="{Binding IsSelected}"/>
+
+                                        <StackPanel Grid.Column="1"
+                                                    Orientation="Horizontal"
+                                                    Spacing="12"
+                                                    Margin="12,0,0,0">
+                                            <TextBlock Text="{Binding Icon}"
+                                                       FontSize="18"/>
+                                            <TextBlock Text="{Binding Title}"
+                                                       FontSize="14"/>
+                                        </StackPanel>
+
+                                    </Grid>
+                                </ToggleButton>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                </StackPanel>
             </StackPanel>
         </Border>
 
-           <!-- Main Content -->
-        <Grid Background="#1E1E1E"
-              RowDefinitions="Auto,*"
-              ColumnDefinitions="*">
-
-            <!-- Header -->
-            <TextBlock Grid.Row="0"
-                       Text="World Rules – Stats and XP"
-                       FontSize="20"
-                       FontWeight="Bold"
-                       Foreground="#FFFFFF"
-                       Margin="0,0,0,12"/>
-
-            <!-- Content Area -->
-            <TabControl Grid.Row="1">
-                <!-- Stats Tab -->
-                <TabItem Header="Stats">
-                    <DataGrid AutoGenerateColumns="False" GridLinesVisibility="All">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="Stat" Width="*"/>
-                            <DataGridTextColumn Header="Base" Width="*"/>
-                            <DataGridTextColumn Header="Growth" Width="*"/>
-                            <DataGridTextColumn Header="Min" Width="*"/>
-                            <DataGridTextColumn Header="Max" Width="*"/>
-                            <DataGridTextColumn Header="Formula" Width="2*"/>
-                        </DataGrid.Columns>
-                    </DataGrid>
-                </TabItem>
-
-                <!-- XP Curve Tab -->
-                <TabItem Header="XP Curve">
-                    <StackPanel Spacing="10">
-                        <ComboBox SelectedIndex="0">
-                            <ComboBoxItem Content="Linear"/>
-                            <ComboBoxItem Content="Exponential"/>
-                            <ComboBoxItem Content="Custom Formula"/>
-                        </ComboBox>
-
-                        <Border Height="260"
-                                Background="#2D2D30"
-                                CornerRadius="6"
-                                HorizontalAlignment="Stretch">
-                            <TextBlock Text="XP Curve Graph Placeholder"
-                                       HorizontalAlignment="Center"
-                                       VerticalAlignment="Center"
-                                       Foreground="#808080"/>
-                        </Border>
-
-                        <TextBox Watermark="XP = Level^2 * 100"/>
-                    </StackPanel>
-                </TabItem>
-            </TabControl>
-        </Grid>
+         <!-- MAIN CONTENT -->
+        <ContentControl Content="{Binding CurrentViewModel}" Margin="20"/>
     </DockPanel>
 </Window>
