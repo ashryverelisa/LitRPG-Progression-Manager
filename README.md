@@ -15,41 +15,127 @@ Help LitRPG writers:
 
 ---
 
-## Core Modules
+## Technology Stack
 
-### World Rules Editor
+- **Framework:** Avalonia UI 11.3 (cross-platform .NET UI framework)
+- **Architecture:** MVVM with CommunityToolkit.Mvvm
+- **Language:** C# / .NET 10.0
+- **Formula Engine:** NCalc for mathematical expression evaluation
+- **Graphics:** SkiaSharp for chart rendering
+- **DI:** Microsoft.Extensions.DependencyInjection
 
-This is the heart of the system.
+---
+
+## Getting Started
+
+### Prerequisites
+
+- .NET SDK (version 10.0)
+- Compatible with Windows, macOS, and Linux
+
+### Building the Project
+
+```bash
+cd src
+dotnet restore
+dotnet build
+```
+
+### Running the Application
+
+```bash
+cd src/ProgressionManager
+dotnet run
+```
+
+---
+
+## Current Features
+
+### World Rules Editor ✅
+
+The heart of the system - fully implemented with a polished dark-themed UI.
 
 #### Stats Definition
 
-Create base stats (STR, AGI, INT, VIT, LUCK)
+Create and manage base stats (STR, AGI, INT, VIT) with:
+- Base value and growth per level
+- Min/max value constraints
+- Full CRUD operations (add, edit, delete, duplicate)
+- Drag-and-drop reordering
 
-**Derived stats:**
-- `HP = VIT × 12 + Level × 5`
-- `Mana = INT × 10`
-- Min/max constraints
-- Growth per level
+**Derived Stats** with formula support:
+- `HP = VIT * 12 + Level * 5`
+- `Mana = INT * 10 + Level * 3`
+- `PhysDmg = STR * 2 + Level`
 
-**UI Idea:**
-- Spreadsheet-like grid
-- Formula editor with validation
-- Live preview of calculated values
+**Formula Validation:**
+- Real-time syntax validation using NCalc
+- Unknown variable detection
+- Live preview of calculated values at any level
+- Visual valid/invalid status indicators
 
-#### XP & Level Curves
+**Default Stats Included:**
+- STR, VIT, INT, AGI (base stats)
+- HP, Mana, PhysDmg (derived stats)
 
-- XP required per level
-- Multiple curve types:
-  - Linear
-  - Exponential
-  - Custom formula
-- Visual graph of progression
+#### XP & Level Curves ✅
 
-**Avalonia Strength:**
-- Charting with SkiaSharp
-- Reactive updates when formulas change
+Multiple curve types supported:
+- **Linear:** `BaseXP + (Level - 1) × Multiplier`
+- **Exponential:** `BaseXP × Base^(Level - 1)`
+- **Custom Formula:** Write your own with NCalc syntax
+
+**Features:**
+- Interactive level preview slider (1-100)
+- Visual XP curve chart rendered with SkiaSharp
+- Dual-line display: XP Required per level & Total XP
+- Real-time chart updates when parameters change
+- Level preview table showing XP requirements
+
+#### Level-Up Rules
+
+Configure stat bonuses and point allocations on level up.
+
+### Navigation System ✅
+
+Sidebar navigation with access to all modules:
+- 🌍 World Rules
+- ⚔ Skills
+- 🧬 Classes
+- 🧝 Races
+- 👤 Characters
+- 📈 Timeline
+- 🔍 Validation
 
 ---
+
+## Project Structure
+
+```
+src/
+├── ProgressionManager.sln
+└── ProgressionManager/
+    ├── Controls/           # Custom UI controls
+    │   ├── XpCurveChart.cs      # SkiaSharp-based chart
+    │   └── Charting/            # Chart rendering components
+    ├── Converters/         # XAML value converters
+    ├── Data/               # Default data (JSON)
+    ├── Extensions/         # Service collection extensions
+    ├── Models/             # Data models
+    │   └── WorldRules/          # Stats, XP curves, formulas
+    ├── Services/           # Business logic
+    │   ├── FormulaValidatorService.cs
+    │   ├── StatService.cs
+    │   ├── XpCurveCalculatorServiceService.cs
+    │   └── Interfaces/
+    ├── ViewModels/         # MVVM view models
+    └── Views/              # UI views (AXAML)
+```
+
+---
+
+## Planned Modules
 
 ### Skill & Ability System
 
@@ -74,11 +160,6 @@ Fireball:
 - Branching evolution paths
 - Skill ranks
 - Class-locked skills
-
-**UI:**
-- Node-based editor
-- Zoomable canvas
-- Click-to-edit nodes
 
 ---
 
@@ -106,8 +187,6 @@ Elf → High Elf → Star Elf
 
 ### Character Progression Tracker
 
-This is where it becomes gold for authors.
-
 #### Per-Character Tracking
 
 - Level
@@ -129,8 +208,6 @@ This is where it becomes gold for authors.
 ---
 
 ### Consistency Checker
-
-This is the killer feature.
 
 #### Auto-Detect Problems
 
@@ -167,64 +244,13 @@ Auto-generate believable LitRPG UI text.
 
 ---
 
-##  Technology Stack
+## Roadmap
 
-- **Framework:** Avalonia UI (cross-platform .NET UI framework)
-- **Architecture:** MVVM (Model-View-ViewModel)
-- **Language:** C# / .NET
-
----
-
-##  Getting Started
-
-### Prerequisites
-
-- .NET SDK (version 10.0)
-- Compatible with Windows, macOS, and Linux
-
-### Building the Project
-
-```bash
-cd src
-dotnet restore
-dotnet build
-```
-
-### Running the Application
-
-```bash
-cd src/ProgressionManager
-dotnet run
-```
-
----
-
-##  Project Structure
-
-```
-src/
-├── ProgressionManager.sln
-└── ProgressionManager/
-    ├── Models/          # Data models and business logic
-    ├── ViewModels/      # MVVM view models
-    ├── Views/           # UI views (AXAML)
-    └── Assets/          # Icons and resources
-```
-
----
-
-##  Current Features
-
-- **World Rules Management:** Define and manage game system rules
-- **Navigation System:** Easy access to different modules
-- **View Models:** Characters, Classes, Races, Skills, Timeline, World Rules, Validation
-
----
-
-## 🗺️ Roadmap
-
-- [ ] Complete World Rules Editor with formula validation
-- [ ] Implement XP curve designer with visual graphs
+- [x] World Rules Editor with formula validation
+- [x] XP curve designer with visual graphs
+- [x] Stats management (base & derived)
+- [x] Navigation system
+- [x] Dark-themed modern UI
 - [ ] Build skill tree node editor
 - [ ] Create character progression timeline
 - [ ] Add consistency checker with violation reporting
@@ -232,6 +258,7 @@ src/
 - [ ] Add export functionality (Markdown, plain text)
 - [ ] Character comparison tool
 - [ ] Data persistence (save/load projects)
+- [ ] Class and race templates
 
 ---
 
@@ -241,7 +268,7 @@ Contributions are welcome! This tool is designed to help the LitRPG writing comm
 
 ---
 
-##  For Authors
+## For Authors
 
 This tool helps you focus on storytelling while ensuring your game mechanics remain consistent, believable, and error-free throughout your entire series.
 
