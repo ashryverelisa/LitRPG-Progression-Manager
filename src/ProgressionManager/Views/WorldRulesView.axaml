@@ -5,6 +5,7 @@
              xmlns:vm="using:ProgressionManager.ViewModels"
              xmlns:models="using:ProgressionManager.Models.WorldRules"
              xmlns:conv="using:ProgressionManager.Converters"
+             xmlns:controls="using:ProgressionManager.Controls"
              mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="800"
              x:DataType="vm:WorldRulesViewModel"
              x:Class="ProgressionManager.Views.WorldRulesView">
@@ -445,6 +446,22 @@
                                                         Width="*"/>
                                 </DataGrid.Columns>
                             </DataGrid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- XP Curve Visualization -->
+                    <Border Classes="InnerCard">
+                        <StackPanel Spacing="12">
+                            <TextBlock Text="XP Curve Visualization"
+                                       FontSize="14"
+                                       FontWeight="SemiBold"
+                                       Foreground="#C0CAF5"/>
+
+                            <controls:XpCurveChart
+                                LevelPreviews="{Binding XpCurve.LevelPreviews}"
+                                ShowTotalXp="True"
+                                ShowXpRequired="True"
+                                Height="300"/>
                         </StackPanel>
                     </Border>
 
