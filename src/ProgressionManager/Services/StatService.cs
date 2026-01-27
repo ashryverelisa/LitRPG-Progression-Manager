@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Text.Json;
 using ProgressionManager.Models.WorldRules;
 using ProgressionManager.Services.Interfaces;
 
@@ -10,66 +13,23 @@ public class StatService(IFormulaValidatorService formulaValidator) : IStatServi
 {
     public IEnumerable<StatDefinition> GetDefaultStats()
     {
-        return
-        [
-            new StatDefinition
-            {
-                Name = "STR",
-                Description = "Physical strength, affects melee damage",
-                BaseValue = 10,
-                GrowthPerLevel = 2,
-                MinValue = 1,
-                MaxValue = 999
-            },
-            new StatDefinition
-            {
-                Name = "VIT",
-                Description = "Vitality, affects HP and stamina",
-                BaseValue = 8,
-                GrowthPerLevel = 3,
-                MinValue = 1,
-                MaxValue = 999
-            },
-            new StatDefinition
-            {
-                Name = "INT",
-                Description = "Intelligence, affects mana and magic damage",
-                BaseValue = 12,
-                GrowthPerLevel = 2,
-                MinValue = 1,
-                MaxValue = 999
-            },
-            new StatDefinition
-            {
-                Name = "AGI",
-                Description = "Agility, affects speed and evasion",
-                BaseValue = 10,
-                GrowthPerLevel = 2,
-                MinValue = 1,
-                MaxValue = 999
-            },
-            new StatDefinition
-            {
-                Name = "HP",
-                Description = "Health Points - derived from VIT",
-                Formula = "VIT * 12 + Level * 5",
-                MinValue = 1
-            },
-            new StatDefinition
-            {
-                Name = "Mana",
-                Description = "Magical energy - derived from INT",
-                Formula = "INT * 10 + Level * 3",
-                MinValue = 0
-            },
-            new StatDefinition
-            {
-                Name = "PhysDmg",
-                Description = "Physical damage - derived from STR",
-                Formula = "STR * 2 + Level",
-                MinValue = 1
-            }
-        ];
+        var assembly = Assembly.GetExecutingAssembly();
+        using var stream = assembly.GetManifestResourceStream("ProgressionManager.Data.DefaultStats.json");
+
+        if (stream == null)
+        {
+            throw new InvalidOperationException("Could not find embedded resource: DefaultStats.json");
+        }
+
+        using var reader = new StreamReader(stream);
+        var json = reader.ReadToEnd();
+
+        var stats = JsonSerializer.Deserialize<List<StatDefinition>>(json, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        });
+
+        return stats ?? [];
     }
 
     public StatDefinition CreateBaseStat(string name = "NEW_STAT")

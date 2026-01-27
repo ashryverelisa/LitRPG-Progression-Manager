@@ -1,0 +1,52 @@
+﻿[
+  {
+    "Name": "STR",
+    "Description": "Physical strength, affects melee damage",
+    "BaseValue": 10,
+    "GrowthPerLevel": 2,
+    "MinValue": 1,
+    "MaxValue": 999
+  },
+  {
+    "Name": "VIT",
+    "Description": "Vitality, affects HP and stamina",
+    "BaseValue": 8,
+    "GrowthPerLevel": 3,
+    "MinValue": 1,
+    "MaxValue": 999
+  },
+  {
+    "Name": "INT",
+    "Description": "Intelligence, affects mana and magic damage",
+    "BaseValue": 12,
+    "GrowthPerLevel": 2,
+    "MinValue": 1,
+    "MaxValue": 999
+  },
+  {
+    "Name": "AGI",
+    "Description": "Agility, affects speed and evasion",
+    "BaseValue": 10,
+    "GrowthPerLevel": 2,
+    "MinValue": 1,
+    "MaxValue": 999
+  },
+  {
+    "Name": "HP",
+    "Description": "Health Points - derived from VIT",
+    "Formula": "VIT * 12 + Level * 5",
+    "MinValue": 1
+  },
+  {
+    "Name": "Mana",
+    "Description": "Magical energy - derived from INT",
+    "Formula": "INT * 10 + Level * 3",
+    "MinValue": 0
+  },
+  {
+    "Name": "PhysDmg",
+    "Description": "Physical damage - derived from STR",
+    "Formula": "STR * 2 + Level",
+    "MinValue": 1
+  }
+]
