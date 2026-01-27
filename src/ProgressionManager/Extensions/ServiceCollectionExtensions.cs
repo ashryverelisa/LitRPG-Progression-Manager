@@ -20,6 +20,12 @@ public static class ServiceCollectionExtensions
         {
             services.AddTransient<MainWindowViewModel>();
             services.AddTransient<WorldRulesViewModel>();
+            services.AddTransient<CharactersViewModel>();
+            services.AddTransient<ClassesViewModel>();
+            services.AddTransient<RacesViewModel>();
+            services.AddTransient<SkillsViewModel>();
+            services.AddTransient<TimelineViewModel>();
+            services.AddTransient<ValidationViewModel>();
         }
     }
 }
