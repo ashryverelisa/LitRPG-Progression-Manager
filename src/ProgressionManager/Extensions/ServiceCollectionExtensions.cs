@@ -1,12 +1,25 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿﻿using Microsoft.Extensions.DependencyInjection;
+using ProgressionManager.Services;
+using ProgressionManager.Services.Interfaces;
 using ProgressionManager.ViewModels;
 
 namespace ProgressionManager.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static void AddCommonServices(this IServiceCollection services)
+    extension(IServiceCollection services)
     {
-        services.AddTransient<MainWindowViewModel>();
+        public void AddCommonServices()
+        {
+            services.AddTransient<IFormulaValidatorService, FormulaValidatorService>();
+            services.AddTransient<IStatService, StatService>();
+            services.AddTransient<IXpCurveCalculatorService, XpCurveCalculatorServiceService>();
+        }
+
+        public void AddViewModels()
+        {
+            services.AddTransient<MainWindowViewModel>();
+            services.AddTransient<WorldRulesViewModel>();
+        }
     }
 }

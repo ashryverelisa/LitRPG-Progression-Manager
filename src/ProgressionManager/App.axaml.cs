@@ -24,6 +24,7 @@ public partial class App : Application
 
         var serviceCollection = new ServiceCollection();
         serviceCollection.AddCommonServices();
+        serviceCollection.AddViewModels();
 
         var services = serviceCollection.BuildServiceProvider();
         var vm = services.GetRequiredService<MainWindowViewModel>();

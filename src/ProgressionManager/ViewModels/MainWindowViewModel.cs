@@ -10,18 +10,18 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty]
     private ObservableObject? _currentViewModel;
 
-    public MainWindowViewModel()
+    public MainWindowViewModel(WorldRulesViewModel worldRulesViewModel)
     {
-        NavigationItems = new()
-        {
-            CreateNav("World Rules", "🌍", new WorldRulesViewModel()),
+        NavigationItems =
+        [
+            CreateNav("World Rules", "🌍", worldRulesViewModel),
             CreateNav("Skills", "⚔", new SkillsViewModel()),
             CreateNav("Classes", "🧬", new ClassesViewModel()),
             CreateNav("Races", "🧝", new RacesViewModel()),
             CreateNav("Characters", "👤", new CharactersViewModel()),
             CreateNav("Timeline", "📈", new TimelineViewModel()),
             CreateNav("Validation", "🔍", new ValidationViewModel())
-        };
+        ];
 
         Select(NavigationItems[0]);
     }

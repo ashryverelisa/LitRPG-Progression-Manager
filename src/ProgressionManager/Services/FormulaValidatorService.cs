@@ -4,12 +4,13 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using NCalc;
 using ProgressionManager.Models.WorldRules;
+using ProgressionManager.Services.Interfaces;
 
 namespace ProgressionManager.Services;
 
-public partial class FormulaValidator
+public partial class FormulaValidatorService : IFormulaValidatorService
 {
-    private static readonly HashSet<string> ReservedKeywords = new(StringComparer.OrdinalIgnoreCase)
+    private static readonly HashSet<string> _reservedKeywords = new(StringComparer.OrdinalIgnoreCase)
     {
         "Level", "BaseValue"
     };
@@ -18,7 +19,7 @@ public partial class FormulaValidator
     private static partial Regex VariableExtractPattern();
 
     // NCalc built-in functions that should not be treated as variables
-    private static readonly HashSet<string> NCalcBuiltInFunctions = new(StringComparer.OrdinalIgnoreCase)
+    private static readonly HashSet<string> _nCalcBuiltInFunctions = new(StringComparer.OrdinalIgnoreCase)
     {
         // Math functions
         "Abs", "Acos", "Asin", "Atan", "Ceiling", "Cos", "Exp", "Floor", "IEEERemainder",
@@ -34,12 +35,12 @@ public partial class FormulaValidator
     {
         if (string.IsNullOrWhiteSpace(formula))
         {
-            return new FormulaValidationResult(true, null, null);
+            return new FormulaValidationResult(true);
         }
 
         var knownVarsSet = new HashSet<string>(knownVariables, StringComparer.OrdinalIgnoreCase);
 
-        foreach (var keyword in ReservedKeywords)
+        foreach (var keyword in _reservedKeywords)
         {
             knownVarsSet.Add(keyword);
         }
@@ -124,12 +125,12 @@ public partial class FormulaValidator
     public IEnumerable<string> ExtractVariables(string formula)
     {
         if (string.IsNullOrWhiteSpace(formula))
-            return Enumerable.Empty<string>();
+            return [];
 
         var matches = VariableExtractPattern().Matches(formula);
         return matches
             .Select(m => m.Value)
-            .Where(v => !NCalcBuiltInFunctions.Contains(v) && !double.TryParse(v, out _) && !IsKeyword(v))
+            .Where(v => !_nCalcBuiltInFunctions.Contains(v) && !double.TryParse(v, out _) && !IsKeyword(v))
             .Distinct();
     }
 
