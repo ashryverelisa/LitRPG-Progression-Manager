@@ -11,21 +11,21 @@ public static class ServiceCollectionExtensions
     {
         public void AddCommonServices()
         {
-            services.AddTransient<IFormulaValidatorService, FormulaValidatorService>();
-            services.AddTransient<IStatService, StatService>();
-            services.AddTransient<IXpCurveCalculatorService, XpCurveCalculatorServiceService>();
+            services.AddScoped<IFormulaValidatorService, FormulaValidatorService>();
+            services.AddScoped<IStatService, StatService>();
+            services.AddScoped<IXpCurveCalculatorService, XpCurveCalculatorServiceService>();
         }
 
         public void AddViewModels()
         {
-            services.AddTransient<MainWindowViewModel>();
-            services.AddTransient<WorldRulesViewModel>();
-            services.AddTransient<CharactersViewModel>();
-            services.AddTransient<ClassesViewModel>();
-            services.AddTransient<RacesViewModel>();
-            services.AddTransient<SkillsViewModel>();
-            services.AddTransient<TimelineViewModel>();
-            services.AddTransient<ValidationViewModel>();
+            services.AddScoped<MainWindowViewModel>();
+            services.AddScoped<WorldRulesViewModel>();
+            services.AddScoped<CharactersViewModel>();
+            services.AddScoped<ClassesViewModel>();
+            services.AddScoped<RacesViewModel>();
+            services.AddScoped<SkillsViewModel>();
+            services.AddScoped<TimelineViewModel>();
+            services.AddScoped<ValidationViewModel>();
         }
     }
 }
