@@ -52,7 +52,7 @@ dotnet run
 
 ## Current Features
 
-### World Rules Editor ✅
+### World Rules Editor
 
 The heart of the system - fully implemented with a polished dark-themed UI.
 
@@ -79,7 +79,7 @@ Create and manage base stats (STR, AGI, INT, VIT) with:
 - STR, VIT, INT, AGI (base stats)
 - HP, Mana, PhysDmg (derived stats)
 
-#### XP & Level Curves ✅
+#### XP & Level Curves
 
 Multiple curve types supported:
 - **Linear:** `BaseXP + (Level - 1) × Multiplier`
@@ -96,17 +96,6 @@ Multiple curve types supported:
 #### Level-Up Rules
 
 Configure stat bonuses and point allocations on level up.
-
-### Navigation System ✅
-
-Sidebar navigation with access to all modules:
-- 🌍 World Rules
-- ⚔ Skills
-- 🧬 Classes
-- 🧝 Races
-- 👤 Characters
-- 📈 Timeline
-- 🔍 Validation
 
 ---
 
