@@ -11,8 +11,8 @@ namespace ProgressionManager.ViewModels;
 
 public partial class WorldRulesViewModel : ViewModelBase
 {
-    private readonly IStatService _statService;
-    private readonly IXpCurveCalculatorService _xpCurveCalculatorService;
+    private readonly IStatService _statService = null!;
+    private readonly IXpCurveCalculatorService _xpCurveCalculatorService = null!;
 
     public ObservableCollection<StatDefinition> Stats { get; } = [];
     public IEnumerable<XpCurveType> CurveTypes => Enum.GetValues<XpCurveType>();
@@ -23,6 +23,11 @@ public partial class WorldRulesViewModel : ViewModelBase
     [ObservableProperty] private XpCurveType _selectedCurveType = XpCurveType.Exponential;
     [ObservableProperty] private LevelUpRules _levelUpRules = new();
     [ObservableProperty] private int _previewLevel = 10;
+
+    public WorldRulesViewModel()
+    {
+
+    }
 
     public WorldRulesViewModel(IStatService statService, IXpCurveCalculatorService xpCurveCalculatorService)
     {
