@@ -1,0 +1,761 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:ProgressionManager.ViewModels"
+             xmlns:models="using:ProgressionManager.Models.Skills"
+             xmlns:conv="using:ProgressionManager.Converters"
+             mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="800"
+             x:DataType="vm:SkillsViewModel"
+             x:Class="ProgressionManager.Views.SkillsView"
+             x:Name="SkillsViewRoot">
+
+    <Design.DataContext>
+        <vm:SkillsViewModel/>
+    </Design.DataContext>
+
+    <UserControl.Resources>
+        <conv:ValidityToColorConverter x:Key="ValidityToColor"/>
+        <conv:ValidityToBackgroundConverter x:Key="ValidityToBackground"/>
+        <conv:NodeIdToNameConverter x:Key="NodeIdToName"/>
+    </UserControl.Resources>
+
+    <UserControl.Styles>
+        <StyleInclude Source="SkillsViewStyles.axaml"/>
+    </UserControl.Styles>
+
+    <ScrollViewer HorizontalScrollBarVisibility="Disabled"
+                  VerticalScrollBarVisibility="Auto">
+        <StackPanel Spacing="24" Margin="0,0,20,20">
+
+            <!-- HEADER -->
+            <Grid ColumnDefinitions="*,Auto">
+                <StackPanel Spacing="6">
+                    <TextBlock Text="Skills &amp; Abilities"
+                               FontSize="28"
+                               FontWeight="Bold"
+                               Foreground="#FFFFFF"/>
+
+                    <TextBlock Text="Define active skills, passive abilities, and skill trees for your LitRPG system"
+                               FontSize="14"
+                               Foreground="#9AA5CE"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                    <Button Classes="ActionBtn" Content="⟲ Reset to Defaults"
+                            Command="{Binding ResetToDefaultsCommand}"/>
+                    <Button Classes="PrimaryBtn" Content="✓ Validate All"
+                            Command="{Binding ValidateAllSkillsCommand}"/>
+                </StackPanel>
+            </Grid>
+
+            <!-- PREVIEW CONTROLS -->
+            <Border Classes="Card">
+                <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto">
+                    <!-- Preview Level -->
+                    <StackPanel Spacing="8" Margin="0,0,12,0">
+                        <Grid ColumnDefinitions="Auto,*,Auto">
+                            <TextBlock Text="Preview Level" Classes="Label" VerticalAlignment="Center"/>
+                            <Slider Grid.Column="1"
+                                    Minimum="1" Maximum="100"
+                                    Value="{Binding PreviewLevel}"
+                                    Margin="16,0"/>
+                            <TextBlock Grid.Column="2"
+                                       Text="{Binding PreviewLevel, StringFormat='Level {0}'}"
+                                       Foreground="#7AA2F7"
+                                       FontWeight="SemiBold"
+                                       FontSize="16"
+                                       VerticalAlignment="Center"/>
+                        </Grid>
+                    </StackPanel>
+
+                    <!-- Preview Skill Rank -->
+                    <StackPanel Grid.Row="0" Grid.Column="1" Spacing="8" Margin="12,0,0,0">
+                        <Grid ColumnDefinitions="Auto,*,Auto">
+                            <TextBlock Text="Preview Skill Rank" Classes="Label" VerticalAlignment="Center"/>
+                            <Slider Grid.Column="1"
+                                    Minimum="1" Maximum="10"
+                                    Value="{Binding PreviewSkillRank}"
+                                    Margin="16,0"/>
+                            <TextBlock Grid.Column="2"
+                                       Text="{Binding PreviewSkillRank, StringFormat='Rank {0}'}"
+                                       Foreground="#F7768E"
+                                       FontWeight="SemiBold"
+                                       FontSize="16"
+                                       VerticalAlignment="Center"/>
+                        </Grid>
+                    </StackPanel>
+
+                    <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                               Classes="HelpText"
+                               Text="Adjust the preview level and skill rank to see calculated values at different progression points"
+                               Margin="0,12,0,0"/>
+                </Grid>
+            </Border>
+
+            <!-- TABS -->
+            <TabControl SelectedIndex="{Binding SelectedTabIndex}">
+                <!-- SKILLS TAB -->
+                <TabItem Header="⚔ Skill Definitions">
+                    <StackPanel Spacing="16" Margin="0,16,0,0">
+                        <!-- Skills Section -->
+                        <Border Classes="Card">
+                            <StackPanel Spacing="16">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <TextBlock Text="Skills Library" Classes="SectionHeader"/>
+                                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
+                                        <Button Classes="ActionBtn" Content="+ Active Skill"
+                                                Command="{Binding AddActiveSkillCommand}"/>
+                                        <Button Classes="ActionBtn" Content="+ Passive Skill"
+                                                Command="{Binding AddPassiveSkillCommand}"/>
+                                    </StackPanel>
+                                </Grid>
+
+                                <!-- Skills DataGrid -->
+                                <DataGrid AutoGenerateColumns="False"
+                                          GridLinesVisibility="None"
+                                          HeadersVisibility="Column"
+                                          RowHeight="52"
+                                          ItemsSource="{Binding Skills}"
+                                          SelectedItem="{Binding SelectedSkill}"
+                                          Background="#0F1115"
+                                          BorderThickness="0"
+                                          CornerRadius="10"
+                                          MaxHeight="300">
+
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Name"
+                                                            Binding="{Binding Name}"
+                                                            Width="120"/>
+
+                                        <DataGridTextColumn Header="Type"
+                                                            Binding="{Binding SkillType}"
+                                                            Width="80"/>
+
+                                        <DataGridTextColumn Header="Max Rank"
+                                                            Binding="{Binding MaxRank}"
+                                                            Width="80"/>
+
+                                        <DataGridTextColumn Header="Req. Level"
+                                                            Binding="{Binding RequiredLevel}"
+                                                            Width="80"/>
+
+                                        <DataGridTextColumn Header="Description"
+                                                            Binding="{Binding Description}"
+                                                            Width="*"/>
+
+                                        <DataGridTemplateColumn Header="" Width="140">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate x:DataType="models:SkillDefinition">
+                                                    <StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Right">
+                                                        <Button Content="📋" ToolTip.Tip="Duplicate"
+                                                                Command="{Binding $parent[DataGrid].((vm:SkillsViewModel)DataContext).DuplicateSkillCommand}"
+                                                                CommandParameter="{Binding}"
+                                                                Background="Transparent" Foreground="#7AA2F7"
+                                                                BorderThickness="0" Padding="6"/>
+                                                        <Button Content="🗑" ToolTip.Tip="Delete"
+                                                                Command="{Binding $parent[DataGrid].((vm:SkillsViewModel)DataContext).DeleteSkillCommand}"
+                                                                CommandParameter="{Binding}"
+                                                                Background="Transparent" Foreground="#E74C3C"
+                                                                BorderThickness="0" Padding="6"/>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Skill Editor Panel -->
+                        <Border Classes="Card" IsVisible="{Binding SelectedSkill, Converter={x:Static ObjectConverters.IsNotNull}}">
+                            <StackPanel Spacing="16">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <TextBlock Text="Edit Skill" Classes="SectionHeader"/>
+                                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
+                                        <Button Content="▲" Classes="ActionBtn"
+                                                Command="{Binding MoveSkillUpCommand}"
+                                                CommandParameter="{Binding SelectedSkill}"
+                                                ToolTip.Tip="Move Up"/>
+                                        <Button Content="▼" Classes="ActionBtn"
+                                                Command="{Binding MoveSkillDownCommand}"
+                                                CommandParameter="{Binding SelectedSkill}"
+                                                ToolTip.Tip="Move Down"/>
+                                    </StackPanel>
+                                </Grid>
+
+                                <!-- Basic Info -->
+                                <Border Classes="InnerCard">
+                                    <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto,Auto"
+                                          DataContext="{Binding SelectedSkill}">
+                                        <!-- Row 0: Name & Type -->
+                                        <StackPanel Grid.Row="0" Grid.Column="0" Spacing="4" Margin="0,0,8,12">
+                                            <TextBlock Text="Name" Classes="Label"/>
+                                            <TextBox Text="{Binding Name}"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Row="0" Grid.Column="1" Spacing="4" Margin="8,0,0,12">
+                                            <TextBlock Text="Type" Classes="Label"/>
+                                            <ComboBox ItemsSource="{Binding $parent[UserControl].((vm:SkillsViewModel)DataContext).SkillTypes}"
+                                                      SelectedItem="{Binding SkillType}"
+                                                      HorizontalAlignment="Stretch"/>
+                                        </StackPanel>
+
+                                        <!-- Row 1: Description -->
+                                        <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Spacing="4" Margin="0,0,0,12">
+                                            <TextBlock Text="Description" Classes="Label"/>
+                                            <TextBox Text="{Binding Description}" TextWrapping="Wrap" Height="60"
+                                                     AcceptsReturn="True"/>
+                                        </StackPanel>
+
+                                        <!-- Row 2: Max Rank & Required Level -->
+                                        <StackPanel Grid.Row="2" Grid.Column="0" Spacing="4" Margin="0,0,8,12">
+                                            <TextBlock Text="Max Rank" Classes="Label"/>
+                                            <NumericUpDown Value="{Binding MaxRank}" Minimum="1" Maximum="100"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Row="2" Grid.Column="1" Spacing="4" Margin="8,0,0,12">
+                                            <TextBlock Text="Required Level" Classes="Label"/>
+                                            <NumericUpDown Value="{Binding RequiredLevel}" Minimum="1" Maximum="999"/>
+                                        </StackPanel>
+
+                                        <!-- Row 3: Class Lock & Prerequisite -->
+                                        <StackPanel Grid.Row="3" Grid.Column="0" Spacing="4" Margin="0,0,8,0">
+                                            <TextBlock Text="Class Lock (Optional)" Classes="Label"/>
+                                            <TextBox Text="{Binding RequiredClass}" Watermark="e.g., Warrior"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Row="3" Grid.Column="1" Spacing="4" Margin="8,0,0,0">
+                                            <TextBlock Text="Prerequisite Skill (Optional)" Classes="Label"/>
+                                            <TextBox Text="{Binding PrerequisiteSkillId}" Watermark="Skill ID"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+
+                                <!-- Active Skill Formulas -->
+                                <Border Classes="InnerCard"
+                                        IsVisible="{Binding SelectedSkill.IsActive}">
+                                    <StackPanel Spacing="12" DataContext="{Binding SelectedSkill}">
+                                        <TextBlock Text="Active Skill Formulas" FontWeight="SemiBold" Foreground="#7AA2F7"/>
+
+                                        <!-- Damage Formula -->
+                                        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
+                                            <StackPanel Grid.Row="0" Grid.Column="0" Spacing="4">
+                                                <TextBlock Text="Damage/Effect Formula" Classes="Label"/>
+                                                <TextBox Text="{Binding DamageFormula, UpdateSourceTrigger=PropertyChanged}"
+                                                         Watermark="e.g., (INT * 2.5) + SkillRank * 10"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Row="0" Grid.Column="1" VerticalAlignment="Bottom" Margin="12,0,0,0">
+                                                <Border CornerRadius="4" Padding="6,2"
+                                                        Background="{Binding IsDamageFormulaValid, Converter={StaticResource ValidityToBackground}}">
+                                                    <TextBlock Text="{Binding DamagePreview, StringFormat='= {0:F1}'}"
+                                                               Foreground="{Binding IsDamageFormulaValid,
+                                                               Converter={StaticResource ValidityToColor}}"
+                                                               FontWeight="SemiBold"/>
+                                                </Border>
+                                            </StackPanel>
+                                            <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                                                       Text="{Binding DamageFormulaError}"
+                                                       Foreground="#E74C3C" FontSize="11"
+                                                       IsVisible="{Binding !IsDamageFormulaValid}"/>
+                                        </Grid>
+
+                                        <!-- Mana Cost Formula -->
+                                        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
+                                            <StackPanel Grid.Row="0" Grid.Column="0" Spacing="4">
+                                                <TextBlock Text="Mana Cost Formula" Classes="Label"/>
+                                                <TextBox Text="{Binding ManaCostFormula, UpdateSourceTrigger=PropertyChanged}"
+                                                         Watermark="e.g., 30 + SkillRank * 5"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Row="0" Grid.Column="1" VerticalAlignment="Bottom" Margin="12,0,0,0">
+                                                <Border CornerRadius="4" Padding="6,2"
+                                                        Background="{Binding IsManaCostFormulaValid, Converter={StaticResource ValidityToBackground}}">
+                                                    <TextBlock Text="{Binding ManaCostPreview, StringFormat='= {0:F1}'}"
+                                                               Foreground="{Binding IsManaCostFormulaValid,
+                                                               Converter={StaticResource ValidityToColor}}"
+                                                               FontWeight="SemiBold"/>
+                                                </Border>
+                                            </StackPanel>
+                                            <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                                                       Text="{Binding ManaCostFormulaError}"
+                                                       Foreground="#E74C3C" FontSize="11"
+                                                       IsVisible="{Binding !IsManaCostFormulaValid}"/>
+                                        </Grid>
+
+                                        <!-- Cooldown Formula -->
+                                        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
+                                            <StackPanel Grid.Row="0" Grid.Column="0" Spacing="4">
+                                                <TextBlock Text="Cooldown Formula (seconds)" Classes="Label"/>
+                                                <TextBox Text="{Binding CooldownFormula, UpdateSourceTrigger=PropertyChanged}"
+                                                         Watermark="e.g., Max(1, 10 - SkillRank)"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Row="0" Grid.Column="1" VerticalAlignment="Bottom" Margin="12,0,0,0">
+                                                <Border CornerRadius="4" Padding="6,2"
+                                                        Background="{Binding IsCooldownFormulaValid, Converter={StaticResource ValidityToBackground}}">
+                                                    <TextBlock Text="{Binding CooldownPreview, StringFormat='= {0:F1}s'}"
+                                                               Foreground="{Binding IsCooldownFormulaValid,
+                                                               Converter={StaticResource ValidityToColor}}"
+                                                               FontWeight="SemiBold"/>
+                                                </Border>
+                                            </StackPanel>
+                                            <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                                                       Text="{Binding CooldownFormulaError}"
+                                                       Foreground="#E74C3C" FontSize="11"
+                                                       IsVisible="{Binding !IsCooldownFormulaValid}"/>
+                                        </Grid>
+
+                                        <TextBlock Classes="HelpText"
+                                                   Text="Available variables: Level, SkillRank, STR, VIT, INT, AGI. Functions: Min, Max, Abs, Pow, Sqrt, etc."/>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Passive Skill Formulas -->
+                                <Border Classes="InnerCard"
+                                        IsVisible="{Binding !SelectedSkill.IsActive}">
+                                    <StackPanel Spacing="12" DataContext="{Binding SelectedSkill}">
+                                        <TextBlock Text="Passive Effect Formula" FontWeight="SemiBold" Foreground="#9ECE6A"/>
+
+                                        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
+                                            <StackPanel Grid.Row="0" Grid.Column="0" Spacing="4">
+                                                <TextBlock Text="Effect Formula" Classes="Label"/>
+                                                <TextBox Text="{Binding PassiveEffectFormula, UpdateSourceTrigger=PropertyChanged}"
+                                                         Watermark="e.g., VIT * 0.5 + SkillRank * 5"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Row="0" Grid.Column="1" VerticalAlignment="Bottom" Margin="12,0,0,0">
+                                                <Border CornerRadius="4" Padding="6,2"
+                                                        Background="{Binding IsPassiveFormulaValid, Converter={StaticResource ValidityToBackground}}">
+                                                    <TextBlock Text="{Binding PassiveEffectPreview, StringFormat='= {0:F1}'}"
+                                                               Foreground="{Binding IsPassiveFormulaValid,
+                                                               Converter={StaticResource ValidityToColor}}"
+                                                               FontWeight="SemiBold"/>
+                                                </Border>
+                                            </StackPanel>
+                                            <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                                                       Text="{Binding PassiveFormulaError}"
+                                                       Foreground="#E74C3C" FontSize="11"
+                                                       IsVisible="{Binding !IsPassiveFormulaValid}"/>
+                                        </Grid>
+
+                                        <TextBlock Classes="HelpText"
+                                                   Text="Available variables: Level, SkillRank, STR, VIT, INT, AGI. Functions: Min, Max, Abs, Pow, Sqrt, etc."/>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Status Effects Section -->
+                                <Border Classes="InnerCard" DataContext="{Binding SelectedSkill}">
+                                    <StackPanel Spacing="12">
+                                        <Grid ColumnDefinitions="*,Auto">
+                                            <TextBlock Text="Status Effects" FontWeight="SemiBold" Foreground="#BB9AF7"/>
+                                            <Button Grid.Column="1" Content="+ Add Effect" Classes="ActionBtn"
+                                                    Command="{Binding $parent[UserControl].((vm:SkillsViewModel)DataContext).AddStatusEffectCommand}"/>
+                                        </Grid>
+
+                                        <ItemsControl ItemsSource="{Binding StatusEffects}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate x:DataType="models:StatusEffect">
+                                                    <Border Background="#1A1E26" CornerRadius="6" Padding="12" Margin="0,4">
+                                                        <Grid ColumnDefinitions="*,*,Auto,Auto,Auto">
+                                                            <TextBox Text="{Binding Name}" Watermark="Effect Name" Margin="0,0,8,0"/>
+                                                            <TextBox Grid.Column="1" Text="{Binding EffectFormula}"
+                                                                     Watermark="Formula" Margin="8,0"/>
+                                                            <NumericUpDown Grid.Column="2" Value="{Binding Duration}"
+                                                                           Minimum="0" Maximum="9999" Width="80"
+                                                                           Watermark="Duration" Margin="8,0"/>
+                                                            <CheckBox Grid.Column="3" IsChecked="{Binding IsDebuff}"
+                                                                      Content="Debuff" Margin="8,0"/>
+                                                            <Button Grid.Column="4" Content="🗑"
+                                                                    Command="{Binding $parent[UserControl].((vm:SkillsViewModel)DataContext).DeleteStatusEffectCommand}"
+                                                                    CommandParameter="{Binding}"
+                                                                    Background="Transparent" Foreground="#E74C3C"
+                                                                    BorderThickness="0" Padding="6"/>
+                                                        </Grid>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+
+                                        <TextBlock Classes="HelpText"
+                                                   Text="Define status effects like Burn, Slow, Stun, etc. that this skill applies"/>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- No Selection Message -->
+                        <Border Classes="Card" IsVisible="{Binding SelectedSkill, Converter={x:Static ObjectConverters.IsNull}}">
+                            <TextBlock Text="Select a skill from the list above to edit its properties"
+                                       Foreground="#7A7F99" HorizontalAlignment="Center" Padding="40"/>
+                        </Border>
+                    </StackPanel>
+                </TabItem>
+
+                <!-- SKILL TREES TAB -->
+                <TabItem Header="🌳 Skill Trees">
+                    <StackPanel Spacing="16" Margin="0,16,0,0">
+                        <!-- Skill Trees Section -->
+                        <Border Classes="Card">
+                            <StackPanel Spacing="16">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <TextBlock Text="Skill Trees" Classes="SectionHeader"/>
+                                    <Button Grid.Column="1" Classes="ActionBtn" Content="+ New Skill Tree"
+                                            Command="{Binding AddSkillTreeCommand}"/>
+                                </Grid>
+
+                                <!-- Skill Trees List -->
+                                <ListBox ItemsSource="{Binding SkillTrees}"
+                                         SelectedItem="{Binding SelectedSkillTree}"
+                                         Background="#0F1115"
+                                         CornerRadius="10"
+                                         MaxHeight="200">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate x:DataType="models:SkillTree">
+                                            <Grid ColumnDefinitions="*,Auto" Margin="8">
+                                                <StackPanel>
+                                                    <TextBlock Text="{Binding Name}" FontWeight="SemiBold" Foreground="#FFFFFF"/>
+                                                    <TextBlock Text="{Binding Description}" Foreground="#7A7F99" FontSize="12"/>
+                                                </StackPanel>
+                                                <Button Grid.Column="1" Content="🗑" ToolTip.Tip="Delete"
+                                                        Command="{Binding $parent[UserControl].((vm:SkillsViewModel)DataContext).DeleteSkillTreeCommand}"
+                                                        CommandParameter="{Binding}"
+                                                        Background="Transparent" Foreground="#E74C3C"
+                                                        BorderThickness="0" Padding="6"/>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Skill Tree Editor -->
+                        <Border Classes="Card" IsVisible="{Binding SelectedSkillTree, Converter={x:Static ObjectConverters.IsNotNull}}">
+                            <StackPanel Spacing="16">
+                                <TextBlock Text="Edit Skill Tree" Classes="SectionHeader"/>
+
+                                <Border Classes="InnerCard" DataContext="{Binding SelectedSkillTree}">
+                                    <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto">
+                                        <StackPanel Grid.Row="0" Grid.Column="0" Spacing="4" Margin="0,0,8,12">
+                                            <TextBlock Text="Tree Name" Classes="Label"/>
+                                            <TextBox Text="{Binding Name}"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Row="0" Grid.Column="1" Spacing="4" Margin="8,0,0,12">
+                                            <TextBlock Text="Associated Class (Optional)" Classes="Label"/>
+                                            <TextBox Text="{Binding AssociatedClass}" Watermark="e.g., Mage"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Spacing="4">
+                                            <TextBlock Text="Description" Classes="Label"/>
+                                            <TextBox Text="{Binding Description}" TextWrapping="Wrap" Height="60"
+                                                     AcceptsReturn="True"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+
+                                <!-- Tree Nodes -->
+                                <Border Classes="InnerCard">
+                                    <StackPanel Spacing="12">
+                                        <Grid ColumnDefinitions="*,Auto">
+                                            <TextBlock Text="Tree Nodes" FontWeight="SemiBold" Foreground="#7AA2F7"/>
+                                            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
+                                                <ComboBox ItemsSource="{Binding $parent[UserControl].((vm:SkillsViewModel)DataContext).Skills}"
+                                                          x:Name="SkillSelector"
+                                                          Width="150"
+                                                          PlaceholderText="Select Skill">
+                                                    <ComboBox.ItemTemplate>
+                                                        <DataTemplate x:DataType="models:SkillDefinition">
+                                                            <TextBlock Text="{Binding Name}"/>
+                                                        </DataTemplate>
+                                                    </ComboBox.ItemTemplate>
+                                                </ComboBox>
+                                                <Button Content="+ Add Node" Classes="ActionBtn"
+                                                        Command="{Binding $parent[UserControl].((vm:SkillsViewModel)DataContext).AddNodeToTreeCommand}"
+                                                        CommandParameter="{Binding #SkillSelector.SelectedItem}"/>
+                                            </StackPanel>
+                                        </Grid>
+
+                                        <ListBox ItemsSource="{Binding SelectedSkillTree.Nodes}"
+                                                 SelectedItem="{Binding SelectedSkillTreeNode}"
+                                                 Background="Transparent"
+                                                 BorderThickness="0">
+                                            <ListBox.ItemTemplate>
+                                                <DataTemplate x:DataType="models:SkillTreeNode">
+                                                    <Border Background="#1A1E26" CornerRadius="6" Padding="12" Margin="0,4">
+                                                        <Grid ColumnDefinitions="Auto,*,Auto,Auto">
+                                                            <Border Background="#2A3A5C" CornerRadius="4" Padding="8,4" Margin="0,0,12,0">
+                                                                <TextBlock Text="{Binding Tier, StringFormat='Tier {0}'}"
+                                                                           Foreground="#7AA2F7" FontSize="12"/>
+                                                            </Border>
+                                                            <StackPanel Grid.Column="1">
+                                                                <TextBlock Text="{Binding Skill.Name, FallbackValue='(No Skill)'}"
+                                                                           FontWeight="SemiBold" Foreground="#FFFFFF"/>
+                                                                <StackPanel Orientation="Horizontal" Spacing="12">
+                                                                    <TextBlock Text="{Binding Skill.Description, FallbackValue=''}"
+                                                                               Foreground="#7A7F99" FontSize="12"/>
+                                                                    <TextBlock Text="{Binding ChildNodeIds.Count, StringFormat='↓ {0} children'}"
+                                                                               Foreground="#9ECE6A" FontSize="11"
+                                                                               IsVisible="{Binding HasChildren}"/>
+                                                                    <TextBlock Text="{Binding EvolutionNodeIds.Count, StringFormat='⇢ {0} evolutions'}"
+                                                                               Foreground="#BB9AF7" FontSize="11"
+                                                                               IsVisible="{Binding HasEvolutions}"/>
+                                                                </StackPanel>
+                                                            </StackPanel>
+                                                            <NumericUpDown Grid.Column="2" Value="{Binding Tier}"
+                                                                           Minimum="0" Maximum="10" Width="80"
+                                                                           Margin="8,0"/>
+                                                            <Button Grid.Column="3" Content="🗑"
+                                                                    Command="{Binding $parent[UserControl].((vm:SkillsViewModel)DataContext).RemoveNodeFromTreeCommand}"
+                                                                    CommandParameter="{Binding}"
+                                                                    Background="Transparent" Foreground="#E74C3C"
+                                                                    BorderThickness="0" Padding="6"/>
+                                                        </Grid>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ListBox.ItemTemplate>
+                                        </ListBox>
+
+                                        <TextBlock Classes="HelpText"
+                                                   Text="Select a node to configure its child prerequisites and evolution paths."/>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Node Relationships Editor -->
+                                <Border Classes="InnerCard" IsVisible="{Binding SelectedSkillTreeNode, Converter={x:Static ObjectConverters.IsNotNull}}">
+                                    <StackPanel Spacing="16">
+                                        <TextBlock FontWeight="SemiBold" Foreground="#F7768E">
+                                            <TextBlock.Text>
+                                                <MultiBinding StringFormat="Node Relationships: {0}">
+                                                    <Binding Path="SelectedSkillTreeNode.Skill.Name" FallbackValue="Selected Node"/>
+                                                </MultiBinding>
+                                            </TextBlock.Text>
+                                        </TextBlock>
+
+                                        <!-- Child Nodes (Prerequisites) Section -->
+                                        <Border Background="#1A1E26" CornerRadius="6" Padding="12">
+                                            <StackPanel Spacing="8">
+                                                <Grid ColumnDefinitions="*,Auto">
+                                                    <StackPanel>
+                                                        <TextBlock Text="↓ Child Nodes (Unlocks After)" FontWeight="SemiBold" Foreground="#9ECE6A"/>
+                                                        <TextBlock Text="Skills that become available after unlocking this node"
+                                                                   Foreground="#7A7F99" FontSize="11"/>
+                                                    </StackPanel>
+                                                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
+                                                        <ComboBox ItemsSource="{Binding SelectedSkillTree.Nodes}"
+                                                                  x:Name="ChildNodeSelector"
+                                                                  Width="150"
+                                                                  PlaceholderText="Select Node">
+                                                            <ComboBox.ItemTemplate>
+                                                                <DataTemplate x:DataType="models:SkillTreeNode">
+                                                                    <TextBlock Text="{Binding Skill.Name, FallbackValue='(No Skill)'}"/>
+                                                                </DataTemplate>
+                                                            </ComboBox.ItemTemplate>
+                                                        </ComboBox>
+                                                        <Button Content="+ Link" Classes="ActionBtn"
+                                                                Command="{Binding LinkChildNodeCommand}"
+                                                                CommandParameter="{Binding #ChildNodeSelector.SelectedItem}"/>
+                                                    </StackPanel>
+                                                </Grid>
+
+                                                <ItemsControl ItemsSource="{Binding SelectedSkillTreeNode.ChildNodeIds}">
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <Border Background="#0F1115" CornerRadius="4" Padding="8,4" Margin="0,2">
+                                                                <Grid ColumnDefinitions="Auto,*,Auto">
+                                                                    <TextBlock Text="→" Foreground="#9ECE6A" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                                                                    <TextBlock Grid.Column="1" Foreground="#FFFFFF" VerticalAlignment="Center"
+                                                                               FontSize="12">
+                                                                        <TextBlock.Text>
+                                                                            <MultiBinding Converter="{StaticResource NodeIdToName}">
+                                                                                <Binding Path="."/>
+                                                                                <Binding Path="((vm:SkillsViewModel)DataContext).SelectedSkillTree" ElementName="SkillsViewRoot"/>
+                                                                            </MultiBinding>
+                                                                        </TextBlock.Text>
+                                                                    </TextBlock>
+                                                                    <Button Grid.Column="2" Content="✕"
+                                                                            Command="{Binding $parent[UserControl].((vm:SkillsViewModel)DataContext).UnlinkChildNodeCommand}"
+                                                                            CommandParameter="{Binding}"
+                                                                            Background="Transparent" Foreground="#E74C3C"
+                                                                            BorderThickness="0" Padding="4,2"
+                                                                            FontSize="10"/>
+                                                                </Grid>
+                                                            </Border>
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                </ItemsControl>
+
+                                                <TextBlock Text="No child nodes linked"
+                                                           Foreground="#565B6E" FontStyle="Italic" FontSize="12"
+                                                           IsVisible="{Binding !SelectedSkillTreeNode.HasChildren}"/>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <!-- Evolution Nodes Section -->
+                                        <Border Background="#1A1E26" CornerRadius="6" Padding="12">
+                                            <StackPanel Spacing="8">
+                                                <Grid ColumnDefinitions="*,Auto">
+                                                    <StackPanel>
+                                                        <TextBlock Text="⇢ Evolution Paths" FontWeight="SemiBold" Foreground="#BB9AF7"/>
+                                                        <TextBlock Text="Skills this can evolve into (branching paths)"
+                                                                   Foreground="#7A7F99" FontSize="11"/>
+                                                    </StackPanel>
+                                                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
+                                                        <ComboBox ItemsSource="{Binding SelectedSkillTree.Nodes}"
+                                                                  x:Name="EvolutionNodeSelector"
+                                                                  Width="150"
+                                                                  PlaceholderText="Select Node">
+                                                            <ComboBox.ItemTemplate>
+                                                                <DataTemplate x:DataType="models:SkillTreeNode">
+                                                                    <TextBlock Text="{Binding Skill.Name, FallbackValue='(No Skill)'}"/>
+                                                                </DataTemplate>
+                                                            </ComboBox.ItemTemplate>
+                                                        </ComboBox>
+                                                        <Button Content="+ Link" Classes="ActionBtn"
+                                                                Command="{Binding LinkEvolutionNodeCommand}"
+                                                                CommandParameter="{Binding #EvolutionNodeSelector.SelectedItem}"/>
+                                                    </StackPanel>
+                                                </Grid>
+
+                                                <ItemsControl ItemsSource="{Binding SelectedSkillTreeNode.EvolutionNodeIds}">
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <Border Background="#0F1115" CornerRadius="4" Padding="8,4" Margin="0,2">
+                                                                <Grid ColumnDefinitions="Auto,*,Auto">
+                                                                    <TextBlock Text="⇢" Foreground="#BB9AF7" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                                                                    <TextBlock Grid.Column="1" Foreground="#FFFFFF" VerticalAlignment="Center"
+                                                                               FontSize="12">
+                                                                        <TextBlock.Text>
+                                                                            <MultiBinding Converter="{StaticResource NodeIdToName}">
+                                                                                <Binding Path="."/>
+                                                                                <Binding Path="((vm:SkillsViewModel)DataContext).SelectedSkillTree" ElementName="SkillsViewRoot"/>
+                                                                            </MultiBinding>
+                                                                        </TextBlock.Text>
+                                                                    </TextBlock>
+                                                                    <Button Grid.Column="2" Content="✕"
+                                                                            Command="{Binding $parent[UserControl].((vm:SkillsViewModel)DataContext).UnlinkEvolutionNodeCommand}"
+                                                                            CommandParameter="{Binding}"
+                                                                            Background="Transparent" Foreground="#E74C3C"
+                                                                            BorderThickness="0" Padding="4,2"
+                                                                            FontSize="10"/>
+                                                                </Grid>
+                                                            </Border>
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                </ItemsControl>
+
+                                                <TextBlock Text="No evolution paths linked"
+                                                           Foreground="#565B6E" FontStyle="Italic" FontSize="12"
+                                                           IsVisible="{Binding !SelectedSkillTreeNode.HasEvolutions}"/>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <TextBlock Classes="HelpText"
+                                                   Text="Example: Fireball → can evolve into Inferno Blast OR Fire Storm (player chooses one path)"/>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- No Tree Selection Message -->
+                        <Border Classes="Card" IsVisible="{Binding SelectedSkillTree, Converter={x:Static ObjectConverters.IsNull}}">
+                            <TextBlock Text="Select a skill tree from the list above to edit its structure"
+                                       Foreground="#7A7F99" HorizontalAlignment="Center" Padding="40"/>
+                        </Border>
+                    </StackPanel>
+                </TabItem>
+
+                <!-- FORMULA REFERENCE TAB -->
+                <TabItem Header="📖 Formula Reference">
+                    <StackPanel Spacing="16" Margin="0,16,0,0">
+                        <Border Classes="Card">
+                            <StackPanel Spacing="16">
+                                <TextBlock Text="Available Variables" Classes="SectionHeader"/>
+
+                                <Border Classes="InnerCard">
+                                    <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto">
+                                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Level" FontWeight="SemiBold" Foreground="#7AA2F7"/>
+                                        <TextBlock Grid.Row="0" Grid.Column="1" Text="Character's current level" Foreground="#7A7F99"/>
+
+                                        <TextBlock Grid.Row="1" Grid.Column="0" Text="SkillRank" FontWeight="SemiBold" Foreground="#7AA2F7"/>
+                                        <TextBlock Grid.Row="1" Grid.Column="1" Text="Current rank of the skill (1 to MaxRank)" Foreground="#7A7F99"/>
+
+                                        <TextBlock Grid.Row="2" Grid.Column="0" Text="STR" FontWeight="SemiBold" Foreground="#F7768E"/>
+                                        <TextBlock Grid.Row="2" Grid.Column="1" Text="Strength stat value" Foreground="#7A7F99"/>
+
+                                        <TextBlock Grid.Row="3" Grid.Column="0" Text="VIT" FontWeight="SemiBold" Foreground="#9ECE6A"/>
+                                        <TextBlock Grid.Row="3" Grid.Column="1" Text="Vitality stat value" Foreground="#7A7F99"/>
+
+                                        <TextBlock Grid.Row="4" Grid.Column="0" Text="INT" FontWeight="SemiBold" Foreground="#BB9AF7"/>
+                                        <TextBlock Grid.Row="4" Grid.Column="1" Text="Intelligence stat value" Foreground="#7A7F99"/>
+
+                                        <TextBlock Grid.Row="5" Grid.Column="0" Text="AGI" FontWeight="SemiBold" Foreground="#E0AF68"/>
+                                        <TextBlock Grid.Row="5" Grid.Column="1" Text="Agility stat value" Foreground="#7A7F99"/>
+
+                                        <TextBlock Grid.Row="6" Grid.Column="0" Text="BaseValue" FontWeight="SemiBold" Foreground="#7AA2F7"/>
+                                        <TextBlock Grid.Row="6" Grid.Column="1" Text="Base value defined in the stat" Foreground="#7A7F99"/>
+                                    </Grid>
+                                </Border>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Classes="Card">
+                            <StackPanel Spacing="16">
+                                <TextBlock Text="Available Functions" Classes="SectionHeader"/>
+
+                                <Border Classes="InnerCard">
+                                    <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto">
+                                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Min(a, b)" FontWeight="SemiBold" Foreground="#7AA2F7"/>
+                                        <TextBlock Grid.Row="0" Grid.Column="1" Text="Max(a, b)" FontWeight="SemiBold" Foreground="#7AA2F7"/>
+                                        <TextBlock Grid.Row="0" Grid.Column="2" Text="Abs(x)" FontWeight="SemiBold" Foreground="#7AA2F7"/>
+
+                                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Floor(x)" FontWeight="SemiBold" Foreground="#7AA2F7"/>
+                                        <TextBlock Grid.Row="1" Grid.Column="1" Text="Ceiling(x)" FontWeight="SemiBold" Foreground="#7AA2F7"/>
+                                        <TextBlock Grid.Row="1" Grid.Column="2" Text="Round(x)" FontWeight="SemiBold" Foreground="#7AA2F7"/>
+
+                                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Pow(base, exp)" FontWeight="SemiBold" Foreground="#7AA2F7"/>
+                                        <TextBlock Grid.Row="2" Grid.Column="1" Text="Sqrt(x)" FontWeight="SemiBold" Foreground="#7AA2F7"/>
+                                        <TextBlock Grid.Row="2" Grid.Column="2" Text="Log(x)" FontWeight="SemiBold" Foreground="#7AA2F7"/>
+
+                                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Sin(x)" FontWeight="SemiBold" Foreground="#7AA2F7"/>
+                                        <TextBlock Grid.Row="3" Grid.Column="1" Text="Cos(x)" FontWeight="SemiBold" Foreground="#7AA2F7"/>
+                                        <TextBlock Grid.Row="3" Grid.Column="2" Text="Tan(x)" FontWeight="SemiBold" Foreground="#7AA2F7"/>
+
+                                        <TextBlock Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Text="if(cond, true, false)" FontWeight="SemiBold" Foreground="#7AA2F7"/>
+                                    </Grid>
+                                </Border>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Classes="Card">
+                            <StackPanel Spacing="16">
+                                <TextBlock Text="Example Formulas" Classes="SectionHeader"/>
+
+                                <Border Classes="InnerCard">
+                                    <StackPanel Spacing="12">
+                                        <StackPanel>
+                                            <TextBlock Text="Fireball Damage:" FontWeight="SemiBold" Foreground="#F7768E"/>
+                                            <TextBlock Text="(INT * 2.5) + SkillRank * 10" Foreground="#C0CAF5" FontFamily="Consolas"/>
+                                        </StackPanel>
+
+                                        <StackPanel>
+                                            <TextBlock Text="Scaling Mana Cost:" FontWeight="SemiBold" Foreground="#BB9AF7"/>
+                                            <TextBlock Text="30 + SkillRank * 5" Foreground="#C0CAF5" FontFamily="Consolas"/>
+                                        </StackPanel>
+
+                                        <StackPanel>
+                                            <TextBlock Text="Cooldown with Minimum:" FontWeight="SemiBold" Foreground="#E0AF68"/>
+                                            <TextBlock Text="Max(1, 10 - SkillRank)" Foreground="#C0CAF5" FontFamily="Consolas"/>
+                                        </StackPanel>
+
+                                        <StackPanel>
+                                            <TextBlock Text="Conditional Bonus:" FontWeight="SemiBold" Foreground="#9ECE6A"/>
+                                            <TextBlock Text="if(Level > 50, STR * 3, STR * 2)" Foreground="#C0CAF5" FontFamily="Consolas"/>
+                                        </StackPanel>
+
+                                        <StackPanel>
+                                            <TextBlock Text="Passive HP Bonus:" FontWeight="SemiBold" Foreground="#7AA2F7"/>
+                                            <TextBlock Text="VIT * SkillRank + Level * 2" Foreground="#C0CAF5" FontFamily="Consolas"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </TabItem>
+            </TabControl>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

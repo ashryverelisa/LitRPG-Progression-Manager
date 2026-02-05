@@ -1,0 +1,107 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Card style -->
+    <Style Selector="Border.Card">
+        <Setter Property="Background" Value="#12151B"/>
+        <Setter Property="CornerRadius" Value="14"/>
+        <Setter Property="Padding" Value="20"/>
+    </Style>
+
+    <!-- Section header -->
+    <Style Selector="TextBlock.SectionHeader">
+        <Setter Property="FontSize" Value="18"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Foreground" Value="#FFFFFF"/>
+    </Style>
+
+    <!-- Label text -->
+    <Style Selector="TextBlock.Label">
+        <Setter Property="Foreground" Value="#C0CAF5"/>
+        <Setter Property="FontSize" Value="13"/>
+    </Style>
+
+    <!-- Help text -->
+    <Style Selector="TextBlock.HelpText">
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="Foreground" Value="#7A7F99"/>
+    </Style>
+
+    <!-- Valid formula indicator -->
+    <Style Selector="Border.ValidIndicator">
+        <Setter Property="Background" Value="#1A3D2E"/>
+        <Setter Property="BorderBrush" Value="#2ECC71"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="4"/>
+        <Setter Property="Padding" Value="6,2"/>
+    </Style>
+
+    <!-- Invalid formula indicator -->
+    <Style Selector="Border.InvalidIndicator">
+        <Setter Property="Background" Value="#3D1A1A"/>
+        <Setter Property="BorderBrush" Value="#E74C3C"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="4"/>
+        <Setter Property="Padding" Value="6,2"/>
+    </Style>
+
+    <!-- Action button -->
+    <Style Selector="Button.ActionBtn">
+        <Setter Property="Background" Value="#1F2A44"/>
+        <Setter Property="Foreground" Value="#C0CAF5"/>
+        <Setter Property="CornerRadius" Value="6"/>
+        <Setter Property="Padding" Value="12,8"/>
+        <Setter Property="BorderThickness" Value="0"/>
+    </Style>
+    <Style Selector="Button.ActionBtn:pointerover">
+        <Setter Property="Background" Value="#2A3A5C"/>
+    </Style>
+
+    <!-- Primary button -->
+    <Style Selector="Button.PrimaryBtn">
+        <Setter Property="Background" Value="#7AA2F7"/>
+        <Setter Property="Foreground" Value="#FFFFFF"/>
+        <Setter Property="CornerRadius" Value="6"/>
+        <Setter Property="Padding" Value="12,8"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+    </Style>
+    <Style Selector="Button.PrimaryBtn:pointerover">
+        <Setter Property="Background" Value="#8AB4FF"/>
+    </Style>
+
+    <!-- Danger button -->
+    <Style Selector="Button.DangerBtn">
+        <Setter Property="Background" Value="#3D1A1A"/>
+        <Setter Property="Foreground" Value="#E74C3C"/>
+        <Setter Property="CornerRadius" Value="6"/>
+        <Setter Property="Padding" Value="12,8"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="BorderBrush" Value="#E74C3C"/>
+    </Style>
+    <Style Selector="Button.DangerBtn:pointerover">
+        <Setter Property="Background" Value="#5D2A2A"/>
+    </Style>
+
+    <!-- Inner card -->
+    <Style Selector="Border.InnerCard">
+        <Setter Property="Background" Value="#0F1115"/>
+        <Setter Property="CornerRadius" Value="10"/>
+        <Setter Property="Padding" Value="14"/>
+    </Style>
+
+    <!-- Tab styling -->
+    <Style Selector="TabControl">
+        <Setter Property="Background" Value="Transparent"/>
+    </Style>
+    <Style Selector="TabItem">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="#7A7F99"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="Padding" Value="16,10"/>
+    </Style>
+    <Style Selector="TabItem:selected">
+        <Setter Property="Foreground" Value="#7AA2F7"/>
+    </Style>
+
+</Styles>

@@ -99,6 +99,81 @@ Configure stat bonuses and point allocations on level up.
 
 ---
 
+### Skills & Abilities System
+
+Fully implemented skill definition and skill tree editor.
+
+#### Skill Definitions
+
+Create and manage active and passive skills with:
+- **Active Skills:** Damage formulas, mana cost, cooldowns
+- **Passive Skills:** Effect formulas for stat bonuses
+- Skill ranks (1 to max rank)
+- Required level and class lock restrictions
+- Prerequisite skill requirements
+
+**Formula Support:**
+- Real-time validation with NCalc
+- Preview values at any level/rank combination
+- Available variables: `Level`, `SkillRank`, `STR`, `VIT`, `INT`, `AGI`
+- Functions: `Min`, `Max`, `Abs`, `Pow`, `Sqrt`, `Floor`, `Ceiling`, `if(cond, true, false)`
+
+**Example Active Skill:**
+```
+Fireball:
+  Damage = (INT × 2.5) + SkillRank × 10
+  Mana Cost = 30 + SkillRank × 5
+  Cooldown = Max(1, 10 - SkillRank)
+```
+
+**Example Passive Skill:**
+```
+Iron Skin:
+  Effect = VIT × SkillRank + Level × 2
+```
+
+#### Status Effects
+
+Attach status effects to skills:
+- Effect name and formula
+- Duration in seconds
+- Buff/Debuff classification
+
+#### Skill Trees
+
+Organize skills into visual tree structures:
+- **Tree Properties:** Name, description, associated class
+- **Tiered Nodes:** Organize skills by tier level (0 = root)
+- **Child Node Links:** Define prerequisites (unlocking a skill unlocks access to children)
+- **Evolution Paths:** Branching skill evolutions (e.g., Fireball → Inferno Blast OR Fire Storm)
+
+**Node Relationships:**
+- Link child nodes that become available after unlocking a parent skill
+- Link evolution nodes for branching upgrade paths
+- Visual indicators showing relationship counts per node
+
+**Example Skill Tree:**
+```
+Combat Skills (Warrior Class)
+├── Tier 0: Power Strike
+│   ├── Child → Tier 1: Cleave
+│   └── Child → Tier 1: Shield Bash
+├── Tier 1: Cleave
+│   ├── Evolution → Whirlwind
+│   └── Evolution → Earthquake Slam
+└── Tier 1: Shield Bash
+    └── Child → Tier 2: Shield Wall
+```
+
+#### Formula Reference
+
+Built-in reference tab showing:
+- All available variables with descriptions
+- Supported mathematical functions
+- Example formulas for common use cases
+
+---
+
 ## Project Structure
 
 ```
@@ -126,31 +201,6 @@ src/
 
 ## Planned Modules
 
-### Skill & Ability System
-
-#### Skill Definitions
-
-- Active / Passive
-- Cooldowns
-- Scaling formulas
-- Status effects
-
-**Example:**
-```
-Fireball:
-  Damage = (INT × 2.5) + SkillLevel × 10
-  Mana Cost = 30 + SkillLevel × 5
-  Cooldown = max(1, 10 - SkillLevel)
-```
-
-#### Skill Trees
-
-- Prerequisites
-- Branching evolution paths
-- Skill ranks
-- Class-locked skills
-
----
 
 ### Classes, Races & Templates
 
@@ -240,7 +290,11 @@ Auto-generate believable LitRPG UI text.
 - [x] Stats management (base & derived)
 - [x] Navigation system
 - [x] Dark-themed modern UI
-- [ ] Build skill tree node editor
+- [x] Skill definitions (active/passive with formulas)
+- [x] Status effects system
+- [x] Skill tree editor with node relationships
+- [x] Child node prerequisites (unlock paths)
+- [x] Evolution paths (branching skill upgrades)
 - [ ] Create character progression timeline
 - [ ] Add consistency checker with violation reporting
 - [ ] Implement system message generator with templates

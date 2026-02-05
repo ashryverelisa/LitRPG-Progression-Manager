@@ -1,0 +1,102 @@
+﻿[
+  {
+    "Name": "Fireball",
+    "Description": "Launches a ball of fire at the target, dealing magic damage",
+    "SkillType": "Active",
+    "MaxRank": 10,
+    "CurrentRank": 1,
+    "DamageFormula": "(INT * 2.5) + SkillRank * 10",
+    "ManaCostFormula": "30 + SkillRank * 5",
+    "CooldownFormula": "Max(1, 10 - SkillRank)",
+    "RequiredLevel": 1
+  },
+  {
+    "Name": "Power Strike",
+    "Description": "A powerful melee attack that deals bonus physical damage",
+    "SkillType": "Active",
+    "MaxRank": 10,
+    "CurrentRank": 1,
+    "DamageFormula": "(STR * 3) + SkillRank * 15",
+    "ManaCostFormula": "20 + SkillRank * 3",
+    "CooldownFormula": "Max(2, 8 - SkillRank * 0.5)",
+    "RequiredLevel": 1
+  },
+  {
+    "Name": "Heal",
+    "Description": "Restores HP to the caster or target ally",
+    "SkillType": "Active",
+    "MaxRank": 10,
+    "CurrentRank": 1,
+    "DamageFormula": "(INT * 2) + SkillRank * 20",
+    "ManaCostFormula": "40 + SkillRank * 8",
+    "CooldownFormula": "Max(5, 15 - SkillRank)",
+    "RequiredLevel": 5
+  },
+  {
+    "Name": "Ice Shard",
+    "Description": "Hurls a shard of ice that damages and slows the target",
+    "SkillType": "Active",
+    "MaxRank": 10,
+    "CurrentRank": 1,
+    "DamageFormula": "(INT * 1.8) + SkillRank * 8",
+    "ManaCostFormula": "25 + SkillRank * 4",
+    "CooldownFormula": "Max(1, 6 - SkillRank * 0.5)",
+    "RequiredLevel": 3
+  },
+  {
+    "Name": "Whirlwind",
+    "Description": "Spin attack that damages all nearby enemies",
+    "SkillType": "Active",
+    "MaxRank": 10,
+    "CurrentRank": 1,
+    "DamageFormula": "(STR * 2) + SkillRank * 12",
+    "ManaCostFormula": "35 + SkillRank * 6",
+    "CooldownFormula": "Max(3, 12 - SkillRank)",
+    "RequiredLevel": 8
+  },
+  {
+    "Name": "Mana Regeneration",
+    "Description": "Passively increases mana regeneration rate",
+    "SkillType": "Passive",
+    "MaxRank": 5,
+    "CurrentRank": 1,
+    "PassiveEffectFormula": "INT * 0.1 * SkillRank",
+    "RequiredLevel": 3
+  },
+  {
+    "Name": "Iron Skin",
+    "Description": "Passively increases physical defense",
+    "SkillType": "Passive",
+    "MaxRank": 5,
+    "CurrentRank": 1,
+    "PassiveEffectFormula": "VIT * 0.5 + SkillRank * 5",
+    "RequiredLevel": 5
+  },
+  {
+    "Name": "Critical Mastery",
+    "Description": "Increases critical hit chance and damage",
+    "SkillType": "Passive",
+    "MaxRank": 5,
+    "CurrentRank": 1,
+    "PassiveEffectFormula": "AGI * 0.2 + SkillRank * 2",
+    "RequiredLevel": 10
+  },
+  {
+    "Name": "Battle Hardened",
+    "Description": "Increases maximum HP",
+    "SkillType": "Passive",
+    "MaxRank": 5,
+    "CurrentRank": 1,
+    "PassiveEffectFormula": "VIT * SkillRank + Level * 2",
+    "RequiredLevel": 7
+  },
+  {
+    "Name": "Arcane Knowledge",
+    "Description": "Increases spell damage",
+    "SkillType": "Passive",
+    "MaxRank": 5,
+    "CurrentRank": 1,
+    "PassiveEffectFormula": "INT * 0.15 * SkillRank",
+    "RequiredLevel": 10
+  }
+]
