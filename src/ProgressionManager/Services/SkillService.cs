@@ -110,22 +110,18 @@ public class SkillService(IFormulaValidatorService formulaValidator) : ISkillSer
             })
             .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
-        // Define formula validations with their property setters
-        var validations = new (string? Formula, Action<bool> SetValid, Action<string?> SetError, Action<double?> SetPreview)[]
-        {
-            (skill.DamageFormula, v => skill.IsDamageFormulaValid = v, e => skill.DamageFormulaError = e, p => skill.DamagePreview = p),
-            (skill.ManaCostFormula, v => skill.IsManaCostFormulaValid = v, e => skill.ManaCostFormulaError = e, p => skill.ManaCostPreview = p),
-            (skill.CooldownFormula, v => skill.IsCooldownFormulaValid = v, e => skill.CooldownFormulaError = e, p => skill.CooldownPreview = p),
-            (skill.PassiveEffectFormula, v => skill.IsPassiveFormulaValid = v, e => skill.PassiveFormulaError = e, p => skill.PassiveEffectPreview = p)
-        };
+        // Validate each formula type
+        (skill.IsDamageFormulaValid, skill.DamageFormulaError, skill.DamagePreview) =
+            ValidateFormula(skill.DamageFormula, knownVariables, testValues);
 
-        foreach (var (formula, setValid, setError, setPreview) in validations)
-        {
-            var (isValid, error, preview) = ValidateFormula(formula, knownVariables, testValues);
-            setValid(isValid);
-            setError(error);
-            setPreview(preview);
-        }
+        (skill.IsManaCostFormulaValid, skill.ManaCostFormulaError, skill.ManaCostPreview) =
+            ValidateFormula(skill.ManaCostFormula, knownVariables, testValues);
+
+        (skill.IsCooldownFormulaValid, skill.CooldownFormulaError, skill.CooldownPreview) =
+            ValidateFormula(skill.CooldownFormula, knownVariables, testValues);
+
+        (skill.IsPassiveFormulaValid, skill.PassiveFormulaError, skill.PassiveEffectPreview) =
+            ValidateFormula(skill.PassiveEffectFormula, knownVariables, testValues);
     }
 
     private (bool IsValid, string? Error, double? Preview) ValidateFormula(
