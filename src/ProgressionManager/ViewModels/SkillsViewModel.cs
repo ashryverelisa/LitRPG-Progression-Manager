@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -18,7 +19,6 @@ public partial class SkillsViewModel : ViewModelBase
     public ObservableCollection<SkillDefinition> Skills { get; } = [];
     public ObservableCollection<SkillTree> SkillTrees { get; } = [];
     public ObservableCollection<StatDefinition> Stats { get; } = [];
-
     public IEnumerable<SkillType> SkillTypes => Enum.GetValues<SkillType>();
 
     [ObservableProperty] private SkillDefinition? _selectedSkill;
@@ -30,60 +30,65 @@ public partial class SkillsViewModel : ViewModelBase
     [ObservableProperty] private bool _isEditingNewSkill;
     [ObservableProperty] private int _selectedTabIndex;
 
-    public SkillsViewModel()
-    {
-    }
+    public IEnumerable<SkillTreeNode> AvailableChildNodes =>
+        SelectedSkillTree == null || SelectedSkillTreeNode == null
+            ? []
+            : SelectedSkillTree.Nodes.Where(n => n.Id != SelectedSkillTreeNode.Id &&
+                                                  !SelectedSkillTreeNode.ChildNodeIds.Contains(n.Id));
+
+    public IEnumerable<SkillTreeNode> AvailableEvolutionNodes =>
+        SelectedSkillTree == null || SelectedSkillTreeNode == null
+            ? []
+            : SelectedSkillTree.Nodes.Where(n => n.Id != SelectedSkillTreeNode.Id &&
+                                                  !SelectedSkillTreeNode.EvolutionNodeIds.Contains(n.Id));
+
+    public SkillsViewModel() { }
 
     public SkillsViewModel(ISkillService skillService, IStatService statService)
     {
         _skillService = skillService;
         _statService = statService;
-
         InitializeData();
     }
 
     private void InitializeData()
     {
-        foreach (var stat in _statService.GetDefaultStats())
-            Stats.Add(stat);
-
-        foreach (var skill in _skillService.GetDefaultSkills())
-            Skills.Add(skill);
-
-        var defaultTree = _skillService.CreateSkillTree("Combat Skills");
-        defaultTree.Description = "Basic combat abilities";
-        SkillTrees.Add(defaultTree);
-
+        LoadStats();
+        LoadSkills();
+        CreateDefaultSkillTree();
         ValidateAllSkillsCommand.Execute(null);
     }
 
-    [RelayCommand]
-    private void AddActiveSkill()
+    private void LoadStats() => _statService.GetDefaultStats().ToList().ForEach(Stats.Add);
+
+    private void LoadSkills() => _skillService.GetDefaultSkills().ToList().ForEach(Skills.Add);
+
+    private void CreateDefaultSkillTree()
     {
-        var skill = _skillService.CreateActiveSkill();
-        Skills.Add(skill);
-        SelectedSkill = skill;
-        IsEditingNewSkill = true;
-        _skillService.ValidateSkillFormulas(skill, Stats, PreviewLevel, PreviewSkillRank);
+        var defaultTree = _skillService.CreateSkillTree("Combat Skills");
+        defaultTree.Description = "Basic combat abilities";
+        SkillTrees.Add(defaultTree);
     }
 
     [RelayCommand]
-    private void AddPassiveSkill()
+    private void AddActiveSkill() => AddSkill(_skillService.CreateActiveSkill());
+
+    [RelayCommand]
+    private void AddPassiveSkill() => AddSkill(_skillService.CreatePassiveSkill());
+
+    private void AddSkill(SkillDefinition skill)
     {
-        var skill = _skillService.CreatePassiveSkill();
         Skills.Add(skill);
         SelectedSkill = skill;
         IsEditingNewSkill = true;
-        _skillService.ValidateSkillFormulas(skill, Stats, PreviewLevel, PreviewSkillRank);
+        ValidateSkillFormulas(skill);
     }
 
     [RelayCommand]
     private void DeleteSkill(SkillDefinition? skill)
     {
         if (skill == null) return;
-
         Skills.Remove(skill);
-
         if (SelectedSkill == skill)
             SelectedSkill = Skills.FirstOrDefault();
     }
@@ -92,86 +97,48 @@ public partial class SkillsViewModel : ViewModelBase
     private void DuplicateSkill(SkillDefinition? skill)
     {
         if (skill == null) return;
-
         var duplicate = _skillService.CloneSkill(skill);
         Skills.Add(duplicate);
         SelectedSkill = duplicate;
-        _skillService.ValidateSkillFormulas(duplicate, Stats, PreviewLevel, PreviewSkillRank);
+        ValidateSkillFormulas(duplicate);
     }
 
     [RelayCommand]
-    private void MoveSkillUp(SkillDefinition? skill)
-    {
-        if (skill == null) return;
-        var index = Skills.IndexOf(skill);
-        if (index > 0)
-            Skills.Move(index, index - 1);
-    }
+    private void MoveSkillUp(SkillDefinition? skill) => MoveSkill(skill, -1);
 
     [RelayCommand]
-    private void MoveSkillDown(SkillDefinition? skill)
+    private void MoveSkillDown(SkillDefinition? skill) => MoveSkill(skill, 1);
+
+    private void MoveSkill(SkillDefinition? skill, int direction)
     {
         if (skill == null) return;
         var index = Skills.IndexOf(skill);
-        if (index >= 0 && index < Skills.Count - 1)
-            Skills.Move(index, index + 1);
+        var newIndex = index + direction;
+        if (newIndex >= 0 && newIndex < Skills.Count)
+            Skills.Move(index, newIndex);
     }
 
     [RelayCommand]
     private void ValidateSkill(SkillDefinition? skill)
     {
         if (skill != null)
-            _skillService.ValidateSkillFormulas(skill, Stats, PreviewLevel, PreviewSkillRank);
+            ValidateSkillFormulas(skill);
     }
 
     [RelayCommand]
     private void ValidateAllSkills()
     {
         foreach (var skill in Skills)
-            _skillService.ValidateSkillFormulas(skill, Stats, PreviewLevel, PreviewSkillRank);
+            ValidateSkillFormulas(skill);
     }
 
-    partial void OnPreviewLevelChanged(int value)
-    {
-        ValidateAllSkillsCommand.Execute(null);
-    }
-
-    partial void OnPreviewSkillRankChanged(int value)
-    {
-        ValidateAllSkillsCommand.Execute(null);
-    }
-
-    partial void OnSelectedSkillChanged(SkillDefinition? oldValue, SkillDefinition? newValue)
-    {
-        if (oldValue != null)
-            oldValue.PropertyChanged -= OnSkillPropertyChanged;
-
-        if (newValue != null)
-        {
-            newValue.PropertyChanged += OnSkillPropertyChanged;
-            PreviewSkillRank = newValue.CurrentRank;
-            _skillService.ValidateSkillFormulas(newValue, Stats, PreviewLevel, PreviewSkillRank);
-        }
-    }
-
-    private void OnSkillPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
-    {
-        if (sender is not SkillDefinition skill) return;
-
-        if (e.PropertyName is nameof(SkillDefinition.DamageFormula)
-            or nameof(SkillDefinition.ManaCostFormula)
-            or nameof(SkillDefinition.CooldownFormula)
-            or nameof(SkillDefinition.PassiveEffectFormula))
-        {
-            _skillService.ValidateSkillFormulas(skill, Stats, PreviewLevel, PreviewSkillRank);
-        }
-    }
+    private void ValidateSkillFormulas(SkillDefinition skill) =>
+        _skillService.ValidateSkillFormulas(skill, Stats, PreviewLevel, PreviewSkillRank);
 
     [RelayCommand]
     private void AddStatusEffect()
     {
         if (SelectedSkill == null) return;
-
         var effect = _skillService.CreateStatusEffect();
         SelectedSkill.StatusEffects.Add(effect);
         SelectedStatusEffect = effect;
@@ -181,7 +148,6 @@ public partial class SkillsViewModel : ViewModelBase
     private void DeleteStatusEffect(StatusEffect? effect)
     {
         if (SelectedSkill == null || effect == null) return;
-
         SelectedSkill.StatusEffects.Remove(effect);
         SelectedStatusEffect = SelectedSkill.StatusEffects.FirstOrDefault();
     }
@@ -198,9 +164,7 @@ public partial class SkillsViewModel : ViewModelBase
     private void DeleteSkillTree(SkillTree? tree)
     {
         if (tree == null) return;
-
         SkillTrees.Remove(tree);
-
         if (SelectedSkillTree == tree)
             SelectedSkillTree = SkillTrees.FirstOrDefault();
     }
@@ -209,11 +173,8 @@ public partial class SkillsViewModel : ViewModelBase
     private void AddNodeToTree(SkillDefinition? skill)
     {
         if (SelectedSkillTree == null) return;
-
-        var node = _skillService.CreateSkillTreeNode(skill, SelectedSkillTree.Nodes.Count > 0
-            ? SelectedSkillTree.Nodes.Max(n => n.Tier)
-            : 0);
-
+        var tier = SelectedSkillTree.Nodes.Count > 0 ? SelectedSkillTree.Nodes.Max(n => n.Tier) : 0;
+        var node = _skillService.CreateSkillTreeNode(skill, tier);
         SelectedSkillTree.Nodes.Add(node);
         SelectedSkillTreeNode = node;
     }
@@ -222,9 +183,7 @@ public partial class SkillsViewModel : ViewModelBase
     private void RemoveNodeFromTree(SkillTreeNode? node)
     {
         if (SelectedSkillTree == null || node == null) return;
-
         SelectedSkillTree.RemoveNode(node.Id);
-
         if (SelectedSkillTreeNode == node)
             SelectedSkillTreeNode = SelectedSkillTree.Nodes.FirstOrDefault();
     }
@@ -232,60 +191,73 @@ public partial class SkillsViewModel : ViewModelBase
     [RelayCommand]
     private void LinkChildNode(SkillTreeNode? childNode)
     {
-        if (SelectedSkillTree == null || SelectedSkillTreeNode == null || childNode == null) return;
-        if (childNode.Id == SelectedSkillTreeNode.Id) return; // Can't link to self
-
-        SelectedSkillTree.LinkChildNode(SelectedSkillTreeNode.Id, childNode.Id);
+        if (!CanLinkNode(childNode)) return;
+        SelectedSkillTree!.LinkChildNode(SelectedSkillTreeNode!.Id, childNode!.Id);
     }
 
     [RelayCommand]
     private void UnlinkChildNode(string? childNodeId)
     {
         if (SelectedSkillTreeNode == null || string.IsNullOrEmpty(childNodeId)) return;
-
         SelectedSkillTreeNode.RemoveChildNode(childNodeId);
     }
 
     [RelayCommand]
     private void LinkEvolutionNode(SkillTreeNode? evolutionNode)
     {
-        if (SelectedSkillTree == null || SelectedSkillTreeNode == null || evolutionNode == null) return;
-        if (evolutionNode.Id == SelectedSkillTreeNode.Id) return; // Can't link to self
-
-        SelectedSkillTree.LinkEvolutionNode(SelectedSkillTreeNode.Id, evolutionNode.Id);
+        if (!CanLinkNode(evolutionNode)) return;
+        SelectedSkillTree!.LinkEvolutionNode(SelectedSkillTreeNode!.Id, evolutionNode!.Id);
     }
 
     [RelayCommand]
     private void UnlinkEvolutionNode(string? evolutionNodeId)
     {
         if (SelectedSkillTreeNode == null || string.IsNullOrEmpty(evolutionNodeId)) return;
-
         SelectedSkillTreeNode.RemoveEvolutionNode(evolutionNodeId);
     }
 
-    public IEnumerable<SkillTreeNode> GetAvailableChildNodes()
+    private bool CanLinkNode(SkillTreeNode? node) =>
+        SelectedSkillTree != null &&
+        SelectedSkillTreeNode != null &&
+        node != null &&
+        node.Id != SelectedSkillTreeNode.Id;
+
+    partial void OnPreviewLevelChanged(int value) => ValidateAllSkillsCommand.Execute(null);
+
+    partial void OnPreviewSkillRankChanged(int value) => ValidateAllSkillsCommand.Execute(null);
+
+    partial void OnSelectedSkillChanged(SkillDefinition? oldValue, SkillDefinition? newValue)
     {
-        if (SelectedSkillTree == null || SelectedSkillTreeNode == null)
-            return [];
+        if (oldValue != null)
+            oldValue.PropertyChanged -= OnSkillPropertyChanged;
 
-        return SelectedSkillTree.Nodes
-            .Where(n => n.Id != SelectedSkillTreeNode.Id && !SelectedSkillTreeNode.ChildNodeIds.Contains(n.Id));
-    }
-
-    public IEnumerable<SkillTreeNode> GetAvailableEvolutionNodes()
-    {
-        if (SelectedSkillTree == null || SelectedSkillTreeNode == null)
-            return [];
-
-        return SelectedSkillTree.Nodes
-            .Where(n => n.Id != SelectedSkillTreeNode.Id && !SelectedSkillTreeNode.EvolutionNodeIds.Contains(n.Id));
+        if (newValue != null)
+        {
+            newValue.PropertyChanged += OnSkillPropertyChanged;
+            PreviewSkillRank = newValue.CurrentRank;
+            ValidateSkillFormulas(newValue);
+        }
     }
 
     partial void OnSelectedSkillTreeNodeChanged(SkillTreeNode? value)
     {
-        OnPropertyChanged(nameof(GetAvailableChildNodes));
-        OnPropertyChanged(nameof(GetAvailableEvolutionNodes));
+        OnPropertyChanged(nameof(AvailableChildNodes));
+        OnPropertyChanged(nameof(AvailableEvolutionNodes));
     }
+
+    private void OnSkillPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (sender is not SkillDefinition skill) return;
+
+        if (IsFormulaProperty(e.PropertyName))
+            ValidateSkillFormulas(skill);
+    }
+
+    private static bool IsFormulaProperty(string? propertyName) =>
+        propertyName is nameof(SkillDefinition.DamageFormula)
+            or nameof(SkillDefinition.ManaCostFormula)
+            or nameof(SkillDefinition.CooldownFormula)
+            or nameof(SkillDefinition.PassiveEffectFormula);
 
     [RelayCommand]
     private void ResetToDefaults()
@@ -293,7 +265,6 @@ public partial class SkillsViewModel : ViewModelBase
         Skills.Clear();
         SkillTrees.Clear();
         Stats.Clear();
-
         InitializeData();
     }
 }
