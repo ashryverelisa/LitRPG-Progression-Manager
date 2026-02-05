@@ -7,18 +7,17 @@ namespace ProgressionManager.Converters;
 
 public class ValidityToColorConverter : IValueConverter
 {
-    public static readonly ValidityToColorConverter Instance = new();
 
-    private static readonly IBrush ValidBrush = SolidColorBrush.Parse("#2ECC71");
-    private static readonly IBrush InvalidBrush = SolidColorBrush.Parse("#E74C3C");
+    private static readonly IBrush _validBrush = SolidColorBrush.Parse("#2ECC71");
+    private static readonly IBrush _invalidBrush = SolidColorBrush.Parse("#E74C3C");
 
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is bool isValid)
         {
-            return isValid ? ValidBrush : InvalidBrush;
+            return isValid ? _validBrush : _invalidBrush;
         }
-        return ValidBrush;
+        return _validBrush;
     }
 
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)

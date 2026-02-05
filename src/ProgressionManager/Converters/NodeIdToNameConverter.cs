@@ -19,9 +19,8 @@ public class NodeIdToNameConverter : IMultiValueConverter
             return values.Count > 0 ? values[0] : null;
 
         var nodeId = values[0] as string;
-        var skillTree = values[1] as SkillTree;
 
-        if (string.IsNullOrEmpty(nodeId) || skillTree == null)
+        if (string.IsNullOrEmpty(nodeId) || values[1] is not SkillTree skillTree)
             return nodeId;
 
         var node = skillTree.FindNode(nodeId);

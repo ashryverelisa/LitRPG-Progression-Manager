@@ -11,7 +11,7 @@ public partial class NavigationItemViewModel : ViewModelBase
     public ObservableObject ContentViewModel { get; }
 
     [ObservableProperty]
-    private bool isSelected;
+    private bool _isSelected;
 
     public IRelayCommand SelectCommand { get; }
 
