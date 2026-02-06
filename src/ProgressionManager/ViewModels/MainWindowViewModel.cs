@@ -1,5 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
+using ProgressionManager.Messages;
 
 namespace ProgressionManager.ViewModels;
 
@@ -48,5 +50,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
         item.IsSelected = true;
         CurrentViewModel = item.ContentViewModel;
+
+        Messenger.Send(new NavigationChangedMessage(item.ContentViewModel, item.Title));
     }
 }

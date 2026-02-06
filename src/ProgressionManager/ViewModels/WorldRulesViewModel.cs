@@ -4,6 +4,8 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using ProgressionManager.Messages;
 using ProgressionManager.Models.WorldRules;
 using ProgressionManager.Services.Interfaces;
 
@@ -55,6 +57,7 @@ public partial class WorldRulesViewModel : ViewModelBase
                 or nameof(XpCurveDefinition.LinearMultiplier) or nameof(XpCurveDefinition.ExponentialBase))
             {
                 RefreshXpCurve();
+                Messenger.Send(new XpCurveChangedMessage(XpCurve));
             }
         };
     }
@@ -66,7 +69,12 @@ public partial class WorldRulesViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private void AddBaseStat() => AddStat(_statService.CreateBaseStat());
+    private void AddBaseStat()
+    {
+        var stat = _statService.CreateBaseStat();
+        AddStat(stat);
+        NotifyStatsChanged(StatsChangedMessage.ChangeType.Added, stat);
+    }
 
     [RelayCommand]
     private void AddDerivedStat()
@@ -74,6 +82,7 @@ public partial class WorldRulesViewModel : ViewModelBase
         var stat = _statService.CreateDerivedStat();
         AddStat(stat);
         _statService.ValidateStatFormula(stat, Stats, PreviewLevel);
+        NotifyStatsChanged(StatsChangedMessage.ChangeType.Added, stat);
     }
 
     private void AddStat(StatDefinition stat)
@@ -93,6 +102,8 @@ public partial class WorldRulesViewModel : ViewModelBase
 
         if (SelectedStat == stat)
             SelectedStat = Stats.FirstOrDefault();
+
+        NotifyStatsChanged(StatsChangedMessage.ChangeType.Removed, stat);
     }
 
     private void InvalidateDependentStats(StatDefinition deletedStat)
@@ -111,6 +122,7 @@ public partial class WorldRulesViewModel : ViewModelBase
         var duplicate = _statService.CloneStat(stat);
         Stats.Add(duplicate);
         SelectedStat = duplicate;
+        NotifyStatsChanged(StatsChangedMessage.ChangeType.Added, duplicate);
     }
 
     [RelayCommand]
@@ -126,7 +138,10 @@ public partial class WorldRulesViewModel : ViewModelBase
         var newIndex = index + direction;
 
         if (newIndex >= 0 && newIndex < Stats.Count)
+        {
             Stats.Move(index, newIndex);
+            NotifyStatsChanged(StatsChangedMessage.ChangeType.Reordered, stat);
+        }
     }
 
     [RelayCommand]
@@ -155,6 +170,12 @@ public partial class WorldRulesViewModel : ViewModelBase
     {
         XpCurve.CurveType = value;
         RefreshXpCurve();
+        Messenger.Send(new XpCurveChangedMessage(XpCurve));
+    }
+
+    partial void OnLevelUpRulesChanged(LevelUpRules value)
+    {
+        Messenger.Send(new LevelUpRulesChangedMessage(value));
     }
 
     [RelayCommand]
@@ -176,5 +197,14 @@ public partial class WorldRulesViewModel : ViewModelBase
         SelectedCurveType = XpCurveType.Exponential;
 
         LevelUpRules = new LevelUpRules();
+
+        NotifyStatsChanged(StatsChangedMessage.ChangeType.Reset);
+        Messenger.Send(new XpCurveChangedMessage(XpCurve));
+        Messenger.Send(new LevelUpRulesChangedMessage(LevelUpRules));
+    }
+
+    private void NotifyStatsChanged(StatsChangedMessage.ChangeType changeType, StatDefinition? changedStat = null)
+    {
+        Messenger.Send(new StatsChangedMessage(Stats.ToList(), changeType, changedStat));
     }
 }

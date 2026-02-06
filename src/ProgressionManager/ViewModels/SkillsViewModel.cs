@@ -5,6 +5,8 @@ using System.ComponentModel;
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using ProgressionManager.Messages;
 using ProgressionManager.Models.Skills;
 using ProgressionManager.Models.WorldRules;
 using ProgressionManager.Services.Interfaces;
@@ -49,6 +51,9 @@ public partial class SkillsViewModel : ViewModelBase
         _skillService = skillService;
         _statService = statService;
         InitializeData();
+
+        Messenger.Register<StatsChangedMessage>(this, (r, m) => ((SkillsViewModel)r).OnStatsChanged(m));
+        Messenger.Register<ValidationRequestMessage>(this, (r, m) => ((SkillsViewModel)r).OnValidationRequested(m));
     }
 
     private void InitializeData()
@@ -82,6 +87,7 @@ public partial class SkillsViewModel : ViewModelBase
         SelectedSkill = skill;
         IsEditingNewSkill = true;
         ValidateSkillFormulas(skill);
+        NotifySkillsChanged(SkillsChangedMessage.ChangeType.Added, skill);
     }
 
     [RelayCommand]
@@ -91,6 +97,7 @@ public partial class SkillsViewModel : ViewModelBase
         Skills.Remove(skill);
         if (SelectedSkill == skill)
             SelectedSkill = Skills.FirstOrDefault();
+        NotifySkillsChanged(SkillsChangedMessage.ChangeType.Removed, skill);
     }
 
     [RelayCommand]
@@ -101,6 +108,7 @@ public partial class SkillsViewModel : ViewModelBase
         Skills.Add(duplicate);
         SelectedSkill = duplicate;
         ValidateSkillFormulas(duplicate);
+        NotifySkillsChanged(SkillsChangedMessage.ChangeType.Added, duplicate);
     }
 
     [RelayCommand]
@@ -158,6 +166,7 @@ public partial class SkillsViewModel : ViewModelBase
         var tree = _skillService.CreateSkillTree();
         SkillTrees.Add(tree);
         SelectedSkillTree = tree;
+        NotifySkillTreesChanged(SkillTreesChangedMessage.ChangeType.Added, tree);
     }
 
     [RelayCommand]
@@ -167,6 +176,7 @@ public partial class SkillsViewModel : ViewModelBase
         SkillTrees.Remove(tree);
         if (SelectedSkillTree == tree)
             SelectedSkillTree = SkillTrees.FirstOrDefault();
+        NotifySkillTreesChanged(SkillTreesChangedMessage.ChangeType.Removed, tree);
     }
 
     [RelayCommand]
@@ -266,5 +276,36 @@ public partial class SkillsViewModel : ViewModelBase
         SkillTrees.Clear();
         Stats.Clear();
         InitializeData();
+
+        NotifySkillsChanged(SkillsChangedMessage.ChangeType.Reset);
+        NotifySkillTreesChanged(SkillTreesChangedMessage.ChangeType.Reset);
+    }
+
+    private void OnStatsChanged(StatsChangedMessage message)
+    {
+        Stats.Clear();
+        foreach (var stat in message.Stats)
+            Stats.Add(stat);
+
+        ValidateAllSkillsCommand.Execute(null);
+    }
+
+    private void OnValidationRequested(ValidationRequestMessage message)
+    {
+        if (message.Type is not (ValidationRequestMessage.ValidationType.All
+            or ValidationRequestMessage.ValidationType.SkillsOnly)) return;
+
+        PreviewLevel = message.PreviewLevel;
+        ValidateAllSkillsCommand.Execute(null);
+    }
+
+    private void NotifySkillsChanged(SkillsChangedMessage.ChangeType changeType, SkillDefinition? changedSkill = null)
+    {
+        Messenger.Send(new SkillsChangedMessage(Skills.ToList(), changeType, changedSkill));
+    }
+
+    private void NotifySkillTreesChanged(SkillTreesChangedMessage.ChangeType changeType, SkillTree? changedTree = null)
+    {
+        Messenger.Send(new SkillTreesChangedMessage(SkillTrees.ToList(), changeType, changedTree));
     }
 }
