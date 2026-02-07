@@ -387,7 +387,7 @@
                 </TabItem>
 
                 <!-- SKILL TREES TAB -->
-                <TabItem Header="?? Skill Trees">
+                <TabItem Header="Skill Trees">
                     <StackPanel Spacing="16" Margin="0,16,0,0">
                         <!-- Skill Trees Section -->
                         <Border Classes="Card">

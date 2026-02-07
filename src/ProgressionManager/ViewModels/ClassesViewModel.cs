@@ -5,16 +5,18 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using ProgressionManager.Messages;
 using ProgressionManager.Models.ClassesRaces;
+using ProgressionManager.Models.Skills;
 using ProgressionManager.Models.WorldRules;
 using ProgressionManager.Services.Interfaces;
 
 namespace ProgressionManager.ViewModels;
 
-public partial class ClassesViewModel : ViewModelBase, IRecipient<StatsChangedMessage>
+public partial class ClassesViewModel : ViewModelBase, IRecipient<StatsChangedMessage>, IRecipient<SkillsChangedMessage>
 {
     private readonly IClassService _classService = null!;
     private readonly IEquipmentService _equipmentService = null!;
     private readonly IStatService _statService = null!;
+    private readonly ISkillService _skillService = null!;
 
     /// <summary>
     /// All defined class templates.
@@ -30,6 +32,11 @@ public partial class ClassesViewModel : ViewModelBase, IRecipient<StatsChangedMe
     /// Available stats from World Rules for stat modifiers.
     /// </summary>
     public ObservableCollection<StatDefinition> AvailableStats { get; } = [];
+
+    /// <summary>
+    /// Available skills from SkillsView for starting skills selection.
+    /// </summary>
+    public ObservableCollection<SkillDefinition> AvailableSkills { get; } = [];
 
     /// <summary>
     /// The currently selected class template for editing.
@@ -54,18 +61,21 @@ public partial class ClassesViewModel : ViewModelBase, IRecipient<StatsChangedMe
 
     }
 
-    public ClassesViewModel(IClassService classService, IEquipmentService equipmentService, IStatService statService)
+    public ClassesViewModel(IClassService classService, IEquipmentService equipmentService, IStatService statService, ISkillService skillService)
     {
         _classService = classService;
         _equipmentService = equipmentService;
         _statService = statService;
+        _skillService = skillService;
 
         LoadEquipmentCategories();
         LoadAvailableStats();
+        LoadAvailableSkills();
         LoadDefaultClasses();
 
         // Subscribe to stat changes from World Rules
-        Messenger.Register(this);
+        Messenger.Register<StatsChangedMessage>(this);
+        Messenger.Register<SkillsChangedMessage>(this);
     }
 
     /// <summary>
@@ -78,6 +88,28 @@ public partial class ClassesViewModel : ViewModelBase, IRecipient<StatsChangedMe
         foreach (var stat in message.Stats)
         {
             AvailableStats.Add(stat);
+        }
+    }
+
+    /// <summary>
+    /// Handle skills changed message from SkillsView.
+    /// </summary>
+    public void Receive(SkillsChangedMessage message)
+    {
+        // Update available skills when they change in SkillsView
+        AvailableSkills.Clear();
+        foreach (var skill in message.Skills)
+        {
+            AvailableSkills.Add(skill);
+        }
+    }
+
+    private void LoadAvailableSkills()
+    {
+        var skills = _skillService.GetDefaultSkills();
+        foreach (var skill in skills)
+        {
+            AvailableSkills.Add(skill);
         }
     }
 
@@ -223,9 +255,11 @@ public partial class ClassesViewModel : ViewModelBase, IRecipient<StatsChangedMe
     {
         if (SelectedClass == null) return;
 
+        var firstSkill = AvailableSkills.FirstOrDefault();
         SelectedClass.StartingSkills.Add(new StartingSkill
         {
-            SkillName = "New Skill",
+            SkillId = firstSkill?.Id ?? string.Empty,
+            SkillName = firstSkill?.Name ?? "New Skill",
             StartingRank = 1
         });
     }
