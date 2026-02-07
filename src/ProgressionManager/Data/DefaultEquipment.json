@@ -1,0 +1,37 @@
+﻿[
+  {
+    "Name": "Weapons",
+    "Items": [
+      { "Name": "Swords", "Description": "One-handed and two-handed swords" },
+      { "Name": "Axes", "Description": "Battle axes and throwing axes" },
+      { "Name": "Maces", "Description": "Blunt crushing weapons" },
+      { "Name": "Staffs", "Description": "Magical and combat staffs" },
+      { "Name": "Bows", "Description": "Longbows and shortbows" },
+      { "Name": "Daggers", "Description": "Quick slashing weapons" },
+      { "Name": "Spears", "Description": "Polearm thrusting weapons" },
+      { "Name": "Wands", "Description": "Magical focus weapons" }
+    ]
+  },
+  {
+    "Name": "Armor",
+    "Items": [
+      { "Name": "Heavy Armor", "Description": "Plate and full mail armor" },
+      { "Name": "Medium Armor", "Description": "Chain and scale armor" },
+      { "Name": "Light Armor", "Description": "Leather and hide armor" },
+      { "Name": "Robes", "Description": "Magical cloth garments" },
+      { "Name": "Shields", "Description": "Defensive equipment" }
+    ]
+  },
+  {
+    "Name": "Accessories",
+    "Items": [
+      { "Name": "Rings", "Description": "Magical finger rings" },
+      { "Name": "Amulets", "Description": "Neck worn talismans" },
+      { "Name": "Cloaks", "Description": "Enchanted capes and cloaks" },
+      { "Name": "Magic Orbs", "Description": "Held magical focuses" },
+      { "Name": "Belts", "Description": "Utility and stat belts" },
+      { "Name": "Gloves", "Description": "Hand protection and enhancements" }
+    ]
+  }
+]
+

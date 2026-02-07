@@ -3,6 +3,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:ProgressionManager.ViewModels"
+             xmlns:models="using:ProgressionManager.Models.ClassesRaces"
+             xmlns:local="using:ProgressionManager.Converters"
              mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="800"
              x:DataType="vm:ClassesViewModel"
              x:Class="ProgressionManager.Views.ClassesView">
@@ -34,7 +36,7 @@
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
                     <Button Classes="ActionBtn" Content=" Import"/>
-                    <Button Classes="PrimaryBtn" Content="+ Add Class"/>
+                    <Button Classes="PrimaryBtn" Content="+ Add Class" Command="{Binding AddClassCommand}"/>
                 </StackPanel>
             </Grid>
 
@@ -43,37 +45,88 @@
                 <StackPanel Spacing="16">
                     <Grid ColumnDefinitions="*,Auto">
                         <TextBlock Text="Class Templates" Classes="SectionHeader"/>
-                        <TextBox Grid.Column="1" Watermark="Search classes..." Width="200"/>
+                        <TextBox Grid.Column="1" Watermark="Search classes..." Width="200" Text="{Binding SearchText}"/>
                     </Grid>
 
                     <!-- Classes DataGrid -->
                     <DataGrid AutoGenerateColumns="False"
+                              ItemsSource="{Binding FilteredClassTemplates}"
+                              SelectedItem="{Binding SelectedClass}"
                               GridLinesVisibility="None"
                               HeadersVisibility="Column"
                               RowHeight="52"
                               Background="#0F1115"
                               BorderThickness="0"
                               CornerRadius="10"
-                              MaxHeight="300">
+                              MaxHeight="300"
+                              IsVisible="{Binding FilteredClassTemplates.Count}">
 
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Name" Width="120"/>
-                            <DataGridTextColumn Header="Base Stats" Width="*"/>
-                            <DataGridTextColumn Header="Starting Skills" Width="120"/>
-                            <DataGridTextColumn Header="Equipment" Width="100"/>
+                            <DataGridTextColumn Header="Name" Width="120" Binding="{Binding Name}"/>
+                            <DataGridTemplateColumn Header="Base Stats" Width="*">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate x:DataType="models:ClassTemplate">
+                                        <ItemsControl ItemsSource="{Binding StatModifiers}">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <StackPanel Orientation="Horizontal" Spacing="4"/>
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate x:DataType="models:StatModifier">
+                                                    <Border Background="#1A1B26" CornerRadius="4" Padding="4,2">
+                                                        <StackPanel Orientation="Horizontal" Spacing="4">
+                                                            <TextBlock Text="{Binding StatName}" Foreground="{Binding Color}" FontWeight="SemiBold" FontSize="11"/>
+                                                            <TextBlock FontSize="11">
+                                                                <TextBlock.Text>
+                                                                    <Binding Path="DisplayValue"/>
+                                                                </TextBlock.Text>
+                                                                <TextBlock.Foreground>
+                                                                    <Binding Path="IsBonus">
+                                                                        <Binding.Converter>
+                                                                            <local:BoolToColorConverter TrueColor="#2ECC71" FalseColor="#E74C3C"/>
+                                                                        </Binding.Converter>
+                                                                    </Binding>
+                                                                </TextBlock.Foreground>
+                                                            </TextBlock>
+                                                        </StackPanel>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="Starting Skills" Width="120">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate x:DataType="models:ClassTemplate">
+                                        <TextBlock Text="{Binding StartingSkills.Count, StringFormat='{}{0} skills'}"
+                                                   VerticalAlignment="Center" Foreground="#C0CAF5"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="Equipment" Width="100">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate x:DataType="models:ClassTemplate">
+                                        <TextBlock Text="{Binding AllowedEquipment.Count, StringFormat='{}{0} categories'}"
+                                                   VerticalAlignment="Center" Foreground="#C0CAF5"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
                             <DataGridTemplateColumn Header="" Width="100">
                                 <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
+                                    <DataTemplate x:DataType="models:ClassTemplate">
                                         <StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Right">
-                                            <Button Content="" ToolTip.Tip="Edit"
-                                                    Background="Transparent" Foreground="#7AA2F7"
-                                                    BorderThickness="0" Padding="6"/>
                                             <Button Content="" ToolTip.Tip="Duplicate"
                                                     Background="Transparent" Foreground="#7AA2F7"
-                                                    BorderThickness="0" Padding="6"/>
+                                                    BorderThickness="0" Padding="6"
+                                                    Command="{Binding $parent[DataGrid].((vm:ClassesViewModel)DataContext).DuplicateClassCommand}"
+                                                    CommandParameter="{Binding}"/>
                                             <Button Content="" ToolTip.Tip="Delete"
                                                     Background="Transparent" Foreground="#E74C3C"
-                                                    BorderThickness="0" Padding="6"/>
+                                                    BorderThickness="0" Padding="6"
+                                                    Command="{Binding $parent[DataGrid].((vm:ClassesViewModel)DataContext).DeleteClassCommand}"
+                                                    CommandParameter="{Binding}"/>
                                         </StackPanel>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
@@ -82,7 +135,7 @@
                     </DataGrid>
 
                     <!-- Empty State -->
-                    <Border Classes="InnerCard" Padding="40">
+                    <Border Classes="InnerCard" Padding="40" IsVisible="{Binding !FilteredClassTemplates.Count}">
                         <StackPanel Spacing="16" HorizontalAlignment="Center">
                             <TextBlock Text="" FontSize="48" HorizontalAlignment="Center"/>
                             <TextBlock Text="No Classes Defined"
@@ -94,21 +147,24 @@
                                        FontSize="14"
                                        Foreground="#7A7F99"
                                        HorizontalAlignment="Center"/>
-                            <Button Classes="PrimaryBtn" Content="+ Create First Class" HorizontalAlignment="Center"/>
+                            <Button Classes="PrimaryBtn" Content="+ Create First Class" HorizontalAlignment="Center"
+                                    Command="{Binding AddClassCommand}"/>
                         </StackPanel>
                     </Border>
                 </StackPanel>
             </Border>
 
             <!-- CLASS EDITOR -->
-            <Border Classes="Card">
+            <Border Classes="Card" IsVisible="{Binding SelectedClass, Converter={x:Static ObjectConverters.IsNotNull}}">
                 <StackPanel Spacing="16">
                     <Grid ColumnDefinitions="*,Auto">
                         <TextBlock Text="Class Editor" Classes="SectionHeader"/>
                         <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
-                            <Button Classes="ActionBtn" Content=" Move Up"/>
-                            <Button Classes="ActionBtn" Content="Move Down"/>
-                            <Button Classes="DangerBtn" Content=" Delete"/>
+                            <Button Classes="ActionBtn" Content=" Move Up" Command="{Binding MoveClassUpCommand}"/>
+                            <Button Classes="ActionBtn" Content="Move Down" Command="{Binding MoveClassDownCommand}"/>
+                            <Button Classes="DangerBtn" Content=" Delete"
+                                    Command="{Binding DeleteClassCommand}"
+                                    CommandParameter="{Binding SelectedClass}"/>
                         </StackPanel>
                     </Grid>
 
@@ -120,18 +176,23 @@
                             <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto">
                                 <StackPanel Grid.Row="0" Grid.Column="0" Spacing="4" Margin="0,0,8,12">
                                     <TextBlock Text="Class Name" Classes="Label"/>
-                                    <TextBox Watermark="e.g., Warrior, Mage, Rogue"/>
+                                    <TextBox Watermark="e.g., Warrior, Mage, Rogue"
+                                             Text="{Binding SelectedClass.Name}"/>
                                 </StackPanel>
                                 <StackPanel Grid.Row="0" Grid.Column="1" Spacing="4" Margin="8,0,0,12">
                                     <TextBlock Text="Parent Class (Optional)" Classes="Label"/>
-                                    <ComboBox HorizontalAlignment="Stretch">
-                                        <ComboBoxItem Content="None (Base Class)"/>
+                                    <ComboBox HorizontalAlignment="Stretch"
+                                              ItemsSource="{Binding ClassTemplates}"
+                                              SelectedValue="{Binding SelectedClass.ParentClassId}"
+                                              SelectedValueBinding="{Binding Id}"
+                                              DisplayMemberBinding="{Binding Name}">
                                     </ComboBox>
                                 </StackPanel>
 
                                 <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Spacing="4">
                                     <TextBlock Text="Description" Classes="Label"/>
                                     <TextBox Watermark="Describe this class's role and playstyle..."
+                                             Text="{Binding SelectedClass.Description}"
                                              TextWrapping="Wrap"
                                              AcceptsReturn="True"
                                              MinHeight="60"/>
@@ -145,39 +206,44 @@
                         <StackPanel Spacing="16">
                             <Grid ColumnDefinitions="*,Auto">
                                 <TextBlock Text="Stat Modifiers" FontSize="14" FontWeight="SemiBold" Foreground="#C0CAF5"/>
-                                <Button Classes="ActionBtn" Content="+ Add Modifier" Grid.Column="1"/>
+                                <Button Classes="ActionBtn" Content="+ Add Modifier" Grid.Column="1"
+                                        Command="{Binding AddStatModifierCommand}"/>
                             </Grid>
 
                             <TextBlock Classes="HelpText"
                                        Text="Define how this class modifies base stats. Positive values boost stats, negative values reduce them."/>
 
-                            <WrapPanel Orientation="Horizontal">
-                                <!-- Stat Modifier Badges -->
-                                <Border Classes="StatBadge" Margin="0,0,8,8">
-                                    <StackPanel Orientation="Horizontal" Spacing="8">
-                                        <TextBlock Text="STR" Foreground="#F7768E" FontWeight="SemiBold"/>
-                                        <TextBlock Text="+5" Foreground="#2ECC71"/>
-                                        <Button Content="x" Background="Transparent" Foreground="#7A7F99"
-                                                BorderThickness="0" Padding="4,0"/>
-                                    </StackPanel>
-                                </Border>
-                                <Border Classes="StatBadge" Margin="0,0,8,8">
-                                    <StackPanel Orientation="Horizontal" Spacing="8">
-                                        <TextBlock Text="VIT" Foreground="#FF9E64" FontWeight="SemiBold"/>
-                                        <TextBlock Text="+3" Foreground="#2ECC71"/>
-                                        <Button Content="x" Background="Transparent" Foreground="#7A7F99"
-                                                BorderThickness="0" Padding="4,0"/>
-                                    </StackPanel>
-                                </Border>
-                                <Border Classes="StatBadge" Margin="0,0,8,8">
-                                    <StackPanel Orientation="Horizontal" Spacing="8">
-                                        <TextBlock Text="INT" Foreground="#7AA2F7" FontWeight="SemiBold"/>
-                                        <TextBlock Text="-2" Foreground="#E74C3C"/>
-                                        <Button Content="x" Background="Transparent" Foreground="#7A7F99"
-                                                BorderThickness="0" Padding="4,0"/>
-                                    </StackPanel>
-                                </Border>
-                            </WrapPanel>
+                            <ItemsControl ItemsSource="{Binding SelectedClass.StatModifiers}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <WrapPanel Orientation="Horizontal"/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate x:DataType="models:StatModifier">
+                                        <Border Classes="StatBadge" Margin="0,0,8,8">
+                                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                                <TextBox Text="{Binding StatName}"
+                                                         Width="50"
+                                                         Padding="2"
+                                                         FontWeight="SemiBold"
+                                                         Background="Transparent"
+                                                         BorderThickness="0"/>
+                                                <NumericUpDown Value="{Binding Value}"
+                                                               Width="70"
+                                                               Minimum="-100"
+                                                               Maximum="100"
+                                                               FormatString="+#;-#;0"
+                                                               ShowButtonSpinner="False"/>
+                                                <Button Content="x" Background="Transparent" Foreground="#7A7F99"
+                                                        BorderThickness="0" Padding="4,0"
+                                                        Command="{Binding $parent[ItemsControl].((vm:ClassesViewModel)DataContext).RemoveStatModifierCommand}"
+                                                        CommandParameter="{Binding}"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
                         </StackPanel>
                     </Border>
 
@@ -186,32 +252,46 @@
                         <StackPanel Spacing="16">
                             <Grid ColumnDefinitions="*,Auto">
                                 <TextBlock Text="Starting Skills" FontSize="14" FontWeight="SemiBold" Foreground="#C0CAF5"/>
-                                <Button Classes="ActionBtn" Content="+ Add Skill" Grid.Column="1"/>
+                                <Button Classes="ActionBtn" Content="+ Add Skill" Grid.Column="1"
+                                        Command="{Binding AddStartingSkillCommand}"/>
                             </Grid>
 
                             <TextBlock Classes="HelpText"
                                        Text="Skills that characters of this class start with at level 1."/>
 
-                            <WrapPanel Orientation="Horizontal">
-                                <Border Classes="StatBadge" Margin="0,0,8,8">
-                                    <StackPanel Orientation="Horizontal" Spacing="8">
-                                        <TextBlock Text="" FontSize="16"/>
-                                        <TextBlock Text="Power Strike" Foreground="#C0CAF5"/>
-                                        <TextBlock Text="Rank 1" Foreground="#7A7F99" FontSize="11"/>
-                                        <Button Content="x" Background="Transparent" Foreground="#7A7F99"
-                                                BorderThickness="0" Padding="4,0"/>
-                                    </StackPanel>
-                                </Border>
-                                <Border Classes="StatBadge" Margin="0,0,8,8">
-                                    <StackPanel Orientation="Horizontal" Spacing="8">
-                                        <TextBlock Text="" FontSize="16"/>
-                                        <TextBlock Text="Block" Foreground="#C0CAF5"/>
-                                        <TextBlock Text="Rank 1" Foreground="#7A7F99" FontSize="11"/>
-                                        <Button Content="x" Background="Transparent" Foreground="#7A7F99"
-                                                BorderThickness="0" Padding="4,0"/>
-                                    </StackPanel>
-                                </Border>
-                            </WrapPanel>
+                            <ItemsControl ItemsSource="{Binding SelectedClass.StartingSkills}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <WrapPanel Orientation="Horizontal"/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate x:DataType="models:StartingSkill">
+                                        <Border Classes="StatBadge" Margin="0,0,8,8">
+                                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                                <TextBlock Text="" FontSize="16"/>
+                                                <TextBox Text="{Binding SkillName}"
+                                                         Width="100"
+                                                         Background="Transparent"
+                                                         BorderThickness="0"
+                                                         Foreground="#C0CAF5"/>
+                                                <StackPanel Orientation="Horizontal" Spacing="4">
+                                                    <TextBlock Text="Rank" Foreground="#7A7F99" FontSize="11" VerticalAlignment="Center"/>
+                                                    <NumericUpDown Value="{Binding StartingRank}"
+                                                                   Width="60"
+                                                                   Minimum="1"
+                                                                   Maximum="10"
+                                                                   ShowButtonSpinner="False"/>
+                                                </StackPanel>
+                                                <Button Content="x" Background="Transparent" Foreground="#7A7F99"
+                                                        BorderThickness="0" Padding="4,0"
+                                                        Command="{Binding $parent[ItemsControl].((vm:ClassesViewModel)DataContext).RemoveStartingSkillCommand}"
+                                                        CommandParameter="{Binding}"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
                         </StackPanel>
                     </Border>
 
@@ -223,34 +303,29 @@
                             <TextBlock Classes="HelpText"
                                        Text="Define what types of equipment this class can use."/>
 
-                            <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto">
-                                <StackPanel Grid.Row="0" Grid.Column="0" Spacing="8" Margin="0,0,12,12">
-                                    <TextBlock Text="Weapons" Classes="Label"/>
-                                    <CheckBox Content="Swords" IsChecked="True"/>
-                                    <CheckBox Content="Axes" IsChecked="True"/>
-                                    <CheckBox Content="Maces" IsChecked="True"/>
-                                    <CheckBox Content="Staffs"/>
-                                    <CheckBox Content="Bows"/>
-                                    <CheckBox Content="Daggers"/>
-                                </StackPanel>
-
-                                <StackPanel Grid.Row="0" Grid.Column="1" Spacing="8" Margin="0,0,12,12">
-                                    <TextBlock Text="Armor" Classes="Label"/>
-                                    <CheckBox Content="Heavy Armor" IsChecked="True"/>
-                                    <CheckBox Content="Medium Armor" IsChecked="True"/>
-                                    <CheckBox Content="Light Armor" IsChecked="True"/>
-                                    <CheckBox Content="Robes"/>
-                                    <CheckBox Content="Shields" IsChecked="True"/>
-                                </StackPanel>
-
-                                <StackPanel Grid.Row="0" Grid.Column="2" Spacing="8">
-                                    <TextBlock Text="Accessories" Classes="Label"/>
-                                    <CheckBox Content="Rings" IsChecked="True"/>
-                                    <CheckBox Content="Amulets" IsChecked="True"/>
-                                    <CheckBox Content="Cloaks" IsChecked="True"/>
-                                    <CheckBox Content="Magic Orbs"/>
-                                </StackPanel>
-                            </Grid>
+                            <ItemsControl ItemsSource="{Binding EquipmentCategories}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <UniformGrid Columns="3"/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate x:DataType="models:EquipmentCategory">
+                                        <StackPanel Spacing="8" Margin="0,0,12,12">
+                                            <TextBlock Text="{Binding Name}" Classes="Label"/>
+                                            <ItemsControl ItemsSource="{Binding Items}">
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate x:DataType="models:EquipmentItem">
+                                                        <CheckBox Content="{Binding Name}"
+                                                                  IsChecked="{Binding IsAllowed}"
+                                                                  ToolTip.Tip="{Binding Description}"/>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
                         </StackPanel>
                     </Border>
 
@@ -259,13 +334,15 @@
                         <StackPanel Spacing="16">
                             <Grid ColumnDefinitions="*,Auto">
                                 <TextBlock Text="Level-Up Bonuses" FontSize="14" FontWeight="SemiBold" Foreground="#C0CAF5"/>
-                                <Button Classes="ActionBtn" Content="+ Add Bonus" Grid.Column="1"/>
+                                <Button Classes="ActionBtn" Content="+ Add Bonus" Grid.Column="1"
+                                        Command="{Binding AddLevelUpBonusCommand}"/>
                             </Grid>
 
                             <TextBlock Classes="HelpText"
                                        Text="Special bonuses this class receives at certain levels."/>
 
                             <DataGrid AutoGenerateColumns="False"
+                                      ItemsSource="{Binding SelectedClass.LevelUpBonuses}"
                                       GridLinesVisibility="None"
                                       HeadersVisibility="Column"
                                       RowHeight="44"
@@ -274,10 +351,20 @@
                                       CornerRadius="8"
                                       MaxHeight="200">
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn Header="Level" Width="80"/>
-                                    <DataGridTextColumn Header="Bonus Type" Width="120"/>
-                                    <DataGridTextColumn Header="Description" Width="*"/>
-                                    <DataGridTextColumn Header="Value" Width="80"/>
+                                    <DataGridTextColumn Header="Level" Width="80" Binding="{Binding Level}"/>
+                                    <DataGridTextColumn Header="Bonus Type" Width="120" Binding="{Binding BonusType}"/>
+                                    <DataGridTextColumn Header="Description" Width="*" Binding="{Binding Description}"/>
+                                    <DataGridTextColumn Header="Value" Width="80" Binding="{Binding Value}"/>
+                                    <DataGridTemplateColumn Header="" Width="50">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate x:DataType="models:LevelUpBonus">
+                                                <Button Content="x" Background="Transparent" Foreground="#E74C3C"
+                                                        BorderThickness="0" Padding="4,0"
+                                                        Command="{Binding $parent[DataGrid].((vm:ClassesViewModel)DataContext).RemoveLevelUpBonusCommand}"
+                                                        CommandParameter="{Binding}"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
                                 </DataGrid.Columns>
                             </DataGrid>
                         </StackPanel>
@@ -290,5 +377,3 @@
     </ScrollViewer>
 
 </UserControl>
-
-
