@@ -1,8 +1,7 @@
+using System;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Data.Core;
 using Avalonia.Data.Core.Plugins;
-using System.Linq;
 using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.DependencyInjection;
 using ProgressionManager.Extensions;
@@ -13,6 +12,8 @@ namespace ProgressionManager;
 
 public partial class App : Application
 {
+    public static IServiceProvider? Services { get; private set; }
+
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
@@ -25,9 +26,10 @@ public partial class App : Application
         var serviceCollection = new ServiceCollection();
         serviceCollection.AddCommonServices();
         serviceCollection.AddViewModels();
+        serviceCollection.AddViews();
 
-        var services = serviceCollection.BuildServiceProvider();
-        var vm = services.GetRequiredService<MainWindowViewModel>();
+        Services = serviceCollection.BuildServiceProvider();
+        var vm = Services.GetRequiredService<MainWindowViewModel>();
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {

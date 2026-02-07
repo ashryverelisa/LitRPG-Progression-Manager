@@ -1,7 +1,8 @@
-﻿﻿﻿using Microsoft.Extensions.DependencyInjection;
+﻿﻿﻿﻿using Microsoft.Extensions.DependencyInjection;
 using ProgressionManager.Services;
 using ProgressionManager.Services.Interfaces;
 using ProgressionManager.ViewModels;
+using ProgressionManager.Views;
 
 namespace ProgressionManager.Extensions;
 
@@ -29,6 +30,17 @@ public static class ServiceCollectionExtensions
             services.AddScoped<SkillsViewModel>();
             services.AddScoped<TimelineViewModel>();
             services.AddScoped<ValidationViewModel>();
+        }
+
+        public void AddViews()
+        {
+            services.AddTransient<WorldRulesView>();
+            services.AddTransient<CharactersView>();
+            services.AddTransient<ClassesView>();
+            services.AddTransient<RacesView>();
+            services.AddTransient<SkillsView>();
+            services.AddTransient<TimelineView>();
+            services.AddTransient<ValidationView>();
         }
     }
 }

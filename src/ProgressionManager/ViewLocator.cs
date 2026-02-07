@@ -15,12 +15,17 @@ public class ViewLocator : IDataTemplate
         var name = param.GetType().FullName!.Replace("ViewModel", "View", StringComparison.Ordinal);
         var type = Type.GetType(name);
 
-        if (type != null)
+        if (type == null) return new TextBlock { Text = "Not Found: " + name };
+
+        // Try to resolve from DI container first
+        if (App.Services?.GetService(type) is Control control)
         {
-            return (Control)Activator.CreateInstance(type)!;
+            return control;
         }
 
-        return new TextBlock { Text = "Not Found: " + name };
+        // Fallback to Activator if not registered in DI
+        return (Control)Activator.CreateInstance(type)!;
+
     }
 
     public bool Match(object? data)
