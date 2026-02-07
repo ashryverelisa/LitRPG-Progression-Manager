@@ -1,4 +1,4 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
+<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -129,9 +129,9 @@
                 </StackPanel>
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                    <Button Classes="ActionBtn" Content="⟲ Reset to Defaults"
+                    <Button Classes="ActionBtn" Content=" Reset to Defaults"
                             Command="{Binding ResetToDefaultsCommand}"/>
-                    <Button Classes="PrimaryBtn" Content="✓ Validate All"
+                    <Button Classes="PrimaryBtn" Content="Validate All"
                             Command="{Binding ValidateAllFormulasCommand}"/>
                 </StackPanel>
             </Grid>
@@ -231,16 +231,16 @@
                                            FontWeight="SemiBold"
                                            Foreground="#C0CAF5"/>
                                 <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
-                                    <Button Classes="ActionBtn" Content="⬆" ToolTip.Tip="Move Up"
+                                    <Button Classes="ActionBtn" Content="" ToolTip.Tip="Move Up"
                                             Command="{Binding MoveStatUpCommand}"
                                             CommandParameter="{Binding SelectedStat}"/>
-                                    <Button Classes="ActionBtn" Content="⬇" ToolTip.Tip="Move Down"
+                                    <Button Classes="ActionBtn" Content="" ToolTip.Tip="Move Down"
                                             Command="{Binding MoveStatDownCommand}"
                                             CommandParameter="{Binding SelectedStat}"/>
-                                    <Button Classes="ActionBtn" Content="⧉ Duplicate"
+                                    <Button Classes="ActionBtn" Content=" Duplicate"
                                             Command="{Binding DuplicateStatCommand}"
                                             CommandParameter="{Binding SelectedStat}"/>
-                                    <Button Classes="DangerBtn" Content="🗑 Delete"
+                                    <Button Classes="DangerBtn" Content=" Delete"
                                             Command="{Binding DeleteStatCommand}"
                                             CommandParameter="{Binding SelectedStat}"/>
                                 </StackPanel>
@@ -306,7 +306,7 @@
                                                 Padding="8,4"
                                                 Background="{Binding SelectedStat.IsFormulaValid, Converter={StaticResource ValidityToBackground}}">
                                             <StackPanel Orientation="Horizontal" Spacing="6">
-                                                <TextBlock Text="{Binding SelectedStat.IsFormulaValid, Converter={StaticResource ValidityToStatusText}, ConverterParameter=✓;✗}"
+                                                <TextBlock Text="{Binding SelectedStat.IsFormulaValid, Converter={StaticResource ValidityToStatusText}, ConverterParameter=?;?}"
                                                            Foreground="{Binding SelectedStat.IsFormulaValid, Converter={StaticResource ValidityToColor}}"/>
                                                 <TextBlock Text="{Binding SelectedStat.SampleValue, StringFormat='= {0:N0}'}"
                                                            Foreground="#7AA2F7"
@@ -394,7 +394,7 @@
                                         CornerRadius="4"
                                         Padding="8,4"
                                         Background="{Binding XpCurve.IsFormulaValid, Converter={StaticResource ValidityToBackground}}">
-                                    <TextBlock Text="{Binding XpCurve.IsFormulaValid, Converter={StaticResource ValidityToStatusText}, ConverterParameter=✓ Valid Formula;✗ Invalid Formula}"
+                                    <TextBlock Text="{Binding XpCurve.IsFormulaValid, Converter={StaticResource ValidityToStatusText}, ConverterParameter=Valid Formula;? Invalid Formula}"
                                                Foreground="{Binding XpCurve.IsFormulaValid, Converter={StaticResource ValidityToColor}}"/>
                                 </Border>
                             </Grid>
@@ -421,7 +421,7 @@
                                            FontSize="14"
                                            FontWeight="SemiBold"
                                            Foreground="#C0CAF5"/>
-                                <Button Grid.Column="1" Classes="ActionBtn" Content="↻ Refresh"
+                                <Button Grid.Column="1" Classes="ActionBtn" Content=" Refresh"
                                         Command="{Binding UpdateXpCurvePreviewsCommand}"/>
                             </Grid>
 

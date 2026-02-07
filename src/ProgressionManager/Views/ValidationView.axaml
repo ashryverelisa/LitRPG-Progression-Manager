@@ -1,0 +1,458 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:ProgressionManager.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="800"
+             x:DataType="vm:ValidationViewModel"
+             x:Class="ProgressionManager.Views.ValidationView">
+
+    <Design.DataContext>
+        <vm:ValidationViewModel/>
+    </Design.DataContext>
+
+    <UserControl.Styles>
+        <StyleInclude Source="/Views/Styles/CommonStyles.axaml"/>
+    </UserControl.Styles>
+
+    <ScrollViewer HorizontalScrollBarVisibility="Disabled"
+                  VerticalScrollBarVisibility="Auto">
+        <StackPanel Spacing="24" Margin="0,0,20,20">
+
+            <!-- HEADER -->
+            <Grid ColumnDefinitions="*,Auto">
+                <StackPanel Spacing="6">
+                    <TextBlock Text="Consistency Checker"
+                               FontSize="28"
+                               FontWeight="Bold"
+                               Foreground="#FFFFFF"/>
+
+                    <TextBlock Text="Validate your story's progression for mathematical errors and inconsistencies"
+                               FontSize="14"
+                               Foreground="#9AA5CE"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                    <Button Classes="ActionBtn" Content="Export Report"/>
+                    <Button Classes="PrimaryBtn" Content="Run Full Validation"/>
+                </StackPanel>
+            </Grid>
+
+            <!-- VALIDATION STATUS OVERVIEW -->
+            <Border Classes="Card">
+                <StackPanel Spacing="16">
+                    <TextBlock Text="Validation Status" Classes="SectionHeader"/>
+
+                    <Grid ColumnDefinitions="*,*,*,*">
+                        <!-- Errors -->
+                        <Border Grid.Column="0" Classes="InnerCard" Margin="0,0,8,0" Background="#3D1A1A">
+                            <StackPanel Spacing="4" HorizontalAlignment="Center">
+                                <TextBlock Text="Errors" Foreground="#E74C3C" FontSize="12" FontWeight="SemiBold"/>
+                                <TextBlock Text="3" Foreground="#E74C3C" FontSize="36" FontWeight="Bold"/>
+                                <TextBlock Text="Critical issues found" Foreground="#7A7F99" FontSize="11"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Warnings -->
+                        <Border Grid.Column="1" Classes="InnerCard" Margin="0,0,8,0" Background="#3D3A1A">
+                            <StackPanel Spacing="4" HorizontalAlignment="Center">
+                                <TextBlock Text="Warnings" Foreground="#F1C40F" FontSize="12" FontWeight="SemiBold"/>
+                                <TextBlock Text="7" Foreground="#F1C40F" FontSize="36" FontWeight="Bold"/>
+                                <TextBlock Text="Potential issues" Foreground="#7A7F99" FontSize="11"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Info -->
+                        <Border Grid.Column="2" Classes="InnerCard" Margin="0,0,8,0" Background="#1A2A3D">
+                            <StackPanel Spacing="4" HorizontalAlignment="Center">
+                                <TextBlock Text="Info" Foreground="#3498DB" FontSize="12" FontWeight="SemiBold"/>
+                                <TextBlock Text="12" Foreground="#3498DB" FontSize="36" FontWeight="Bold"/>
+                                <TextBlock Text="Suggestions" Foreground="#7A7F99" FontSize="11"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Passed -->
+                        <Border Grid.Column="3" Classes="InnerCard" Background="#1A3D2E">
+                            <StackPanel Spacing="4" HorizontalAlignment="Center">
+                                <TextBlock Text="Passed" Foreground="#2ECC71" FontSize="12" FontWeight="SemiBold"/>
+                                <TextBlock Text="156" Foreground="#2ECC71" FontSize="36" FontWeight="Bold"/>
+                                <TextBlock Text="Checks passed" Foreground="#7A7F99" FontSize="11"/>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+
+                    <!-- Last Validation Info -->
+                    <Border Background="#0A0C10" CornerRadius="8" Padding="12">
+                        <StackPanel Orientation="Horizontal" Spacing="24">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <TextBlock Text="Last Validation:" Foreground="#7A7F99"/>
+                                <TextBlock Text="Today, 2:34 PM" Foreground="#C0CAF5"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <TextBlock Text="Characters Checked:" Foreground="#7A7F99"/>
+                                <TextBlock Text="3" Foreground="#C0CAF5"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <TextBlock Text="Chapters Analyzed:" Foreground="#7A7F99"/>
+                                <TextBlock Text="42" Foreground="#C0CAF5"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Border>
+
+            <!-- VALIDATION FILTERS -->
+            <Border Classes="Card">
+                <Grid ColumnDefinitions="*,*,*,Auto" RowDefinitions="Auto">
+                    <StackPanel Grid.Column="0" Spacing="4" Margin="0,0,12,0">
+                        <TextBlock Text="Character Filter" Classes="Label"/>
+                        <ComboBox HorizontalAlignment="Stretch">
+                            <ComboBoxItem Content="All Characters" IsSelected="True"/>
+                            <ComboBoxItem Content="Aric Stormwind"/>
+                            <ComboBoxItem Content="Elena Brightwood"/>
+                        </ComboBox>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1" Spacing="4" Margin="0,0,12,0">
+                        <TextBlock Text="Issue Type" Classes="Label"/>
+                        <ComboBox HorizontalAlignment="Stretch">
+                            <ComboBoxItem Content="All Issues" IsSelected="True"/>
+                            <ComboBoxItem Content="Errors Only"/>
+                            <ComboBoxItem Content="Warnings Only"/>
+                            <ComboBoxItem Content="Info Only"/>
+                        </ComboBox>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="2" Spacing="4" Margin="0,0,12,0">
+                        <TextBlock Text="Category" Classes="Label"/>
+                        <ComboBox HorizontalAlignment="Stretch">
+                            <ComboBoxItem Content="All Categories" IsSelected="True"/>
+                            <ComboBoxItem Content="Stats"/>
+                            <ComboBoxItem Content="Skills"/>
+                            <ComboBoxItem Content="XP/Leveling"/>
+                            <ComboBoxItem Content="Equipment"/>
+                            <ComboBoxItem Content="Cooldowns"/>
+                        </ComboBox>
+                    </StackPanel>
+
+                    <Button Classes="ActionBtn" Content="Clear Filters" Grid.Column="3" VerticalAlignment="Bottom"/>
+                </Grid>
+            </Border>
+
+            <!-- VALIDATION RESULTS -->
+            <Border Classes="Card">
+                <StackPanel Spacing="16">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="Validation Results" Classes="SectionHeader"/>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
+                            <TextBox Watermark="Search issues..." Width="200"/>
+                            <Button Classes="ActionBtn" Content="Sort by Severity"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Issues List -->
+                    <ItemsControl>
+                        <ItemsControl.Items>
+                            <!-- Error Item -->
+                            <Border Classes="ListItem" Background="#1A0F0F" BorderBrush="#3D1A1A" BorderThickness="1" CornerRadius="8">
+                                <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto">
+                                    <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="2"
+                                            Background="#3D1A1A" CornerRadius="4" Padding="8,6"
+                                            VerticalAlignment="Top" Margin="0,0,16,0">
+                                        <TextBlock Text="ERROR" Foreground="#E74C3C" FontSize="11" FontWeight="SemiBold"/>
+                                    </Border>
+
+                                    <StackPanel Grid.Row="0" Grid.Column="1" Spacing="4">
+                                        <TextBlock Text="Mana Usage Exceeds Maximum" Foreground="#FFFFFF" FontWeight="SemiBold"/>
+                                        <TextBlock Text="Chapter 37: Aric Stormwind used 220 mana, but max mana is only 180 at Level 12"
+                                                   Foreground="#C0CAF5" FontSize="13" TextWrapping="Wrap"/>
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Spacing="12" Margin="0,8,0,0">
+                                        <StackPanel Orientation="Horizontal" Spacing="4">
+                                            <TextBlock Text="" FontSize="12"/>
+                                            <TextBlock Text="Aric Stormwind" Foreground="#7A7F99" FontSize="12"/>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Spacing="4">
+                                            <TextBlock Text="" FontSize="12"/>
+                                            <TextBlock Text="Chapter 37" Foreground="#7A7F99" FontSize="12"/>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Spacing="4">
+                                            <TextBlock Text="" FontSize="12"/>
+                                            <TextBlock Text="Stats" Foreground="#7A7F99" FontSize="12"/>
+                                        </StackPanel>
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Row="0" Grid.RowSpan="2" Grid.Column="2"
+                                                VerticalAlignment="Center" Spacing="4">
+                                        <Button Classes="ActionBtn" Content="Go to Chapter"/>
+                                        <Button Content="Mark Resolved" Background="Transparent"
+                                                Foreground="#7A7F99" BorderThickness="0" Padding="6"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+
+                            <!-- Error Item 2 -->
+                            <Border Classes="ListItem" Background="#1A0F0F" BorderBrush="#3D1A1A" BorderThickness="1" CornerRadius="8">
+                                <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto">
+                                    <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="2"
+                                            Background="#3D1A1A" CornerRadius="4" Padding="8,6"
+                                            VerticalAlignment="Top" Margin="0,0,16,0">
+                                        <TextBlock Text="ERROR" Foreground="#E74C3C" FontSize="11" FontWeight="SemiBold"/>
+                                    </Border>
+
+                                    <StackPanel Grid.Row="0" Grid.Column="1" Spacing="4">
+                                        <TextBlock Text="Skill Used Before Unlocking" Foreground="#FFFFFF" FontWeight="SemiBold"/>
+                                        <TextBlock Text="Chapter 22: 'Whirlwind' was used, but it was learned in Chapter 42"
+                                                   Foreground="#C0CAF5" FontSize="13" TextWrapping="Wrap"/>
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Spacing="12" Margin="0,8,0,0">
+                                        <StackPanel Orientation="Horizontal" Spacing="4">
+                                            <TextBlock Text="" FontSize="12"/>
+                                            <TextBlock Text="Aric Stormwind" Foreground="#7A7F99" FontSize="12"/>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Spacing="4">
+                                            <TextBlock Text="" FontSize="12"/>
+                                            <TextBlock Text="Chapter 22" Foreground="#7A7F99" FontSize="12"/>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Spacing="4">
+                                            <TextBlock Text="" FontSize="12"/>
+                                            <TextBlock Text="Skills" Foreground="#7A7F99" FontSize="12"/>
+                                        </StackPanel>
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Row="0" Grid.RowSpan="2" Grid.Column="2"
+                                                VerticalAlignment="Center" Spacing="4">
+                                        <Button Classes="ActionBtn" Content="Go to Chapter"/>
+                                        <Button Content="Mark Resolved" Background="Transparent"
+                                                Foreground="#7A7F99" BorderThickness="0" Padding="6"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+
+                            <!-- Warning Item -->
+                            <Border Classes="ListItem" Background="#1A170F" BorderBrush="#3D3A1A" BorderThickness="1" CornerRadius="8">
+                                <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto">
+                                    <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="2"
+                                            Background="#3D3A1A" CornerRadius="4" Padding="8,6"
+                                            VerticalAlignment="Top" Margin="0,0,16,0">
+                                        <TextBlock Text="WARNING" Foreground="#F1C40F" FontSize="11" FontWeight="SemiBold"/>
+                                    </Border>
+
+                                    <StackPanel Grid.Row="0" Grid.Column="1" Spacing="4">
+                                        <TextBlock Text="Unexplained Stat Jump" Foreground="#FFFFFF" FontWeight="SemiBold"/>
+                                        <TextBlock Text="Chapter 28: STR increased by 12 points without level-up or equipment change"
+                                                   Foreground="#C0CAF5" FontSize="13" TextWrapping="Wrap"/>
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Spacing="12" Margin="0,8,0,0">
+                                        <StackPanel Orientation="Horizontal" Spacing="4">
+                                            <TextBlock Text="" FontSize="12"/>
+                                            <TextBlock Text="Aric Stormwind" Foreground="#7A7F99" FontSize="12"/>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Spacing="4">
+                                            <TextBlock Text="" FontSize="12"/>
+                                            <TextBlock Text="Chapter 28" Foreground="#7A7F99" FontSize="12"/>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Spacing="4">
+                                            <TextBlock Text="" FontSize="12"/>
+                                            <TextBlock Text="Stats" Foreground="#7A7F99" FontSize="12"/>
+                                        </StackPanel>
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Row="0" Grid.RowSpan="2" Grid.Column="2"
+                                                VerticalAlignment="Center" Spacing="4">
+                                        <Button Classes="ActionBtn" Content="Go to Chapter"/>
+                                        <Button Content="Mark Resolved" Background="Transparent"
+                                                Foreground="#7A7F99" BorderThickness="0" Padding="6"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+
+                            <!-- Warning Item 2 -->
+                            <Border Classes="ListItem" Background="#1A170F" BorderBrush="#3D3A1A" BorderThickness="1" CornerRadius="8">
+                                <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto">
+                                    <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="2"
+                                            Background="#3D3A1A" CornerRadius="4" Padding="8,6"
+                                            VerticalAlignment="Top" Margin="0,0,16,0">
+                                        <TextBlock Text="WARNING" Foreground="#F1C40F" FontSize="11" FontWeight="SemiBold"/>
+                                    </Border>
+
+                                    <StackPanel Grid.Row="0" Grid.Column="1" Spacing="4">
+                                        <TextBlock Text="Cooldown Violation" Foreground="#FFFFFF" FontWeight="SemiBold"/>
+                                        <TextBlock Text="Chapter 35: 'Power Strike' used twice within 3 seconds (cooldown is 5 seconds)"
+                                                   Foreground="#C0CAF5" FontSize="13" TextWrapping="Wrap"/>
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Spacing="12" Margin="0,8,0,0">
+                                        <StackPanel Orientation="Horizontal" Spacing="4">
+                                            <TextBlock Text="" FontSize="12"/>
+                                            <TextBlock Text="Aric Stormwind" Foreground="#7A7F99" FontSize="12"/>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Spacing="4">
+                                            <TextBlock Text="" FontSize="12"/>
+                                            <TextBlock Text="Chapter 35" Foreground="#7A7F99" FontSize="12"/>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Spacing="4">
+                                            <TextBlock Text="" FontSize="12"/>
+                                            <TextBlock Text="Cooldowns" Foreground="#7A7F99" FontSize="12"/>
+                                        </StackPanel>
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Row="0" Grid.RowSpan="2" Grid.Column="2"
+                                                VerticalAlignment="Center" Spacing="4">
+                                        <Button Classes="ActionBtn" Content="Go to Chapter"/>
+                                        <Button Content="Mark Resolved" Background="Transparent"
+                                                Foreground="#7A7F99" BorderThickness="0" Padding="6"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+
+                            <!-- Info Item -->
+                            <Border Classes="ListItem" Background="#0F1317" BorderBrush="#1A2A3D" BorderThickness="1" CornerRadius="8">
+                                <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto">
+                                    <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="2"
+                                            Background="#1A2A3D" CornerRadius="4" Padding="8,6"
+                                            VerticalAlignment="Top" Margin="0,0,16,0">
+                                        <TextBlock Text="INFO" Foreground="#3498DB" FontSize="11" FontWeight="SemiBold"/>
+                                    </Border>
+
+                                    <StackPanel Grid.Row="0" Grid.Column="1" Spacing="4">
+                                        <TextBlock Text="XP Gain Higher Than Expected" Foreground="#FFFFFF" FontWeight="SemiBold"/>
+                                        <TextBlock Text="Chapter 40: 5,000 XP gained in one chapter is above average (typical: 1,000-2,000)"
+                                                   Foreground="#C0CAF5" FontSize="13" TextWrapping="Wrap"/>
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Spacing="12" Margin="0,8,0,0">
+                                        <StackPanel Orientation="Horizontal" Spacing="4">
+                                            <TextBlock Text="" FontSize="12"/>
+                                            <TextBlock Text="Aric Stormwind" Foreground="#7A7F99" FontSize="12"/>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Spacing="4">
+                                            <TextBlock Text="" FontSize="12"/>
+                                            <TextBlock Text="Chapter 40" Foreground="#7A7F99" FontSize="12"/>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Spacing="4">
+                                            <TextBlock Text="" FontSize="12"/>
+                                            <TextBlock Text="XP/Leveling" Foreground="#7A7F99" FontSize="12"/>
+                                        </StackPanel>
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Row="0" Grid.RowSpan="2" Grid.Column="2"
+                                                VerticalAlignment="Center" Spacing="4">
+                                        <Button Classes="ActionBtn" Content="Go to Chapter"/>
+                                        <Button Content="Dismiss" Background="Transparent"
+                                                Foreground="#7A7F99" BorderThickness="0" Padding="6"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                        </ItemsControl.Items>
+                    </ItemsControl>
+
+                    <!-- Pagination -->
+                    <Border Background="#0A0C10" CornerRadius="8" Padding="12">
+                        <Grid ColumnDefinitions="*,Auto,*">
+                            <TextBlock Grid.Column="0" Text="Showing 5 of 22 issues"
+                                       Foreground="#7A7F99" VerticalAlignment="Center"/>
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="4">
+                                <Button Classes="ActionBtn" Content="Prev" Padding="8,6"/>
+                                <Button Classes="ActionBtn" Content="1" Background="#7AA2F7" Foreground="#FFFFFF"/>
+                                <Button Classes="ActionBtn" Content="2"/>
+                                <Button Classes="ActionBtn" Content="3"/>
+                                <Button Classes="ActionBtn" Content="4"/>
+                                <Button Classes="ActionBtn" Content="5"/>
+                                <Button Classes="ActionBtn" Content="Next" Padding="8,6"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </StackPanel>
+            </Border>
+
+            <!-- VALIDATION RULES -->
+            <Border Classes="Card">
+                <StackPanel Spacing="16">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="Validation Rules" Classes="SectionHeader"/>
+                        <Button Classes="ActionBtn" Content="? Configure Rules" Grid.Column="1"/>
+                    </Grid>
+
+                    <TextBlock Classes="HelpText"
+                               Text="Enable or disable specific validation checks to customize what issues are detected."/>
+
+                    <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto">
+                        <!-- Stats Validation -->
+                        <Border Grid.Row="0" Grid.Column="0" Classes="InnerCard" Margin="0,0,8,8">
+                            <StackPanel Spacing="8">
+                                <TextBlock Text=" Stats Validation" Foreground="#C0CAF5" FontWeight="SemiBold"/>
+                                <CheckBox Content="HP/Mana exceeding maximum" IsChecked="True"/>
+                                <CheckBox Content="Unexplained stat changes" IsChecked="True"/>
+                                <CheckBox Content="Stat calculation errors" IsChecked="True"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Skills Validation -->
+                        <Border Grid.Row="0" Grid.Column="1" Classes="InnerCard" Margin="0,0,0,8">
+                            <StackPanel Spacing="8">
+                                <TextBlock Text=" Skills Validation" Foreground="#C0CAF5" FontWeight="SemiBold"/>
+                                <CheckBox Content="Skill used before learning" IsChecked="True"/>
+                                <CheckBox Content="Skill rank inconsistencies" IsChecked="True"/>
+                                <CheckBox Content="Prerequisite violations" IsChecked="True"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- XP/Level Validation -->
+                        <Border Grid.Row="1" Grid.Column="0" Classes="InnerCard" Margin="0,0,8,8">
+                            <StackPanel Spacing="8">
+                                <TextBlock Text=" XP/Level Validation" Foreground="#C0CAF5" FontWeight="SemiBold"/>
+                                <CheckBox Content="XP exceeds possible gain" IsChecked="True"/>
+                                <CheckBox Content="Level without sufficient XP" IsChecked="True"/>
+                                <CheckBox Content="Unusual XP patterns" IsChecked="False"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Combat Validation -->
+                        <Border Grid.Row="1" Grid.Column="1" Classes="InnerCard" Margin="0,0,0,8">
+                            <StackPanel Spacing="8">
+                                <TextBlock Text="? Combat Validation" Foreground="#C0CAF5" FontWeight="SemiBold"/>
+                                <CheckBox Content="Cooldown violations" IsChecked="True"/>
+                                <CheckBox Content="Resource usage errors" IsChecked="True"/>
+                                <CheckBox Content="Damage calculation checks" IsChecked="False"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Equipment Validation -->
+                        <Border Grid.Row="2" Grid.Column="0" Classes="InnerCard" Margin="0,0,8,0">
+                            <StackPanel Spacing="8">
+                                <TextBlock Text=" Equipment Validation" Foreground="#C0CAF5" FontWeight="SemiBold"/>
+                                <CheckBox Content="Class equipment restrictions" IsChecked="True"/>
+                                <CheckBox Content="Level requirement violations" IsChecked="True"/>
+                                <CheckBox Content="Duplicate equipment slots" IsChecked="True"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Timeline Validation -->
+                        <Border Grid.Row="2" Grid.Column="1" Classes="InnerCard">
+                            <StackPanel Spacing="8">
+                                <TextBlock Text="?? Timeline Validation" Foreground="#C0CAF5" FontWeight="SemiBold"/>
+                                <CheckBox Content="Chronological inconsistencies" IsChecked="True"/>
+                                <CheckBox Content="Missing chapter data" IsChecked="True"/>
+                                <CheckBox Content="Retroactive changes" IsChecked="False"/>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+        </StackPanel>
+    </ScrollViewer>
+
+</UserControl>
+
+
+
+
+
+
+
+

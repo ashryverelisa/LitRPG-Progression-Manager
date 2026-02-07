@@ -1,4 +1,4 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
+<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -42,9 +42,9 @@
                 </StackPanel>
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                    <Button Classes="ActionBtn" Content="⟲ Reset to Defaults"
+                    <Button Classes="ActionBtn" Content=" Reset to Defaults"
                             Command="{Binding ResetToDefaultsCommand}"/>
-                    <Button Classes="PrimaryBtn" Content="✓ Validate All"
+                    <Button Classes="PrimaryBtn" Content="Validate All"
                             Command="{Binding ValidateAllSkillsCommand}"/>
                 </StackPanel>
             </Grid>
@@ -96,7 +96,7 @@
             <!-- TABS -->
             <TabControl SelectedIndex="{Binding SelectedTabIndex}">
                 <!-- SKILLS TAB -->
-                <TabItem Header="⚔ Skill Definitions">
+                <TabItem Header=" Skill Definitions">
                     <StackPanel Spacing="16" Margin="0,16,0,0">
                         <!-- Skills Section -->
                         <Border Classes="Card">
@@ -148,12 +148,12 @@
                                             <DataGridTemplateColumn.CellTemplate>
                                                 <DataTemplate x:DataType="models:SkillDefinition">
                                                     <StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Right">
-                                                        <Button Content="📋" ToolTip.Tip="Duplicate"
+                                                        <Button Content="" ToolTip.Tip="Duplicate"
                                                                 Command="{Binding $parent[DataGrid].((vm:SkillsViewModel)DataContext).DuplicateSkillCommand}"
                                                                 CommandParameter="{Binding}"
                                                                 Background="Transparent" Foreground="#7AA2F7"
                                                                 BorderThickness="0" Padding="6"/>
-                                                        <Button Content="🗑" ToolTip.Tip="Delete"
+                                                        <Button Content="" ToolTip.Tip="Delete"
                                                                 Command="{Binding $parent[DataGrid].((vm:SkillsViewModel)DataContext).DeleteSkillCommand}"
                                                                 CommandParameter="{Binding}"
                                                                 Background="Transparent" Foreground="#E74C3C"
@@ -173,11 +173,11 @@
                                 <Grid ColumnDefinitions="*,Auto">
                                     <TextBlock Text="Edit Skill" Classes="SectionHeader"/>
                                     <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
-                                        <Button Content="▲" Classes="ActionBtn"
+                                        <Button Content="^" Classes="ActionBtn"
                                                 Command="{Binding MoveSkillUpCommand}"
                                                 CommandParameter="{Binding SelectedSkill}"
                                                 ToolTip.Tip="Move Up"/>
-                                        <Button Content="▼" Classes="ActionBtn"
+                                        <Button Content="v" Classes="ActionBtn"
                                                 Command="{Binding MoveSkillDownCommand}"
                                                 CommandParameter="{Binding SelectedSkill}"
                                                 ToolTip.Tip="Move Down"/>
@@ -360,7 +360,7 @@
                                                                            Watermark="Duration" Margin="8,0"/>
                                                             <CheckBox Grid.Column="3" IsChecked="{Binding IsDebuff}"
                                                                       Content="Debuff" Margin="8,0"/>
-                                                            <Button Grid.Column="4" Content="🗑"
+                                                            <Button Grid.Column="4" Content=""
                                                                     Command="{Binding $parent[UserControl].((vm:SkillsViewModel)DataContext).DeleteStatusEffectCommand}"
                                                                     CommandParameter="{Binding}"
                                                                     Background="Transparent" Foreground="#E74C3C"
@@ -387,7 +387,7 @@
                 </TabItem>
 
                 <!-- SKILL TREES TAB -->
-                <TabItem Header="🌳 Skill Trees">
+                <TabItem Header="?? Skill Trees">
                     <StackPanel Spacing="16" Margin="0,16,0,0">
                         <!-- Skill Trees Section -->
                         <Border Classes="Card">
@@ -411,7 +411,7 @@
                                                     <TextBlock Text="{Binding Name}" FontWeight="SemiBold" Foreground="#FFFFFF"/>
                                                     <TextBlock Text="{Binding Description}" Foreground="#7A7F99" FontSize="12"/>
                                                 </StackPanel>
-                                                <Button Grid.Column="1" Content="🗑" ToolTip.Tip="Delete"
+                                                <Button Grid.Column="1" Content="" ToolTip.Tip="Delete"
                                                         Command="{Binding $parent[UserControl].((vm:SkillsViewModel)DataContext).DeleteSkillTreeCommand}"
                                                         CommandParameter="{Binding}"
                                                         Background="Transparent" Foreground="#E74C3C"
@@ -486,10 +486,10 @@
                                                                 <StackPanel Orientation="Horizontal" Spacing="12">
                                                                     <TextBlock Text="{Binding Skill.Description, FallbackValue=''}"
                                                                                Foreground="#7A7F99" FontSize="12"/>
-                                                                    <TextBlock Text="{Binding ChildNodeIds.Count, StringFormat='↓ {0} children'}"
+                                                                    <TextBlock Text="{Binding ChildNodeIds.Count, StringFormat='? {0} children'}"
                                                                                Foreground="#9ECE6A" FontSize="11"
                                                                                IsVisible="{Binding HasChildren}"/>
-                                                                    <TextBlock Text="{Binding EvolutionNodeIds.Count, StringFormat='⇢ {0} evolutions'}"
+                                                                    <TextBlock Text="{Binding EvolutionNodeIds.Count, StringFormat='? {0} evolutions'}"
                                                                                Foreground="#BB9AF7" FontSize="11"
                                                                                IsVisible="{Binding HasEvolutions}"/>
                                                                 </StackPanel>
@@ -497,7 +497,7 @@
                                                             <NumericUpDown Grid.Column="2" Value="{Binding Tier}"
                                                                            Minimum="0" Maximum="10" Width="80"
                                                                            Margin="8,0"/>
-                                                            <Button Grid.Column="3" Content="🗑"
+                                                            <Button Grid.Column="3" Content=""
                                                                     Command="{Binding $parent[UserControl].((vm:SkillsViewModel)DataContext).RemoveNodeFromTreeCommand}"
                                                                     CommandParameter="{Binding}"
                                                                     Background="Transparent" Foreground="#E74C3C"
@@ -529,7 +529,7 @@
                                             <StackPanel Spacing="8">
                                                 <Grid ColumnDefinitions="*,Auto">
                                                     <StackPanel>
-                                                        <TextBlock Text="↓ Child Nodes (Unlocks After)" FontWeight="SemiBold" Foreground="#9ECE6A"/>
+                                                        <TextBlock Text="? Child Nodes (Unlocks After)" FontWeight="SemiBold" Foreground="#9ECE6A"/>
                                                         <TextBlock Text="Skills that become available after unlocking this node"
                                                                    Foreground="#7A7F99" FontSize="11"/>
                                                     </StackPanel>
@@ -555,7 +555,7 @@
                                                         <DataTemplate>
                                                             <Border Background="#0F1115" CornerRadius="4" Padding="8,4" Margin="0,2">
                                                                 <Grid ColumnDefinitions="Auto,*,Auto">
-                                                                    <TextBlock Text="→" Foreground="#9ECE6A" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                                                                    <TextBlock Text="?" Foreground="#9ECE6A" Margin="0,0,8,0" VerticalAlignment="Center"/>
                                                                     <TextBlock Grid.Column="1" Foreground="#FFFFFF" VerticalAlignment="Center"
                                                                                FontSize="12">
                                                                         <TextBlock.Text>
@@ -565,7 +565,7 @@
                                                                             </MultiBinding>
                                                                         </TextBlock.Text>
                                                                     </TextBlock>
-                                                                    <Button Grid.Column="2" Content="✕"
+                                                                    <Button Grid.Column="2" Content="?"
                                                                             Command="{Binding $parent[UserControl].((vm:SkillsViewModel)DataContext).UnlinkChildNodeCommand}"
                                                                             CommandParameter="{Binding}"
                                                                             Background="Transparent" Foreground="#E74C3C"
@@ -588,7 +588,7 @@
                                             <StackPanel Spacing="8">
                                                 <Grid ColumnDefinitions="*,Auto">
                                                     <StackPanel>
-                                                        <TextBlock Text="⇢ Evolution Paths" FontWeight="SemiBold" Foreground="#BB9AF7"/>
+                                                        <TextBlock Text="? Evolution Paths" FontWeight="SemiBold" Foreground="#BB9AF7"/>
                                                         <TextBlock Text="Skills this can evolve into (branching paths)"
                                                                    Foreground="#7A7F99" FontSize="11"/>
                                                     </StackPanel>
@@ -614,7 +614,7 @@
                                                         <DataTemplate>
                                                             <Border Background="#0F1115" CornerRadius="4" Padding="8,4" Margin="0,2">
                                                                 <Grid ColumnDefinitions="Auto,*,Auto">
-                                                                    <TextBlock Text="⇢" Foreground="#BB9AF7" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                                                                    <TextBlock Text="?" Foreground="#BB9AF7" Margin="0,0,8,0" VerticalAlignment="Center"/>
                                                                     <TextBlock Grid.Column="1" Foreground="#FFFFFF" VerticalAlignment="Center"
                                                                                FontSize="12">
                                                                         <TextBlock.Text>
@@ -624,7 +624,7 @@
                                                                             </MultiBinding>
                                                                         </TextBlock.Text>
                                                                     </TextBlock>
-                                                                    <Button Grid.Column="2" Content="✕"
+                                                                    <Button Grid.Column="2" Content="?"
                                                                             Command="{Binding $parent[UserControl].((vm:SkillsViewModel)DataContext).UnlinkEvolutionNodeCommand}"
                                                                             CommandParameter="{Binding}"
                                                                             Background="Transparent" Foreground="#E74C3C"
@@ -643,7 +643,7 @@
                                         </Border>
 
                                         <TextBlock Classes="HelpText"
-                                                   Text="Example: Fireball → can evolve into Inferno Blast OR Fire Storm (player chooses one path)"/>
+                                                   Text="Example: Fireball ? can evolve into Inferno Blast OR Fire Storm (player chooses one path)"/>
                                     </StackPanel>
                                 </Border>
                             </StackPanel>
@@ -658,7 +658,7 @@
                 </TabItem>
 
                 <!-- FORMULA REFERENCE TAB -->
-                <TabItem Header="📖 Formula Reference">
+                <TabItem Header=" Formula Reference">
                     <StackPanel Spacing="16" Margin="0,16,0,0">
                         <Border Classes="Card">
                             <StackPanel Spacing="16">

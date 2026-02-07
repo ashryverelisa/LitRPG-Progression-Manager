@@ -1,0 +1,294 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:ProgressionManager.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="800"
+             x:DataType="vm:ClassesViewModel"
+             x:Class="ProgressionManager.Views.ClassesView">
+
+    <Design.DataContext>
+        <vm:ClassesViewModel/>
+    </Design.DataContext>
+
+    <UserControl.Styles>
+        <StyleInclude Source="/Views/Styles/CommonStyles.axaml"/>
+    </UserControl.Styles>
+
+    <ScrollViewer HorizontalScrollBarVisibility="Disabled"
+                  VerticalScrollBarVisibility="Auto">
+        <StackPanel Spacing="24" Margin="0,0,20,20">
+
+            <!-- HEADER -->
+            <Grid ColumnDefinitions="*,Auto">
+                <StackPanel Spacing="6">
+                    <TextBlock Text="Classes"
+                               FontSize="28"
+                               FontWeight="Bold"
+                               Foreground="#FFFFFF"/>
+
+                    <TextBlock Text="Define character classes with stat modifiers, equipment restrictions, and starting skills"
+                               FontSize="14"
+                               Foreground="#9AA5CE"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                    <Button Classes="ActionBtn" Content=" Import"/>
+                    <Button Classes="PrimaryBtn" Content="+ Add Class"/>
+                </StackPanel>
+            </Grid>
+
+            <!-- CLASSES LIST -->
+            <Border Classes="Card">
+                <StackPanel Spacing="16">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="Class Templates" Classes="SectionHeader"/>
+                        <TextBox Grid.Column="1" Watermark="Search classes..." Width="200"/>
+                    </Grid>
+
+                    <!-- Classes DataGrid -->
+                    <DataGrid AutoGenerateColumns="False"
+                              GridLinesVisibility="None"
+                              HeadersVisibility="Column"
+                              RowHeight="52"
+                              Background="#0F1115"
+                              BorderThickness="0"
+                              CornerRadius="10"
+                              MaxHeight="300">
+
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Name" Width="120"/>
+                            <DataGridTextColumn Header="Base Stats" Width="*"/>
+                            <DataGridTextColumn Header="Starting Skills" Width="120"/>
+                            <DataGridTextColumn Header="Equipment" Width="100"/>
+                            <DataGridTemplateColumn Header="" Width="100">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Right">
+                                            <Button Content="" ToolTip.Tip="Edit"
+                                                    Background="Transparent" Foreground="#7AA2F7"
+                                                    BorderThickness="0" Padding="6"/>
+                                            <Button Content="" ToolTip.Tip="Duplicate"
+                                                    Background="Transparent" Foreground="#7AA2F7"
+                                                    BorderThickness="0" Padding="6"/>
+                                            <Button Content="" ToolTip.Tip="Delete"
+                                                    Background="Transparent" Foreground="#E74C3C"
+                                                    BorderThickness="0" Padding="6"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <!-- Empty State -->
+                    <Border Classes="InnerCard" Padding="40">
+                        <StackPanel Spacing="16" HorizontalAlignment="Center">
+                            <TextBlock Text="" FontSize="48" HorizontalAlignment="Center"/>
+                            <TextBlock Text="No Classes Defined"
+                                       FontSize="18"
+                                       FontWeight="SemiBold"
+                                       Foreground="#FFFFFF"
+                                       HorizontalAlignment="Center"/>
+                            <TextBlock Text="Create your first class template to define character archetypes"
+                                       FontSize="14"
+                                       Foreground="#7A7F99"
+                                       HorizontalAlignment="Center"/>
+                            <Button Classes="PrimaryBtn" Content="+ Create First Class" HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Border>
+
+            <!-- CLASS EDITOR -->
+            <Border Classes="Card">
+                <StackPanel Spacing="16">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="Class Editor" Classes="SectionHeader"/>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
+                            <Button Classes="ActionBtn" Content=" Move Up"/>
+                            <Button Classes="ActionBtn" Content="Move Down"/>
+                            <Button Classes="DangerBtn" Content=" Delete"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Basic Info -->
+                    <Border Classes="InnerCard">
+                        <StackPanel Spacing="16">
+                            <TextBlock Text="Basic Information" FontSize="14" FontWeight="SemiBold" Foreground="#C0CAF5"/>
+
+                            <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto">
+                                <StackPanel Grid.Row="0" Grid.Column="0" Spacing="4" Margin="0,0,8,12">
+                                    <TextBlock Text="Class Name" Classes="Label"/>
+                                    <TextBox Watermark="e.g., Warrior, Mage, Rogue"/>
+                                </StackPanel>
+                                <StackPanel Grid.Row="0" Grid.Column="1" Spacing="4" Margin="8,0,0,12">
+                                    <TextBlock Text="Parent Class (Optional)" Classes="Label"/>
+                                    <ComboBox HorizontalAlignment="Stretch">
+                                        <ComboBoxItem Content="None (Base Class)"/>
+                                    </ComboBox>
+                                </StackPanel>
+
+                                <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Spacing="4">
+                                    <TextBlock Text="Description" Classes="Label"/>
+                                    <TextBox Watermark="Describe this class's role and playstyle..."
+                                             TextWrapping="Wrap"
+                                             AcceptsReturn="True"
+                                             MinHeight="60"/>
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Stat Modifiers -->
+                    <Border Classes="InnerCard">
+                        <StackPanel Spacing="16">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <TextBlock Text="Stat Modifiers" FontSize="14" FontWeight="SemiBold" Foreground="#C0CAF5"/>
+                                <Button Classes="ActionBtn" Content="+ Add Modifier" Grid.Column="1"/>
+                            </Grid>
+
+                            <TextBlock Classes="HelpText"
+                                       Text="Define how this class modifies base stats. Positive values boost stats, negative values reduce them."/>
+
+                            <WrapPanel Orientation="Horizontal">
+                                <!-- Stat Modifier Badges -->
+                                <Border Classes="StatBadge" Margin="0,0,8,8">
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <TextBlock Text="STR" Foreground="#F7768E" FontWeight="SemiBold"/>
+                                        <TextBlock Text="+5" Foreground="#2ECC71"/>
+                                        <Button Content="x" Background="Transparent" Foreground="#7A7F99"
+                                                BorderThickness="0" Padding="4,0"/>
+                                    </StackPanel>
+                                </Border>
+                                <Border Classes="StatBadge" Margin="0,0,8,8">
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <TextBlock Text="VIT" Foreground="#FF9E64" FontWeight="SemiBold"/>
+                                        <TextBlock Text="+3" Foreground="#2ECC71"/>
+                                        <Button Content="x" Background="Transparent" Foreground="#7A7F99"
+                                                BorderThickness="0" Padding="4,0"/>
+                                    </StackPanel>
+                                </Border>
+                                <Border Classes="StatBadge" Margin="0,0,8,8">
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <TextBlock Text="INT" Foreground="#7AA2F7" FontWeight="SemiBold"/>
+                                        <TextBlock Text="-2" Foreground="#E74C3C"/>
+                                        <Button Content="x" Background="Transparent" Foreground="#7A7F99"
+                                                BorderThickness="0" Padding="4,0"/>
+                                    </StackPanel>
+                                </Border>
+                            </WrapPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Starting Skills -->
+                    <Border Classes="InnerCard">
+                        <StackPanel Spacing="16">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <TextBlock Text="Starting Skills" FontSize="14" FontWeight="SemiBold" Foreground="#C0CAF5"/>
+                                <Button Classes="ActionBtn" Content="+ Add Skill" Grid.Column="1"/>
+                            </Grid>
+
+                            <TextBlock Classes="HelpText"
+                                       Text="Skills that characters of this class start with at level 1."/>
+
+                            <WrapPanel Orientation="Horizontal">
+                                <Border Classes="StatBadge" Margin="0,0,8,8">
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <TextBlock Text="" FontSize="16"/>
+                                        <TextBlock Text="Power Strike" Foreground="#C0CAF5"/>
+                                        <TextBlock Text="Rank 1" Foreground="#7A7F99" FontSize="11"/>
+                                        <Button Content="x" Background="Transparent" Foreground="#7A7F99"
+                                                BorderThickness="0" Padding="4,0"/>
+                                    </StackPanel>
+                                </Border>
+                                <Border Classes="StatBadge" Margin="0,0,8,8">
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <TextBlock Text="" FontSize="16"/>
+                                        <TextBlock Text="Block" Foreground="#C0CAF5"/>
+                                        <TextBlock Text="Rank 1" Foreground="#7A7F99" FontSize="11"/>
+                                        <Button Content="x" Background="Transparent" Foreground="#7A7F99"
+                                                BorderThickness="0" Padding="4,0"/>
+                                    </StackPanel>
+                                </Border>
+                            </WrapPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Equipment Restrictions -->
+                    <Border Classes="InnerCard">
+                        <StackPanel Spacing="16">
+                            <TextBlock Text="Allowed Equipment" FontSize="14" FontWeight="SemiBold" Foreground="#C0CAF5"/>
+
+                            <TextBlock Classes="HelpText"
+                                       Text="Define what types of equipment this class can use."/>
+
+                            <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto">
+                                <StackPanel Grid.Row="0" Grid.Column="0" Spacing="8" Margin="0,0,12,12">
+                                    <TextBlock Text="Weapons" Classes="Label"/>
+                                    <CheckBox Content="Swords" IsChecked="True"/>
+                                    <CheckBox Content="Axes" IsChecked="True"/>
+                                    <CheckBox Content="Maces" IsChecked="True"/>
+                                    <CheckBox Content="Staffs"/>
+                                    <CheckBox Content="Bows"/>
+                                    <CheckBox Content="Daggers"/>
+                                </StackPanel>
+
+                                <StackPanel Grid.Row="0" Grid.Column="1" Spacing="8" Margin="0,0,12,12">
+                                    <TextBlock Text="Armor" Classes="Label"/>
+                                    <CheckBox Content="Heavy Armor" IsChecked="True"/>
+                                    <CheckBox Content="Medium Armor" IsChecked="True"/>
+                                    <CheckBox Content="Light Armor" IsChecked="True"/>
+                                    <CheckBox Content="Robes"/>
+                                    <CheckBox Content="Shields" IsChecked="True"/>
+                                </StackPanel>
+
+                                <StackPanel Grid.Row="0" Grid.Column="2" Spacing="8">
+                                    <TextBlock Text="Accessories" Classes="Label"/>
+                                    <CheckBox Content="Rings" IsChecked="True"/>
+                                    <CheckBox Content="Amulets" IsChecked="True"/>
+                                    <CheckBox Content="Cloaks" IsChecked="True"/>
+                                    <CheckBox Content="Magic Orbs"/>
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Level-Up Bonuses -->
+                    <Border Classes="InnerCard">
+                        <StackPanel Spacing="16">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <TextBlock Text="Level-Up Bonuses" FontSize="14" FontWeight="SemiBold" Foreground="#C0CAF5"/>
+                                <Button Classes="ActionBtn" Content="+ Add Bonus" Grid.Column="1"/>
+                            </Grid>
+
+                            <TextBlock Classes="HelpText"
+                                       Text="Special bonuses this class receives at certain levels."/>
+
+                            <DataGrid AutoGenerateColumns="False"
+                                      GridLinesVisibility="None"
+                                      HeadersVisibility="Column"
+                                      RowHeight="44"
+                                      Background="#0A0C10"
+                                      BorderThickness="0"
+                                      CornerRadius="8"
+                                      MaxHeight="200">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Level" Width="80"/>
+                                    <DataGridTextColumn Header="Bonus Type" Width="120"/>
+                                    <DataGridTextColumn Header="Description" Width="*"/>
+                                    <DataGridTextColumn Header="Value" Width="80"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </StackPanel>
+                    </Border>
+
+                </StackPanel>
+            </Border>
+
+        </StackPanel>
+    </ScrollViewer>
+
+</UserControl>
+
+

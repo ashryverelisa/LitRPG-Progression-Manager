@@ -1,0 +1,339 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:ProgressionManager.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="800"
+             x:DataType="vm:RacesViewModel"
+             x:Class="ProgressionManager.Views.RacesView">
+
+    <Design.DataContext>
+        <vm:RacesViewModel/>
+    </Design.DataContext>
+
+    <UserControl.Styles>
+        <StyleInclude Source="/Views/Styles/CommonStyles.axaml"/>
+    </UserControl.Styles>
+
+    <ScrollViewer HorizontalScrollBarVisibility="Disabled"
+                  VerticalScrollBarVisibility="Auto">
+        <StackPanel Spacing="24" Margin="0,0,20,20">
+
+            <!-- HEADER -->
+            <Grid ColumnDefinitions="*,Auto">
+                <StackPanel Spacing="6">
+                    <TextBlock Text="Races"
+                               FontSize="28"
+                               FontWeight="Bold"
+                               Foreground="#FFFFFF"/>
+
+                    <TextBlock Text="Define playable races with passive bonuses, growth modifiers, and evolution paths"
+                               FontSize="14"
+                               Foreground="#9AA5CE"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                    <Button Classes="ActionBtn" Content=" Import"/>
+                    <Button Classes="PrimaryBtn" Content="+ Add Race"/>
+                </StackPanel>
+            </Grid>
+
+            <!-- RACES LIST -->
+            <Border Classes="Card">
+                <StackPanel Spacing="16">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="Race Templates" Classes="SectionHeader"/>
+                        <TextBox Grid.Column="1" Watermark="Search races..." Width="200"/>
+                    </Grid>
+
+                    <!-- Races DataGrid -->
+                    <DataGrid AutoGenerateColumns="False"
+                              GridLinesVisibility="None"
+                              HeadersVisibility="Column"
+                              RowHeight="52"
+                              Background="#0F1115"
+                              BorderThickness="0"
+                              CornerRadius="10"
+                              MaxHeight="300">
+
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Name" Width="120"/>
+                            <DataGridTextColumn Header="Passive Bonuses" Width="*"/>
+                            <DataGridTextColumn Header="Growth Mod" Width="100"/>
+                            <DataGridTextColumn Header="Evolutions" Width="100"/>
+                            <DataGridTemplateColumn Header="" Width="100">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Right">
+                                            <Button Content="" ToolTip.Tip="Edit"
+                                                    Background="Transparent" Foreground="#7AA2F7"
+                                                    BorderThickness="0" Padding="6"/>
+                                            <Button Content="" ToolTip.Tip="Duplicate"
+                                                    Background="Transparent" Foreground="#7AA2F7"
+                                                    BorderThickness="0" Padding="6"/>
+                                            <Button Content="" ToolTip.Tip="Delete"
+                                                    Background="Transparent" Foreground="#E74C3C"
+                                                    BorderThickness="0" Padding="6"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <!-- Empty State -->
+                    <Border Classes="InnerCard" Padding="40">
+                        <StackPanel Spacing="16" HorizontalAlignment="Center">
+                            <TextBlock Text="" FontSize="48" HorizontalAlignment="Center"/>
+                            <TextBlock Text="No Races Defined"
+                                       FontSize="18"
+                                       FontWeight="SemiBold"
+                                       Foreground="#FFFFFF"
+                                       HorizontalAlignment="Center"/>
+                            <TextBlock Text="Create your first race to define species in your world"
+                                       FontSize="14"
+                                       Foreground="#7A7F99"
+                                       HorizontalAlignment="Center"/>
+                            <Button Classes="PrimaryBtn" Content="+ Create First Race" HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Border>
+
+            <!-- RACE EDITOR -->
+            <Border Classes="Card">
+                <StackPanel Spacing="16">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="Race Editor" Classes="SectionHeader"/>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
+                            <Button Classes="ActionBtn" Content=" Move Up"/>
+                            <Button Classes="ActionBtn" Content="Move Down"/>
+                            <Button Classes="DangerBtn" Content=" Delete"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Basic Info -->
+                    <Border Classes="InnerCard">
+                        <StackPanel Spacing="16">
+                            <TextBlock Text="Basic Information" FontSize="14" FontWeight="SemiBold" Foreground="#C0CAF5"/>
+
+                            <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto">
+                                <StackPanel Grid.Row="0" Grid.Column="0" Spacing="4" Margin="0,0,8,12">
+                                    <TextBlock Text="Race Name" Classes="Label"/>
+                                    <TextBox Watermark="e.g., Human, Elf, Dwarf, Orc"/>
+                                </StackPanel>
+                                <StackPanel Grid.Row="0" Grid.Column="1" Spacing="4" Margin="8,0,0,12">
+                                    <TextBlock Text="Base Race (Optional)" Classes="Label"/>
+                                    <ComboBox HorizontalAlignment="Stretch">
+                                        <ComboBoxItem Content="None (Base Race)"/>
+                                    </ComboBox>
+                                </StackPanel>
+
+                                <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Spacing="4">
+                                    <TextBlock Text="Description" Classes="Label"/>
+                                    <TextBox Watermark="Describe this race's lore, culture, and characteristics..."
+                                             TextWrapping="Wrap"
+                                             AcceptsReturn="True"
+                                             MinHeight="60"/>
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Passive Bonuses -->
+                    <Border Classes="InnerCard">
+                        <StackPanel Spacing="16">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <TextBlock Text="Passive Bonuses" FontSize="14" FontWeight="SemiBold" Foreground="#C0CAF5"/>
+                                <Button Classes="ActionBtn" Content="+ Add Bonus" Grid.Column="1"/>
+                            </Grid>
+
+                            <TextBlock Classes="HelpText"
+                                       Text="Innate bonuses that all members of this race receive."/>
+
+                            <WrapPanel Orientation="Horizontal">
+                                <!-- Sample Passive Bonuses -->
+                                <Border Classes="StatBadge" Margin="0,0,8,8">
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <TextBlock Text="" FontSize="16"/>
+                                        <TextBlock Text="Darkvision" Foreground="#C0CAF5"/>
+                                        <TextBlock Text="60ft" Foreground="#7AA2F7" FontSize="11"/>
+                                        <Button Content="x" Background="Transparent" Foreground="#7A7F99"
+                                                BorderThickness="0" Padding="4,0"/>
+                                    </StackPanel>
+                                </Border>
+                                <Border Classes="StatBadge" Margin="0,0,8,8">
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <TextBlock Text="" FontSize="16"/>
+                                        <TextBlock Text="Bow Proficiency" Foreground="#C0CAF5"/>
+                                        <TextBlock Text="+10%" Foreground="#2ECC71" FontSize="11"/>
+                                        <Button Content="x" Background="Transparent" Foreground="#7A7F99"
+                                                BorderThickness="0" Padding="4,0"/>
+                                    </StackPanel>
+                                </Border>
+                                <Border Classes="StatBadge" Margin="0,0,8,8">
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <TextBlock Text="" FontSize="16"/>
+                                        <TextBlock Text="Magic Affinity" Foreground="#C0CAF5"/>
+                                        <TextBlock Text="+5 INT" Foreground="#2ECC71" FontSize="11"/>
+                                        <Button Content="x" Background="Transparent" Foreground="#7A7F99"
+                                                BorderThickness="0" Padding="4,0"/>
+                                    </StackPanel>
+                                </Border>
+                            </WrapPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Growth Modifiers -->
+                    <Border Classes="InnerCard">
+                        <StackPanel Spacing="16">
+                            <TextBlock Text="Growth Modifiers" FontSize="14" FontWeight="SemiBold" Foreground="#C0CAF5"/>
+
+                            <TextBlock Classes="HelpText"
+                                       Text="How stat growth per level is modified for this race. Values are multipliers (1.0 = normal)."/>
+
+                            <Grid ColumnDefinitions="*,*,*,*" RowDefinitions="Auto">
+                                <StackPanel Grid.Column="0" Spacing="4" Margin="0,0,8,0">
+                                    <TextBlock Text="STR Growth" Classes="Label"/>
+                                    <NumericUpDown Minimum="0.1" Maximum="3.0" Increment="0.1"
+                                                   Value="1.0" FormatString="N1"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Spacing="4" Margin="0,0,8,0">
+                                    <TextBlock Text="VIT Growth" Classes="Label"/>
+                                    <NumericUpDown Minimum="0.1" Maximum="3.0" Increment="0.1"
+                                                   Value="0.9" FormatString="N1"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="2" Spacing="4" Margin="0,0,8,0">
+                                    <TextBlock Text="INT Growth" Classes="Label"/>
+                                    <NumericUpDown Minimum="0.1" Maximum="3.0" Increment="0.1"
+                                                   Value="1.2" FormatString="N1"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="3" Spacing="4">
+                                    <TextBlock Text="AGI Growth" Classes="Label"/>
+                                    <NumericUpDown Minimum="0.1" Maximum="3.0" Increment="0.1"
+                                                   Value="1.1" FormatString="N1"/>
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Racial Evolution Paths -->
+                    <Border Classes="InnerCard">
+                        <StackPanel Spacing="16">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <TextBlock Text="Racial Evolutions" FontSize="14" FontWeight="SemiBold" Foreground="#C0CAF5"/>
+                                <Button Classes="ActionBtn" Content="+ Add Evolution" Grid.Column="1"/>
+                            </Grid>
+
+                            <TextBlock Classes="HelpText"
+                                       Text="Define evolution paths for this race. Example: Elf ? High Elf ? Star Elf"/>
+
+                            <!-- Evolution Tree Preview -->
+                            <Border Background="#0A0C10" CornerRadius="8" Padding="20">
+                                <StackPanel Spacing="16">
+                                    <TextBlock Text="Evolution Path Preview" Classes="Label"/>
+
+                                    <!-- Sample Evolution Chain -->
+                                    <StackPanel Orientation="Horizontal" Spacing="0" HorizontalAlignment="Center">
+                                        <Border Classes="StatBadge" Background="#1A3D2E">
+                                            <TextBlock Text=" Elf" Foreground="#2ECC71" FontWeight="SemiBold"/>
+                                        </Border>
+                                        <TextBlock Text=" ? " Foreground="#7A7F99" VerticalAlignment="Center" Margin="8,0"/>
+                                        <Border Classes="StatBadge" Background="#1A2A3D">
+                                            <TextBlock Text=" High Elf" Foreground="#7AA2F7" FontWeight="SemiBold"/>
+                                        </Border>
+                                        <TextBlock Text=" ? " Foreground="#7A7F99" VerticalAlignment="Center" Margin="8,0"/>
+                                        <Border Classes="StatBadge" Background="#3D2A1A">
+                                            <TextBlock Text=" Star Elf" Foreground="#F7768E" FontWeight="SemiBold"/>
+                                        </Border>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Evolutions List -->
+                            <DataGrid AutoGenerateColumns="False"
+                                      GridLinesVisibility="None"
+                                      HeadersVisibility="Column"
+                                      RowHeight="44"
+                                      Background="#0A0C10"
+                                      BorderThickness="0"
+                                      CornerRadius="8"
+                                      MaxHeight="200">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Evolution Name" Width="150"/>
+                                    <DataGridTextColumn Header="Required Level" Width="100"/>
+                                    <DataGridTextColumn Header="Requirements" Width="*"/>
+                                    <DataGridTextColumn Header="Bonuses" Width="150"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Racial Traits -->
+                    <Border Classes="InnerCard">
+                        <StackPanel Spacing="16">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <TextBlock Text="Racial Traits" FontSize="14" FontWeight="SemiBold" Foreground="#C0CAF5"/>
+                                <Button Classes="ActionBtn" Content="+ Add Trait" Grid.Column="1"/>
+                            </Grid>
+
+                            <TextBlock Classes="HelpText"
+                                       Text="Unique traits that define this race's special abilities and restrictions."/>
+
+                            <ItemsControl>
+                                <ItemsControl.Items>
+                                    <!-- Sample Trait -->
+                                    <Border Classes="ListItem">
+                                        <Grid ColumnDefinitions="Auto,*,Auto">
+                                            <Border Background="#1A3D2E" CornerRadius="4" Padding="6,3"
+                                                    VerticalAlignment="Center" Margin="0,0,12,0">
+                                                <TextBlock Text="Passive" Foreground="#2ECC71" FontSize="11"/>
+                                            </Border>
+                                            <StackPanel Grid.Column="1" Spacing="4">
+                                                <TextBlock Text="Longevity" Foreground="#FFFFFF" FontWeight="SemiBold"/>
+                                                <TextBlock Text="Elves age at 1/10th the rate of humans and are immune to magical aging effects."
+                                                           Foreground="#7A7F99" FontSize="12" TextWrapping="Wrap"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="4">
+                                                <Button Content="" Background="Transparent" Foreground="#7AA2F7"
+                                                        BorderThickness="0" Padding="6"/>
+                                                <Button Content="" Background="Transparent" Foreground="#E74C3C"
+                                                        BorderThickness="0" Padding="6"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+
+                                    <!-- Sample Trait 2 -->
+                                    <Border Classes="ListItem">
+                                        <Grid ColumnDefinitions="Auto,*,Auto">
+                                            <Border Background="#3D3A1A" CornerRadius="4" Padding="6,3"
+                                                    VerticalAlignment="Center" Margin="0,0,12,0">
+                                                <TextBlock Text="Restriction" Foreground="#F1C40F" FontSize="11"/>
+                                            </Border>
+                                            <StackPanel Grid.Column="1" Spacing="4">
+                                                <TextBlock Text="Iron Sensitivity" Foreground="#FFFFFF" FontWeight="SemiBold"/>
+                                                <TextBlock Text="Cold iron weapons deal +50% damage. Cannot wear cold iron armor."
+                                                           Foreground="#7A7F99" FontSize="12" TextWrapping="Wrap"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="4">
+                                                <Button Content="" Background="Transparent" Foreground="#7AA2F7"
+                                                        BorderThickness="0" Padding="6"/>
+                                                <Button Content="" Background="Transparent" Foreground="#E74C3C"
+                                                        BorderThickness="0" Padding="6"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                </ItemsControl.Items>
+                            </ItemsControl>
+                        </StackPanel>
+                    </Border>
+
+                </StackPanel>
+            </Border>
+
+        </StackPanel>
+    </ScrollViewer>
+
+</UserControl>
+
+

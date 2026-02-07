@@ -1,0 +1,413 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:ProgressionManager.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="800"
+             x:DataType="vm:TimelineViewModel"
+             x:Class="ProgressionManager.Views.TimelineView">
+
+    <Design.DataContext>
+        <vm:TimelineViewModel/>
+    </Design.DataContext>
+
+    <UserControl.Styles>
+        <StyleInclude Source="/Views/Styles/CommonStyles.axaml"/>
+    </UserControl.Styles>
+
+    <ScrollViewer HorizontalScrollBarVisibility="Disabled"
+                  VerticalScrollBarVisibility="Auto">
+        <StackPanel Spacing="24" Margin="0,0,20,20">
+
+            <!-- HEADER -->
+            <Grid ColumnDefinitions="*,Auto">
+                <StackPanel Spacing="6">
+                    <TextBlock Text="Chapter Timeline"
+                               FontSize="28"
+                               FontWeight="Bold"
+                               Foreground="#FFFFFF"/>
+
+                    <TextBlock Text="Track character progression across chapters with detailed stat snapshots"
+                               FontSize="14"
+                               Foreground="#9AA5CE"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                    <Button Classes="ActionBtn" Content="Export"/>
+                    <Button Classes="PrimaryBtn" Content="+ Add Chapter Entry"/>
+                </StackPanel>
+            </Grid>
+
+            <!-- FILTERS AND CHARACTER SELECT -->
+            <Border Classes="Card">
+                <Grid ColumnDefinitions="*,*,Auto" RowDefinitions="Auto">
+                    <StackPanel Grid.Column="0" Spacing="4" Margin="0,0,12,0">
+                        <TextBlock Text="Select Character" Classes="Label"/>
+                        <ComboBox HorizontalAlignment="Stretch">
+                            <ComboBoxItem Content="Aric Stormwind (Human Warrior)" IsSelected="True"/>
+                            <ComboBoxItem Content="Elena Brightwood (Elf Mage)"/>
+                            <ComboBoxItem Content="Thrak Ironforge (Dwarf Fighter)"/>
+                        </ComboBox>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1" Spacing="4" Margin="0,0,12,0">
+                        <TextBlock Text="Chapter Range" Classes="Label"/>
+                        <Grid ColumnDefinitions="*,Auto,*">
+                            <NumericUpDown Grid.Column="0" Value="1" Minimum="1" Maximum="999"/>
+                            <TextBlock Grid.Column="1" Text=" to " VerticalAlignment="Center" Foreground="#7A7F99" Margin="8,0"/>
+                            <NumericUpDown Grid.Column="2" Value="50" Minimum="1" Maximum="999"/>
+                        </Grid>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="2" VerticalAlignment="Bottom" Orientation="Horizontal" Spacing="8">
+                        <Button Classes="ActionBtn" Content="Compare Chapters"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- TIMELINE STATS OVERVIEW -->
+            <Border Classes="Card">
+                <StackPanel Spacing="16">
+                    <TextBlock Text="Progression Overview" Classes="SectionHeader"/>
+
+                    <Grid ColumnDefinitions="*,*,*,*,*">
+                        <Border Grid.Column="0" Classes="InnerCard" Margin="0,0,8,0">
+                            <StackPanel Spacing="4" HorizontalAlignment="Center">
+                                <TextBlock Text="Start Level" Foreground="#7A7F99" FontSize="12"/>
+                                <TextBlock Text="1" Foreground="#7AA2F7" FontSize="28" FontWeight="Bold"/>
+                                <TextBlock Text="Chapter 1" Foreground="#7A7F99" FontSize="11"/>
+                            </StackPanel>
+                        </Border>
+                        <Border Grid.Column="1" Classes="InnerCard" Margin="0,0,8,0">
+                            <StackPanel Spacing="4" HorizontalAlignment="Center">
+                                <TextBlock Text="Current Level" Foreground="#7A7F99" FontSize="12"/>
+                                <TextBlock Text="15" Foreground="#2ECC71" FontSize="28" FontWeight="Bold"/>
+                                <TextBlock Text="Chapter 42" Foreground="#7A7F99" FontSize="11"/>
+                            </StackPanel>
+                        </Border>
+                        <Border Grid.Column="2" Classes="InnerCard" Margin="0,0,8,0">
+                            <StackPanel Spacing="4" HorizontalAlignment="Center">
+                                <TextBlock Text="Total XP Gained" Foreground="#7A7F99" FontSize="12"/>
+                                <TextBlock Text="45,230" Foreground="#9B59B6" FontSize="28" FontWeight="Bold"/>
+                                <TextBlock Text="across 42 chapters" Foreground="#7A7F99" FontSize="11"/>
+                            </StackPanel>
+                        </Border>
+                        <Border Grid.Column="3" Classes="InnerCard" Margin="0,0,8,0">
+                            <StackPanel Spacing="4" HorizontalAlignment="Center">
+                                <TextBlock Text="Skills Learned" Foreground="#7A7F99" FontSize="12"/>
+                                <TextBlock Text="8" Foreground="#F7768E" FontSize="28" FontWeight="Bold"/>
+                                <TextBlock Text="4 active, 4 passive" Foreground="#7A7F99" FontSize="11"/>
+                            </StackPanel>
+                        </Border>
+                        <Border Grid.Column="4" Classes="InnerCard">
+                            <StackPanel Spacing="4" HorizontalAlignment="Center">
+                                <TextBlock Text="Avg Levels/Ch" Foreground="#7A7F99" FontSize="12"/>
+                                <TextBlock Text="0.33" Foreground="#FF9E64" FontSize="28" FontWeight="Bold"/>
+                                <TextBlock Text="levels per chapter" Foreground="#7A7F99" FontSize="11"/>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- CHAPTER TIMELINE TABLE -->
+            <Border Classes="Card">
+                <StackPanel Spacing="16">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="Chapter History" Classes="SectionHeader"/>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
+                            <TextBox Watermark="Search chapters..." Width="200"/>
+                            <Button Classes="ActionBtn" Content="Newest First"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Timeline DataGrid -->
+                    <DataGrid AutoGenerateColumns="False"
+                              GridLinesVisibility="None"
+                              HeadersVisibility="Column"
+                              RowHeight="56"
+                              Background="#0F1115"
+                              BorderThickness="0"
+                              CornerRadius="10"
+                              MaxHeight="400">
+
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Chapter" Width="80"/>
+                            <DataGridTextColumn Header="Level" Width="70"/>
+                            <DataGridTextColumn Header="HP" Width="80"/>
+                            <DataGridTextColumn Header="Mana" Width="80"/>
+                            <DataGridTextColumn Header="STR" Width="60"/>
+                            <DataGridTextColumn Header="VIT" Width="60"/>
+                            <DataGridTextColumn Header="INT" Width="60"/>
+                            <DataGridTextColumn Header="AGI" Width="60"/>
+                            <DataGridTextColumn Header="Skills Gained" Width="*"/>
+                            <DataGridTemplateColumn Header="" Width="80">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Right">
+                                            <Button Content="" ToolTip.Tip="Edit"
+                                                    Background="Transparent" Foreground="#7AA2F7"
+                                                    BorderThickness="0" Padding="6"/>
+                                            <Button Content="" ToolTip.Tip="Delete"
+                                                    Background="Transparent" Foreground="#E74C3C"
+                                                    BorderThickness="0" Padding="6"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <TextBlock Classes="HelpText" Text="Click on any chapter row to view detailed stats and edit the entry"/>
+                </StackPanel>
+            </Border>
+
+            <!-- CHAPTER ENTRY EDITOR -->
+            <Border Classes="Card">
+                <StackPanel Spacing="16">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <StackPanel Orientation="Horizontal" Spacing="12">
+                            <TextBlock Text="Chapter Entry Editor" Classes="SectionHeader"/>
+                            <Border Classes="StatBadge" Background="#1A3D2E">
+                                <TextBlock Text="Chapter 42" Foreground="#2ECC71" FontSize="12"/>
+                            </Border>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
+                            <Button Classes="ActionBtn" Content="Previous"/>
+                            <Button Classes="ActionBtn" Content="Next >"/>
+                            <Button Classes="SuccessBtn" Content="Save Changes"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Chapter Info -->
+                    <Border Classes="InnerCard">
+                        <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto">
+                            <StackPanel Grid.Column="0" Spacing="4" Margin="0,0,12,0">
+                                <TextBlock Text="Chapter Number" Classes="Label"/>
+                                <NumericUpDown Value="42" Minimum="1" Maximum="9999"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Spacing="4" Margin="0,0,12,0">
+                                <TextBlock Text="Chapter Title (Optional)" Classes="Label"/>
+                                <TextBox Watermark="e.g., 'The Dungeon Boss'"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="2" Spacing="4">
+                                <TextBlock Text="Level at End of Chapter" Classes="Label"/>
+                                <NumericUpDown Value="15" Minimum="1" Maximum="999"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <!-- Stats Snapshot -->
+                    <Border Classes="InnerCard">
+                        <StackPanel Spacing="16">
+                            <TextBlock Text="Stats Snapshot" FontSize="14" FontWeight="SemiBold" Foreground="#C0CAF5"/>
+
+                            <Grid ColumnDefinitions="*,*,*,*" RowDefinitions="Auto,Auto">
+                                <StackPanel Grid.Row="0" Grid.Column="0" Spacing="4" Margin="0,0,8,12">
+                                    <TextBlock Text="STR" Classes="Label"/>
+                                    <NumericUpDown Value="45" Minimum="0"/>
+                                </StackPanel>
+                                <StackPanel Grid.Row="0" Grid.Column="1" Spacing="4" Margin="0,0,8,12">
+                                    <TextBlock Text="VIT" Classes="Label"/>
+                                    <NumericUpDown Value="38" Minimum="0"/>
+                                </StackPanel>
+                                <StackPanel Grid.Row="0" Grid.Column="2" Spacing="4" Margin="0,0,8,12">
+                                    <TextBlock Text="INT" Classes="Label"/>
+                                    <NumericUpDown Value="18" Minimum="0"/>
+                                </StackPanel>
+                                <StackPanel Grid.Row="0" Grid.Column="3" Spacing="4" Margin="0,0,0,12">
+                                    <TextBlock Text="AGI" Classes="Label"/>
+                                    <NumericUpDown Value="32" Minimum="0"/>
+                                </StackPanel>
+
+                                <StackPanel Grid.Row="1" Grid.Column="0" Spacing="4" Margin="0,0,8,0">
+                                    <TextBlock Text="Current HP" Classes="Label"/>
+                                    <NumericUpDown Value="531" Minimum="0"/>
+                                </StackPanel>
+                                <StackPanel Grid.Row="1" Grid.Column="1" Spacing="4" Margin="0,0,8,0">
+                                    <TextBlock Text="Max HP" Classes="Label"/>
+                                    <NumericUpDown Value="531" Minimum="0"/>
+                                </StackPanel>
+                                <StackPanel Grid.Row="1" Grid.Column="2" Spacing="4" Margin="0,0,8,0">
+                                    <TextBlock Text="Current Mana" Classes="Label"/>
+                                    <NumericUpDown Value="225" Minimum="0"/>
+                                </StackPanel>
+                                <StackPanel Grid.Row="1" Grid.Column="3" Spacing="4">
+                                    <TextBlock Text="Max Mana" Classes="Label"/>
+                                    <NumericUpDown Value="225" Minimum="0"/>
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- XP Changes -->
+                    <Border Classes="InnerCard">
+                        <StackPanel Spacing="16">
+                            <TextBlock Text="XP Changes" FontSize="14" FontWeight="SemiBold" Foreground="#C0CAF5"/>
+
+                            <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto">
+                                <StackPanel Grid.Column="0" Spacing="4" Margin="0,0,12,0">
+                                    <TextBlock Text="XP at Start" Classes="Label"/>
+                                    <NumericUpDown Value="10000" Minimum="0" FormatString="N0"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Spacing="4" Margin="0,0,12,0">
+                                    <TextBlock Text="XP Gained" Classes="Label"/>
+                                    <NumericUpDown Value="2450" Minimum="0" FormatString="N0"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="2" Spacing="4">
+                                    <TextBlock Text="XP at End" Classes="Label"/>
+                                    <NumericUpDown Value="12450" Minimum="0" FormatString="N0" IsEnabled="False"/>
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Skills Gained -->
+                    <Border Classes="InnerCard">
+                        <StackPanel Spacing="16">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <TextBlock Text="Skills Gained This Chapter" FontSize="14" FontWeight="SemiBold" Foreground="#C0CAF5"/>
+                                <Button Classes="ActionBtn" Content="+ Add Skill Gain" Grid.Column="1"/>
+                            </Grid>
+
+                            <WrapPanel Orientation="Horizontal">
+                                <Border Classes="StatBadge" Margin="0,0,8,8">
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <TextBlock Text="" FontSize="16"/>
+                                        <TextBlock Text="Whirlwind" Foreground="#C0CAF5"/>
+                                        <Border Background="#1A3D2E" CornerRadius="4" Padding="4,2">
+                                            <TextBlock Text="NEW" Foreground="#2ECC71" FontSize="10"/>
+                                        </Border>
+                                        <Button Content="x" Background="Transparent" Foreground="#7A7F99"
+                                                BorderThickness="0" Padding="4,0"/>
+                                    </StackPanel>
+                                </Border>
+                                <Border Classes="StatBadge" Margin="0,0,8,8">
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <TextBlock Text="" FontSize="16"/>
+                                        <TextBlock Text="Power Strike" Foreground="#C0CAF5"/>
+                                        <Border Background="#1A2A3D" CornerRadius="4" Padding="4,2">
+                                            <TextBlock Text="Rank 4 ? 5" Foreground="#7AA2F7" FontSize="10"/>
+                                        </Border>
+                                        <Button Content="x" Background="Transparent" Foreground="#7A7F99"
+                                                BorderThickness="0" Padding="4,0"/>
+                                    </StackPanel>
+                                </Border>
+                            </WrapPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Equipment Changes -->
+                    <Border Classes="InnerCard">
+                        <StackPanel Spacing="16">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <TextBlock Text="Equipment Changes This Chapter" FontSize="14" FontWeight="SemiBold" Foreground="#C0CAF5"/>
+                                <Button Classes="ActionBtn" Content="+ Add Equipment Change" Grid.Column="1"/>
+                            </Grid>
+
+                            <ItemsControl>
+                                <ItemsControl.Items>
+                                    <Border Classes="ListItem">
+                                        <Grid ColumnDefinitions="Auto,*,Auto">
+                                            <Border Background="#3D1A1A" CornerRadius="4" Padding="6,3"
+                                                    VerticalAlignment="Center" Margin="0,0,12,0">
+                                                <TextBlock Text="Unequip" Foreground="#E74C3C" FontSize="11"/>
+                                            </Border>
+                                            <StackPanel Grid.Column="1" Spacing="2">
+                                                <TextBlock Text="Old Iron Sword" Foreground="#FFFFFF"/>
+                                                <TextBlock Text="Replaced by Flame Sword +3" Foreground="#7A7F99" FontSize="11"/>
+                                            </StackPanel>
+                                            <Button Grid.Column="2" Content="x" Background="Transparent"
+                                                    Foreground="#7A7F99" BorderThickness="0" Padding="6"/>
+                                        </Grid>
+                                    </Border>
+                                    <Border Classes="ListItem">
+                                        <Grid ColumnDefinitions="Auto,*,Auto">
+                                            <Border Background="#1A3D2E" CornerRadius="4" Padding="6,3"
+                                                    VerticalAlignment="Center" Margin="0,0,12,0">
+                                                <TextBlock Text="Equip" Foreground="#2ECC71" FontSize="11"/>
+                                            </Border>
+                                            <StackPanel Grid.Column="1" Spacing="2">
+                                                <TextBlock Text=" Flame Sword +3" Foreground="#F7768E"/>
+                                                <TextBlock Text="Looted from Dungeon Boss" Foreground="#7A7F99" FontSize="11"/>
+                                            </StackPanel>
+                                            <Button Grid.Column="2" Content="x" Background="Transparent"
+                                                    Foreground="#7A7F99" BorderThickness="0" Padding="6"/>
+                                        </Grid>
+                                    </Border>
+                                </ItemsControl.Items>
+                            </ItemsControl>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Chapter Notes -->
+                    <Border Classes="InnerCard">
+                        <StackPanel Spacing="8">
+                            <TextBlock Text="Chapter Notes" FontSize="14" FontWeight="SemiBold" Foreground="#C0CAF5"/>
+                            <TextBox Watermark="Add notes about important events, combat encounters, or story progression in this chapter..."
+                                     TextWrapping="Wrap"
+                                     AcceptsReturn="True"
+                                     MinHeight="80"
+                                     Text="Defeated the Flame Golem boss. Gained Whirlwind skill from skill book drop. Upgraded Power Strike to Rank 5 using skill points."/>
+                        </StackPanel>
+                    </Border>
+
+                </StackPanel>
+            </Border>
+
+            <!-- CHAPTER COMPARISON -->
+            <Border Classes="Card">
+                <StackPanel Spacing="16">
+                    <TextBlock Text="Chapter Comparison" Classes="SectionHeader"/>
+
+                    <Grid ColumnDefinitions="*,Auto,*" RowDefinitions="Auto">
+                        <StackPanel Grid.Column="0" Spacing="4">
+                            <TextBlock Text="Compare From" Classes="Label"/>
+                            <ComboBox HorizontalAlignment="Stretch">
+                                <ComboBoxItem Content="Chapter 1" IsSelected="True"/>
+                                <ComboBoxItem Content="Chapter 10"/>
+                                <ComboBoxItem Content="Chapter 20"/>
+                            </ComboBox>
+                        </StackPanel>
+
+                        <TextBlock Grid.Column="1" Text="-" FontSize="24" Foreground="#7A7F99"
+                                   VerticalAlignment="Bottom" Margin="16,0"/>
+
+                        <StackPanel Grid.Column="2" Spacing="4">
+                            <TextBlock Text="Compare To" Classes="Label"/>
+                            <ComboBox HorizontalAlignment="Stretch">
+                                <ComboBoxItem Content="Chapter 42" IsSelected="True"/>
+                                <ComboBoxItem Content="Chapter 30"/>
+                                <ComboBoxItem Content="Chapter 20"/>
+                            </ComboBox>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Comparison Table -->
+                    <Border Classes="InnerCard">
+                        <DataGrid AutoGenerateColumns="False"
+                                  GridLinesVisibility="None"
+                                  HeadersVisibility="Column"
+                                  RowHeight="44"
+                                  Background="#0A0C10"
+                                  BorderThickness="0"
+                                  CornerRadius="8">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Stat" Width="100"/>
+                                <DataGridTextColumn Header="Chapter 1" Width="100"/>
+                                <DataGridTextColumn Header="Chapter 42" Width="100"/>
+                                <DataGridTextColumn Header="Change" Width="100"/>
+                                <DataGridTextColumn Header="% Growth" Width="*"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Border>
+                </StackPanel>
+            </Border>
+
+        </StackPanel>
+    </ScrollViewer>
+
+</UserControl>
+
+
+

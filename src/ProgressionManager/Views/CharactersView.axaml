@@ -1,0 +1,362 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:ProgressionManager.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="800"
+             x:DataType="vm:CharactersViewModel"
+             x:Class="ProgressionManager.Views.CharactersView">
+
+    <Design.DataContext>
+        <vm:CharactersViewModel/>
+    </Design.DataContext>
+
+    <UserControl.Styles>
+        <StyleInclude Source="/Views/Styles/CommonStyles.axaml"/>
+    </UserControl.Styles>
+
+    <ScrollViewer HorizontalScrollBarVisibility="Disabled"
+                  VerticalScrollBarVisibility="Auto">
+        <StackPanel Spacing="24" Margin="0,0,20,20">
+
+            <!-- HEADER -->
+            <Grid ColumnDefinitions="*,Auto">
+                <StackPanel Spacing="6">
+                    <TextBlock Text="Characters"
+                               FontSize="28"
+                               FontWeight="Bold"
+                               Foreground="#FFFFFF"/>
+
+                    <TextBlock Text="Track character progression, stats, skills, and equipment across your story"
+                               FontSize="14"
+                               Foreground="#9AA5CE"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                    <Button Classes="ActionBtn" Content=" Import"/>
+                    <Button Classes="ActionBtn" Content="Export"/>
+                    <Button Classes="PrimaryBtn" Content="+ Add Character"/>
+                </StackPanel>
+            </Grid>
+
+            <!-- CHARACTER LIST -->
+            <Border Classes="Card">
+                <StackPanel Spacing="16">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="Character Roster" Classes="SectionHeader"/>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="12">
+                            <TextBox Watermark="Search characters..." Width="200"/>
+                            <ComboBox Width="120">
+                                <ComboBoxItem Content="All Classes" IsSelected="True"/>
+                                <ComboBoxItem Content="Warriors"/>
+                                <ComboBoxItem Content="Mages"/>
+                            </ComboBox>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Characters DataGrid -->
+                    <DataGrid AutoGenerateColumns="False"
+                              GridLinesVisibility="None"
+                              HeadersVisibility="Column"
+                              RowHeight="60"
+                              Background="#0F1115"
+                              BorderThickness="0"
+                              CornerRadius="10"
+                              MaxHeight="350">
+
+                        <DataGrid.Columns>
+                            <DataGridTemplateColumn Header="Character" Width="180">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" Spacing="10" Margin="8,0">
+                                            <Border Width="36" Height="36" CornerRadius="18"
+                                                    Background="#1F2A44" VerticalAlignment="Center">
+                                                <TextBlock Text="" FontSize="18"
+                                                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                            <StackPanel Spacing="2" VerticalAlignment="Center">
+                                                <TextBlock Text="Aric Stormwind" Foreground="#FFFFFF" FontWeight="SemiBold"/>
+                                                <TextBlock Text="Human Warrior" Foreground="#7A7F99" FontSize="11"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <DataGridTextColumn Header="Level" Width="70"/>
+                            <DataGridTextColumn Header="HP" Width="80"/>
+                            <DataGridTextColumn Header="Mana" Width="80"/>
+                            <DataGridTextColumn Header="Last Chapter" Width="100"/>
+                            <DataGridTextColumn Header="Skills" Width="80"/>
+
+                            <DataGridTemplateColumn Header="" Width="120">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Right">
+                                            <Button Content="" ToolTip.Tip="View Stats"
+                                                    Background="Transparent" Foreground="#7AA2F7"
+                                                    BorderThickness="0" Padding="6"/>
+                                            <Button Content="" ToolTip.Tip="Edit"
+                                                    Background="Transparent" Foreground="#7AA2F7"
+                                                    BorderThickness="0" Padding="6"/>
+                                            <Button Content="" ToolTip.Tip="Duplicate"
+                                                    Background="Transparent" Foreground="#7AA2F7"
+                                                    BorderThickness="0" Padding="6"/>
+                                            <Button Content="" ToolTip.Tip="Delete"
+                                                    Background="Transparent" Foreground="#E74C3C"
+                                                    BorderThickness="0" Padding="6"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <!-- Empty State -->
+                    <Border Classes="InnerCard" Padding="40">
+                        <StackPanel Spacing="16" HorizontalAlignment="Center">
+                            <TextBlock Text="" FontSize="48" HorizontalAlignment="Center"/>
+                            <TextBlock Text="No Characters Created"
+                                       FontSize="18"
+                                       FontWeight="SemiBold"
+                                       Foreground="#FFFFFF"
+                                       HorizontalAlignment="Center"/>
+                            <TextBlock Text="Create your first character to begin tracking their progression"
+                                       FontSize="14"
+                                       Foreground="#7A7F99"
+                                       HorizontalAlignment="Center"/>
+                            <Button Classes="PrimaryBtn" Content="+ Create First Character" HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Border>
+
+            <!-- CHARACTER DETAILS -->
+            <Border Classes="Card">
+                <StackPanel Spacing="16">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <StackPanel Orientation="Horizontal" Spacing="16">
+                            <Border Width="64" Height="64" CornerRadius="32" Background="#1F2A44">
+                                <TextBlock Text="" FontSize="32"
+                                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <StackPanel Spacing="4" VerticalAlignment="Center">
+                                <TextBlock Text="Aric Stormwind" FontSize="22" FontWeight="Bold" Foreground="#FFFFFF"/>
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <Border Classes="StatBadge">
+                                        <TextBlock Text="Human" Foreground="#C0CAF5" FontSize="12"/>
+                                    </Border>
+                                    <Border Classes="StatBadge">
+                                        <TextBlock Text="Warrior" Foreground="#F7768E" FontSize="12"/>
+                                    </Border>
+                                    <Border Classes="StatBadge" Background="#1A3D2E">
+                                        <TextBlock Text="Level 15" Foreground="#2ECC71" FontSize="12"/>
+                                    </Border>
+                                </StackPanel>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Top">
+                            <Button Classes="ActionBtn" Content=" Compare"/>
+                            <Button Classes="ActionBtn" Content=" History"/>
+                            <Button Classes="DangerBtn" Content=" Delete"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Current Stats -->
+                    <Border Classes="InnerCard">
+                        <StackPanel Spacing="16">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <TextBlock Text="Current Stats (Chapter 42)" FontSize="14" FontWeight="SemiBold" Foreground="#C0CAF5"/>
+                                <Button Classes="ActionBtn" Content=" Recalculate" Grid.Column="1"/>
+                            </Grid>
+
+                            <Grid ColumnDefinitions="*,*,*,*" RowDefinitions="Auto,Auto">
+                                <!-- Base Stats -->
+                                <Border Grid.Row="0" Grid.Column="0" Classes="StatBadge" Margin="0,0,8,8" Padding="12">
+                                    <StackPanel Spacing="4">
+                                        <TextBlock Text="STR" Foreground="#F7768E" FontWeight="SemiBold" FontSize="12"/>
+                                        <TextBlock Text="45" Foreground="#FFFFFF" FontSize="24" FontWeight="Bold"/>
+                                        <TextBlock Text="+3 from gear" Foreground="#2ECC71" FontSize="10"/>
+                                    </StackPanel>
+                                </Border>
+                                <Border Grid.Row="0" Grid.Column="1" Classes="StatBadge" Margin="0,0,8,8" Padding="12">
+                                    <StackPanel Spacing="4">
+                                        <TextBlock Text="VIT" Foreground="#FF9E64" FontWeight="SemiBold" FontSize="12"/>
+                                        <TextBlock Text="38" Foreground="#FFFFFF" FontSize="24" FontWeight="Bold"/>
+                                        <TextBlock Text="+5 from gear" Foreground="#2ECC71" FontSize="10"/>
+                                    </StackPanel>
+                                </Border>
+                                <Border Grid.Row="0" Grid.Column="2" Classes="StatBadge" Margin="0,0,8,8" Padding="12">
+                                    <StackPanel Spacing="4">
+                                        <TextBlock Text="INT" Foreground="#7AA2F7" FontWeight="SemiBold" FontSize="12"/>
+                                        <TextBlock Text="18" Foreground="#FFFFFF" FontSize="24" FontWeight="Bold"/>
+                                        <TextBlock Text="+0 from gear" Foreground="#7A7F99" FontSize="10"/>
+                                    </StackPanel>
+                                </Border>
+                                <Border Grid.Row="0" Grid.Column="3" Classes="StatBadge" Margin="0,0,0,8" Padding="12">
+                                    <StackPanel Spacing="4">
+                                        <TextBlock Text="AGI" Foreground="#9ECE6A" FontWeight="SemiBold" FontSize="12"/>
+                                        <TextBlock Text="32" Foreground="#FFFFFF" FontSize="24" FontWeight="Bold"/>
+                                        <TextBlock Text="+2 from gear" Foreground="#2ECC71" FontSize="10"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Derived Stats -->
+                                <Border Grid.Row="1" Grid.Column="0" Classes="StatBadge" Margin="0,0,8,0" Padding="12">
+                                    <StackPanel Spacing="4">
+                                        <TextBlock Text="HP" Foreground="#E74C3C" FontWeight="SemiBold" FontSize="12"/>
+                                        <TextBlock Text="531" Foreground="#FFFFFF" FontSize="24" FontWeight="Bold"/>
+                                        <TextBlock Text="/ 531 max" Foreground="#7A7F99" FontSize="10"/>
+                                    </StackPanel>
+                                </Border>
+                                <Border Grid.Row="1" Grid.Column="1" Classes="StatBadge" Margin="0,0,8,0" Padding="12">
+                                    <StackPanel Spacing="4">
+                                        <TextBlock Text="Mana" Foreground="#3498DB" FontWeight="SemiBold" FontSize="12"/>
+                                        <TextBlock Text="225" Foreground="#FFFFFF" FontSize="24" FontWeight="Bold"/>
+                                        <TextBlock Text="/ 225 max" Foreground="#7A7F99" FontSize="10"/>
+                                    </StackPanel>
+                                </Border>
+                                <Border Grid.Row="1" Grid.Column="2" Classes="StatBadge" Margin="0,0,8,0" Padding="12">
+                                    <StackPanel Spacing="4">
+                                        <TextBlock Text="Phys Dmg" Foreground="#F1C40F" FontWeight="SemiBold" FontSize="12"/>
+                                        <TextBlock Text="105" Foreground="#FFFFFF" FontSize="24" FontWeight="Bold"/>
+                                        <TextBlock Text="base attack" Foreground="#7A7F99" FontSize="10"/>
+                                    </StackPanel>
+                                </Border>
+                                <Border Grid.Row="1" Grid.Column="3" Classes="StatBadge" Padding="12">
+                                    <StackPanel Spacing="4">
+                                        <TextBlock Text="XP" Foreground="#9B59B6" FontWeight="SemiBold" FontSize="12"/>
+                                        <TextBlock Text="12,450" Foreground="#FFFFFF" FontSize="24" FontWeight="Bold"/>
+                                        <TextBlock Text="/ 15,000 next" Foreground="#7A7F99" FontSize="10"/>
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Skills -->
+                    <Border Classes="InnerCard">
+                        <StackPanel Spacing="16">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <TextBlock Text="Learned Skills" FontSize="14" FontWeight="SemiBold" Foreground="#C0CAF5"/>
+                                <Button Classes="ActionBtn" Content="+ Add Skill" Grid.Column="1"/>
+                            </Grid>
+
+                            <WrapPanel Orientation="Horizontal">
+                                <Border Classes="StatBadge" Margin="0,0,8,8">
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <TextBlock Text="" FontSize="16"/>
+                                        <TextBlock Text="Power Strike" Foreground="#C0CAF5"/>
+                                        <Border Background="#1A3D2E" CornerRadius="4" Padding="4,2">
+                                            <TextBlock Text="Rank 5" Foreground="#2ECC71" FontSize="10"/>
+                                        </Border>
+                                    </StackPanel>
+                                </Border>
+                                <Border Classes="StatBadge" Margin="0,0,8,8">
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <TextBlock Text="" FontSize="16"/>
+                                        <TextBlock Text="Whirlwind" Foreground="#C0CAF5"/>
+                                        <Border Background="#1A3D2E" CornerRadius="4" Padding="4,2">
+                                            <TextBlock Text="Rank 3" Foreground="#2ECC71" FontSize="10"/>
+                                        </Border>
+                                    </StackPanel>
+                                </Border>
+                                <Border Classes="StatBadge" Margin="0,0,8,8">
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <TextBlock Text="" FontSize="16"/>
+                                        <TextBlock Text="Iron Skin" Foreground="#C0CAF5"/>
+                                        <Border Background="#1A3D2E" CornerRadius="4" Padding="4,2">
+                                            <TextBlock Text="Rank 2" Foreground="#2ECC71" FontSize="10"/>
+                                        </Border>
+                                    </StackPanel>
+                                </Border>
+                                <Border Classes="StatBadge" Margin="0,0,8,8">
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <TextBlock Text="" FontSize="16"/>
+                                        <TextBlock Text="Battle Cry" Foreground="#C0CAF5"/>
+                                        <Border Background="#1A3D2E" CornerRadius="4" Padding="4,2">
+                                            <TextBlock Text="Rank 1" Foreground="#2ECC71" FontSize="10"/>
+                                        </Border>
+                                    </StackPanel>
+                                </Border>
+                            </WrapPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Equipment -->
+                    <Border Classes="InnerCard">
+                        <StackPanel Spacing="16">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <TextBlock Text="Current Equipment" FontSize="14" FontWeight="SemiBold" Foreground="#C0CAF5"/>
+                                <Button Classes="ActionBtn" Content=" Edit Equipment" Grid.Column="1"/>
+                            </Grid>
+
+                            <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto">
+                                <Border Grid.Row="0" Grid.Column="0" Classes="ListItem" Margin="0,0,8,8">
+                                    <StackPanel Spacing="4">
+                                        <TextBlock Text="Weapon" Classes="Label" FontSize="11"/>
+                                        <TextBlock Text=" Flame Sword +3" Foreground="#F7768E" FontWeight="SemiBold"/>
+                                        <TextBlock Text="+15 Phys Dmg, +5 Fire Dmg" Foreground="#7A7F99" FontSize="11"/>
+                                    </StackPanel>
+                                </Border>
+                                <Border Grid.Row="0" Grid.Column="1" Classes="ListItem" Margin="0,0,8,8">
+                                    <StackPanel Spacing="4">
+                                        <TextBlock Text="Armor" Classes="Label" FontSize="11"/>
+                                        <TextBlock Text=" Steel Plate +2" Foreground="#7AA2F7" FontWeight="SemiBold"/>
+                                        <TextBlock Text="+5 VIT, +30 Defense" Foreground="#7A7F99" FontSize="11"/>
+                                    </StackPanel>
+                                </Border>
+                                <Border Grid.Row="0" Grid.Column="2" Classes="ListItem" Margin="0,0,0,8">
+                                    <StackPanel Spacing="4">
+                                        <TextBlock Text="Accessory 1" Classes="Label" FontSize="11"/>
+                                        <TextBlock Text=" Ring of Strength" Foreground="#9ECE6A" FontWeight="SemiBold"/>
+                                        <TextBlock Text="+3 STR" Foreground="#7A7F99" FontSize="11"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <Border Grid.Row="1" Grid.Column="0" Classes="ListItem" Margin="0,0,8,0">
+                                    <StackPanel Spacing="4">
+                                        <TextBlock Text="Helmet" Classes="Label" FontSize="11"/>
+                                        <TextBlock Text=" Iron Helm" Foreground="#C0CAF5" FontWeight="SemiBold"/>
+                                        <TextBlock Text="+10 Defense" Foreground="#7A7F99" FontSize="11"/>
+                                    </StackPanel>
+                                </Border>
+                                <Border Grid.Row="1" Grid.Column="1" Classes="ListItem" Margin="0,0,8,0">
+                                    <StackPanel Spacing="4">
+                                        <TextBlock Text="Accessory 2" Classes="Label" FontSize="11"/>
+                                        <TextBlock Text=" Amulet of Vitality" Foreground="#FF9E64" FontWeight="SemiBold"/>
+                                        <TextBlock Text="+25 Max HP" Foreground="#7A7F99" FontSize="11"/>
+                                    </StackPanel>
+                                </Border>
+                                <Border Grid.Row="1" Grid.Column="2" Classes="ListItem">
+                                    <StackPanel Spacing="4">
+                                        <TextBlock Text="Boots" Classes="Label" FontSize="11"/>
+                                        <TextBlock Text=" Swift Boots" Foreground="#9ECE6A" FontWeight="SemiBold"/>
+                                        <TextBlock Text="+2 AGI, +5% Move Speed" Foreground="#7A7F99" FontSize="11"/>
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Notes -->
+                    <Border Classes="InnerCard">
+                        <StackPanel Spacing="8">
+                            <TextBlock Text="Character Notes" FontSize="14" FontWeight="SemiBold" Foreground="#C0CAF5"/>
+                            <TextBox Watermark="Add notes about this character's story, personality, or progression plans..."
+                                     TextWrapping="Wrap"
+                                     AcceptsReturn="True"
+                                     MinHeight="80"/>
+                        </StackPanel>
+                    </Border>
+
+                </StackPanel>
+            </Border>
+
+        </StackPanel>
+    </ScrollViewer>
+
+</UserControl>
+
+

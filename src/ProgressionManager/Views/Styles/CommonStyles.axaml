@@ -1,0 +1,176 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Card style -->
+    <Style Selector="Border.Card">
+        <Setter Property="Background" Value="#12151B"/>
+        <Setter Property="CornerRadius" Value="14"/>
+        <Setter Property="Padding" Value="20"/>
+    </Style>
+
+    <!-- Section header -->
+    <Style Selector="TextBlock.SectionHeader">
+        <Setter Property="FontSize" Value="18"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Foreground" Value="#FFFFFF"/>
+    </Style>
+
+    <!-- Label text -->
+    <Style Selector="TextBlock.Label">
+        <Setter Property="Foreground" Value="#C0CAF5"/>
+        <Setter Property="FontSize" Value="13"/>
+    </Style>
+
+    <!-- Help text -->
+    <Style Selector="TextBlock.HelpText">
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="Foreground" Value="#7A7F99"/>
+    </Style>
+
+    <!-- Valid indicator -->
+    <Style Selector="Border.ValidIndicator">
+        <Setter Property="Background" Value="#1A3D2E"/>
+        <Setter Property="BorderBrush" Value="#2ECC71"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="4"/>
+        <Setter Property="Padding" Value="6,2"/>
+    </Style>
+
+    <!-- Invalid indicator -->
+    <Style Selector="Border.InvalidIndicator">
+        <Setter Property="Background" Value="#3D1A1A"/>
+        <Setter Property="BorderBrush" Value="#E74C3C"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="4"/>
+        <Setter Property="Padding" Value="6,2"/>
+    </Style>
+
+    <!-- Warning indicator -->
+    <Style Selector="Border.WarningIndicator">
+        <Setter Property="Background" Value="#3D3A1A"/>
+        <Setter Property="BorderBrush" Value="#F1C40F"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="4"/>
+        <Setter Property="Padding" Value="6,2"/>
+    </Style>
+
+    <!-- Info indicator -->
+    <Style Selector="Border.InfoIndicator">
+        <Setter Property="Background" Value="#1A2A3D"/>
+        <Setter Property="BorderBrush" Value="#3498DB"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="4"/>
+        <Setter Property="Padding" Value="6,2"/>
+    </Style>
+
+    <!-- Action button -->
+    <Style Selector="Button.ActionBtn">
+        <Setter Property="Background" Value="#1F2A44"/>
+        <Setter Property="Foreground" Value="#C0CAF5"/>
+        <Setter Property="CornerRadius" Value="6"/>
+        <Setter Property="Padding" Value="12,8"/>
+        <Setter Property="BorderThickness" Value="0"/>
+    </Style>
+    <Style Selector="Button.ActionBtn:pointerover">
+        <Setter Property="Background" Value="#2A3A5C"/>
+    </Style>
+
+    <!-- Primary button -->
+    <Style Selector="Button.PrimaryBtn">
+        <Setter Property="Background" Value="#7AA2F7"/>
+        <Setter Property="Foreground" Value="#FFFFFF"/>
+        <Setter Property="CornerRadius" Value="6"/>
+        <Setter Property="Padding" Value="12,8"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+    </Style>
+    <Style Selector="Button.PrimaryBtn:pointerover">
+        <Setter Property="Background" Value="#8AB4FF"/>
+    </Style>
+
+    <!-- Danger button -->
+    <Style Selector="Button.DangerBtn">
+        <Setter Property="Background" Value="#3D1A1A"/>
+        <Setter Property="Foreground" Value="#E74C3C"/>
+        <Setter Property="CornerRadius" Value="6"/>
+        <Setter Property="Padding" Value="12,8"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="BorderBrush" Value="#E74C3C"/>
+    </Style>
+    <Style Selector="Button.DangerBtn:pointerover">
+        <Setter Property="Background" Value="#5D2A2A"/>
+    </Style>
+
+    <!-- Success button -->
+    <Style Selector="Button.SuccessBtn">
+        <Setter Property="Background" Value="#1A3D2E"/>
+        <Setter Property="Foreground" Value="#2ECC71"/>
+        <Setter Property="CornerRadius" Value="6"/>
+        <Setter Property="Padding" Value="12,8"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="BorderBrush" Value="#2ECC71"/>
+    </Style>
+    <Style Selector="Button.SuccessBtn:pointerover">
+        <Setter Property="Background" Value="#2A5D4E"/>
+    </Style>
+
+    <!-- Inner card -->
+    <Style Selector="Border.InnerCard">
+        <Setter Property="Background" Value="#0F1115"/>
+        <Setter Property="CornerRadius" Value="10"/>
+        <Setter Property="Padding" Value="14"/>
+    </Style>
+
+    <!-- Tab styling -->
+    <Style Selector="TabControl">
+        <Setter Property="Background" Value="Transparent"/>
+    </Style>
+    <Style Selector="TabItem">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="#7A7F99"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="Padding" Value="12,8"/>
+    </Style>
+    <Style Selector="TabItem:selected">
+        <Setter Property="Foreground" Value="#7AA2F7"/>
+    </Style>
+
+    <!-- Stat badge -->
+    <Style Selector="Border.StatBadge">
+        <Setter Property="Background" Value="#1F2A44"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="Padding" Value="10,6"/>
+    </Style>
+
+    <!-- List item style -->
+    <Style Selector="Border.ListItem">
+        <Setter Property="Background" Value="#0F1115"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="Padding" Value="12"/>
+        <Setter Property="Margin" Value="0,4"/>
+    </Style>
+    <Style Selector="Border.ListItem:pointerover">
+        <Setter Property="Background" Value="#1A1D24"/>
+    </Style>
+
+    <!-- Timeline node -->
+    <Style Selector="Border.TimelineNode">
+        <Setter Property="Background" Value="#1F2A44"/>
+        <Setter Property="CornerRadius" Value="50"/>
+        <Setter Property="Width" Value="24"/>
+        <Setter Property="Height" Value="24"/>
+    </Style>
+
+    <!-- Chapter card -->
+    <Style Selector="Border.ChapterCard">
+        <Setter Property="Background" Value="#12151B"/>
+        <Setter Property="CornerRadius" Value="12"/>
+        <Setter Property="Padding" Value="16"/>
+        <Setter Property="Margin" Value="0,8"/>
+    </Style>
+    <Style Selector="Border.ChapterCard:pointerover">
+        <Setter Property="Background" Value="#1A1D24"/>
+    </Style>
+
+</Styles>
+
