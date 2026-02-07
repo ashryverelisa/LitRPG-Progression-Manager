@@ -51,9 +51,7 @@ public partial class ClassesViewModel : ViewModelBase, IRecipient<StatsChangedMe
     // Parameterless constructor for design-time
     public ClassesViewModel()
     {
-        // Design-time: add sample data
-        ClassTemplates.Add(new ClassTemplate { Name = "Sample Warrior", Description = "Design-time sample" });
-        UpdateFilteredClasses();
+
     }
 
     public ClassesViewModel(IClassService classService, IEquipmentService equipmentService, IStatService statService)

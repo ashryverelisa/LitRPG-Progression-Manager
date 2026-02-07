@@ -11,8 +11,19 @@ public partial class StatModifier : ObservableObject
     /// <summary>
     /// The name/abbreviation of the stat being modified (e.g., "STR", "INT", "VIT").
     /// </summary>
-    [ObservableProperty]
     private string _statName = string.Empty;
+
+    public string StatName
+    {
+        get => _statName;
+        set
+        {
+            // Prevent null/empty values from binding timing issues during navigation
+            // Note: Avalonia binding can pass null at runtime despite non-nullable type
+            if (string.IsNullOrEmpty(value)) return;
+            SetProperty(ref _statName, value);
+        }
+    }
 
     /// <summary>
     /// The modifier value. Positive for bonuses, negative for penalties.
