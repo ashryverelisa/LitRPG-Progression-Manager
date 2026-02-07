@@ -1,0 +1,22 @@
+﻿{
+  "Colors": {
+    "STR": "#F7768E",
+    "STRENGTH": "#F7768E",
+    "VIT": "#FF9E64",
+    "VITALITY": "#FF9E64",
+    "CON": "#FF9E64",
+    "CONSTITUTION": "#FF9E64",
+    "INT": "#7AA2F7",
+    "INTELLIGENCE": "#7AA2F7",
+    "AGI": "#9ECE6A",
+    "AGILITY": "#9ECE6A",
+    "DEX": "#9ECE6A",
+    "DEXTERITY": "#9ECE6A",
+    "WIS": "#BB9AF7",
+    "WISDOM": "#BB9AF7",
+    "LUK": "#E0AF68",
+    "LUCK": "#E0AF68"
+  },
+  "DefaultColor": "#C0CAF5"
+}
+

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -13,6 +12,7 @@ namespace ProgressionManager.ViewModels;
 
 public partial class ClassesViewModel : ViewModelBase, IRecipient<StatsChangedMessage>
 {
+    private readonly IClassService _classService = null!;
     private readonly IEquipmentService _equipmentService = null!;
     private readonly IStatService _statService = null!;
 
@@ -51,11 +51,14 @@ public partial class ClassesViewModel : ViewModelBase, IRecipient<StatsChangedMe
     // Parameterless constructor for design-time
     public ClassesViewModel()
     {
-        LoadDefaultClasses();
+        // Design-time: add sample data
+        ClassTemplates.Add(new ClassTemplate { Name = "Sample Warrior", Description = "Design-time sample" });
+        UpdateFilteredClasses();
     }
 
-    public ClassesViewModel(IEquipmentService equipmentService, IStatService statService)
+    public ClassesViewModel(IClassService classService, IEquipmentService equipmentService, IStatService statService)
     {
+        _classService = classService;
         _equipmentService = equipmentService;
         _statService = statService;
 
@@ -64,7 +67,7 @@ public partial class ClassesViewModel : ViewModelBase, IRecipient<StatsChangedMe
         LoadDefaultClasses();
 
         // Subscribe to stat changes from World Rules
-        Messenger.Register<StatsChangedMessage>(this);
+        Messenger.Register(this);
     }
 
     /// <summary>
@@ -100,136 +103,18 @@ public partial class ClassesViewModel : ViewModelBase, IRecipient<StatsChangedMe
 
     private void LoadDefaultClasses()
     {
-        // Get stat colors from available stats, or use defaults
-        string GetStatColor(string statName)
+        var classes = _classService.GetDefaultClasses(AvailableStats);
+        foreach (var classTemplate in classes)
         {
-            // Default color mapping for common stats
-            return statName.ToUpperInvariant() switch
-            {
-                "STR" or "STRENGTH" => "#F7768E",
-                "VIT" or "VITALITY" or "CON" or "CONSTITUTION" => "#FF9E64",
-                "INT" or "INTELLIGENCE" => "#7AA2F7",
-                "AGI" or "AGILITY" or "DEX" or "DEXTERITY" => "#9ECE6A",
-                "WIS" or "WISDOM" => "#BB9AF7",
-                "LUK" or "LUCK" => "#E0AF68",
-                _ => "#C0CAF5"
-            };
+            ClassTemplates.Add(classTemplate);
         }
 
-        // Get stat names from available stats if loaded, otherwise use defaults
-        var statNames = AvailableStats.Count > 0
-            ? AvailableStats.Where(s => !s.IsDerived).Select(s => s.Name).ToList()
-            : new List<string> { "STR", "VIT", "INT", "AGI", "WIS", "LUK" };
-
-        // Create sample class templates using available stats
-        var warrior = new ClassTemplate
-        {
-            Name = "Warrior",
-            Description = "A stalwart defender and powerful melee combatant. Warriors excel at physical combat and can wear heavy armor.",
-            StatModifiers = new ObservableCollection<StatModifier>(
-                CreateStatModifiersFromNames(statNames, new Dictionary<string, int>
-                {
-                    { "STR", 5 }, { "STRENGTH", 5 },
-                    { "VIT", 3 }, { "VITALITY", 3 }, { "CON", 3 }, { "CONSTITUTION", 3 },
-                    { "INT", -2 }, { "INTELLIGENCE", -2 }
-                }, GetStatColor)),
-            StartingSkills =
-            [
-                new StartingSkill { SkillName = "Power Strike", StartingRank = 1 },
-                new StartingSkill { SkillName = "Block", StartingRank = 1 }
-            ],
-            LevelUpBonuses =
-            [
-                new LevelUpBonus { Level = 5, BonusType = "Skill Unlock", Description = "Unlocks Cleave ability", Value = "Cleave" },
-                new LevelUpBonus { Level = 10, BonusType = "Stat Bonus", Description = "+5 STR Bonus", Value = "+5" },
-                new LevelUpBonus { Level = 15, BonusType = "Passive Ability", Description = "Gains Iron Will passive", Value = "Iron Will" }
-            ]
-        };
-
-        var mage = new ClassTemplate
-        {
-            Name = "Mage",
-            Description = "A master of arcane arts who wields devastating magical spells. Mages have high intelligence but low physical stats.",
-            StatModifiers = new ObservableCollection<StatModifier>(
-                CreateStatModifiersFromNames(statNames, new Dictionary<string, int>
-                {
-                    { "INT", 6 }, { "INTELLIGENCE", 6 },
-                    { "STR", -3 }, { "STRENGTH", -3 },
-                    { "VIT", -2 }, { "VITALITY", -2 }, { "CON", -2 }, { "CONSTITUTION", -2 }
-                }, GetStatColor)),
-            StartingSkills =
-            [
-                new StartingSkill { SkillName = "Fireball", StartingRank = 1 },
-                new StartingSkill { SkillName = "Mana Shield", StartingRank = 1 }
-            ],
-            LevelUpBonuses =
-            [
-                new LevelUpBonus { Level = 5, BonusType = "Skill Unlock", Description = "Unlocks Ice Bolt ability", Value = "Ice Bolt" },
-                new LevelUpBonus { Level = 10, BonusType = "Stat Bonus", Description = "+5 INT Bonus", Value = "+5" },
-                new LevelUpBonus { Level = 20, BonusType = "Skill Unlock", Description = "Unlocks Meteor Storm", Value = "Meteor Storm" }
-            ]
-        };
-
-        var rogue = new ClassTemplate
-        {
-            Name = "Rogue",
-            Description = "A swift and deadly assassin who strikes from the shadows. Rogues excel at agility and critical strikes.",
-            StatModifiers = new ObservableCollection<StatModifier>(
-                CreateStatModifiersFromNames(statNames, new Dictionary<string, int>
-                {
-                    { "AGI", 6 }, { "AGILITY", 6 }, { "DEX", 6 }, { "DEXTERITY", 6 },
-                    { "STR", 2 }, { "STRENGTH", 2 },
-                    { "VIT", -2 }, { "VITALITY", -2 }, { "CON", -2 }, { "CONSTITUTION", -2 }
-                }, GetStatColor)),
-            StartingSkills =
-            [
-                new StartingSkill { SkillName = "Backstab", StartingRank = 1 },
-                new StartingSkill { SkillName = "Stealth", StartingRank = 1 }
-            ],
-            LevelUpBonuses =
-            [
-                new LevelUpBonus { Level = 5, BonusType = "Skill Unlock", Description = "Unlocks Poison Blade", Value = "Poison Blade" },
-                new LevelUpBonus { Level = 10, BonusType = "Passive Ability", Description = "Gains Shadow Step passive", Value = "Shadow Step" }
-            ]
-        };
-
-        ClassTemplates.Add(warrior);
-        ClassTemplates.Add(mage);
-        ClassTemplates.Add(rogue);
-
         // Set the first class as selected by default
-        SelectedClass = warrior;
+        SelectedClass = ClassTemplates.FirstOrDefault();
 
         UpdateFilteredClasses();
     }
 
-    /// <summary>
-    /// Creates stat modifiers based on available stat names and a modifier map.
-    /// </summary>
-    private static List<StatModifier> CreateStatModifiersFromNames(
-        List<string> availableStatNames,
-        Dictionary<string, int> modifierMap,
-        System.Func<string, string> getColor)
-    {
-        var result = new List<StatModifier>();
-
-        foreach (var statName in availableStatNames)
-        {
-            // Check if this stat has a modifier defined (case-insensitive)
-            var upperName = statName.ToUpperInvariant();
-            if (modifierMap.TryGetValue(upperName, out var value))
-            {
-                result.Add(new StatModifier
-                {
-                    StatName = statName,
-                    Value = value,
-                    Color = getColor(statName)
-                });
-            }
-        }
-
-        return result;
-    }
 
     partial void OnSearchTextChanged(string value)
     {
@@ -256,11 +141,7 @@ public partial class ClassesViewModel : ViewModelBase, IRecipient<StatsChangedMe
     [RelayCommand]
     private void AddClass()
     {
-        var newClass = new ClassTemplate
-        {
-            Name = "New Class",
-            Description = "Enter a description for this class..."
-        };
+        var newClass = _classService.CreateClass(AvailableStats);
 
         // Copy equipment categories with all items unchecked
         foreach (var category in EquipmentCategories)
@@ -278,7 +159,7 @@ public partial class ClassesViewModel : ViewModelBase, IRecipient<StatsChangedMe
     {
         if (classTemplate == null) return;
 
-        var duplicate = classTemplate.Clone();
+        var duplicate = _classService.CloneClass(classTemplate);
         ClassTemplates.Add(duplicate);
         SelectedClass = duplicate;
         UpdateFilteredClasses();
@@ -325,28 +206,11 @@ public partial class ClassesViewModel : ViewModelBase, IRecipient<StatsChangedMe
     {
         if (SelectedClass == null) return;
 
-        // Use the first available stat from World Rules, or a default
+        // Use the first available base stat from World Rules
         var firstStat = AvailableStats.FirstOrDefault(s => !s.IsDerived);
-        var statName = firstStat?.Name ?? "NEW";
+        if (firstStat == null) return;
 
-        // Get color for the stat
-        var color = statName.ToUpperInvariant() switch
-        {
-            "STR" or "STRENGTH" => "#F7768E",
-            "VIT" or "VITALITY" or "CON" or "CONSTITUTION" => "#FF9E64",
-            "INT" or "INTELLIGENCE" => "#7AA2F7",
-            "AGI" or "AGILITY" or "DEX" or "DEXTERITY" => "#9ECE6A",
-            "WIS" or "WISDOM" => "#BB9AF7",
-            "LUK" or "LUCK" => "#E0AF68",
-            _ => "#C0CAF5"
-        };
-
-        SelectedClass.StatModifiers.Add(new StatModifier
-        {
-            StatName = statName,
-            Value = 0,
-            Color = color
-        });
+        SelectedClass.StatModifiers.Add(_classService.CreateStatModifier(firstStat));
     }
 
     [RelayCommand]

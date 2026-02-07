@@ -17,6 +17,8 @@
         <EmbeddedResource Include="Data\DefaultStats.json" />
         <EmbeddedResource Include="Data\DefaultSkills.json" />
         <EmbeddedResource Include="Data\DefaultEquipment.json" />
+        <EmbeddedResource Include="Data\DefaultClasses.json" />
+        <EmbeddedResource Include="Data\StatColors.json" />
     </ItemGroup>
 
     <ItemGroup>

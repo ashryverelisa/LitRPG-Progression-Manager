@@ -1,4 +1,4 @@
-﻿﻿﻿﻿using Microsoft.Extensions.DependencyInjection;
+﻿﻿﻿﻿﻿using Microsoft.Extensions.DependencyInjection;
 using ProgressionManager.Services;
 using ProgressionManager.Services.Interfaces;
 using ProgressionManager.ViewModels;
@@ -18,6 +18,7 @@ public static class ServiceCollectionExtensions
             services.AddScoped<IXpCurveCalculatorService, XpCurveCalculatorServiceService>();
             services.AddScoped<ISkillService, SkillService>();
             services.AddScoped<IEquipmentService, EquipmentService>();
+            services.AddScoped<IClassService, ClassService>();
         }
 
         public void AddViewModels()

@@ -1,0 +1,56 @@
+﻿[
+  {
+    "Name": "Warrior",
+    "Description": "A stalwart defender and powerful melee combatant. Warriors excel at physical combat and can wear heavy armor.",
+    "StatModifiers": [
+      { "StatName": "STR", "Value": 5, "Color": "#F7768E" },
+      { "StatName": "VIT", "Value": 3, "Color": "#FF9E64" },
+      { "StatName": "INT", "Value": -2, "Color": "#7AA2F7" }
+    ],
+    "StartingSkills": [
+      { "SkillName": "Power Strike", "StartingRank": 1 },
+      { "SkillName": "Block", "StartingRank": 1 }
+    ],
+    "LevelUpBonuses": [
+      { "Level": 5, "BonusType": "Skill Unlock", "Description": "Unlocks Cleave ability", "Value": "Cleave" },
+      { "Level": 10, "BonusType": "Stat Bonus", "Description": "+5 STR Bonus", "Value": "+5" },
+      { "Level": 15, "BonusType": "Passive Ability", "Description": "Gains Iron Will passive", "Value": "Iron Will" }
+    ]
+  },
+  {
+    "Name": "Mage",
+    "Description": "A master of arcane arts who wields devastating magical spells. Mages have high intelligence but low physical stats.",
+    "StatModifiers": [
+      { "StatName": "INT", "Value": 6, "Color": "#7AA2F7" },
+      { "StatName": "STR", "Value": -3, "Color": "#F7768E" },
+      { "StatName": "VIT", "Value": -2, "Color": "#FF9E64" }
+    ],
+    "StartingSkills": [
+      { "SkillName": "Fireball", "StartingRank": 1 },
+      { "SkillName": "Mana Shield", "StartingRank": 1 }
+    ],
+    "LevelUpBonuses": [
+      { "Level": 5, "BonusType": "Skill Unlock", "Description": "Unlocks Ice Bolt ability", "Value": "Ice Bolt" },
+      { "Level": 10, "BonusType": "Stat Bonus", "Description": "+5 INT Bonus", "Value": "+5" },
+      { "Level": 20, "BonusType": "Skill Unlock", "Description": "Unlocks Meteor Storm", "Value": "Meteor Storm" }
+    ]
+  },
+  {
+    "Name": "Rogue",
+    "Description": "A swift and deadly assassin who strikes from the shadows. Rogues excel at agility and critical strikes.",
+    "StatModifiers": [
+      { "StatName": "AGI", "Value": 6, "Color": "#9ECE6A" },
+      { "StatName": "STR", "Value": 2, "Color": "#F7768E" },
+      { "StatName": "VIT", "Value": -2, "Color": "#FF9E64" }
+    ],
+    "StartingSkills": [
+      { "SkillName": "Backstab", "StartingRank": 1 },
+      { "SkillName": "Stealth", "StartingRank": 1 }
+    ],
+    "LevelUpBonuses": [
+      { "Level": 5, "BonusType": "Skill Unlock", "Description": "Unlocks Poison Blade", "Value": "Poison Blade" },
+      { "Level": 10, "BonusType": "Passive Ability", "Description": "Gains Shadow Step passive", "Value": "Shadow Step" }
+    ]
+  }
+]
+
