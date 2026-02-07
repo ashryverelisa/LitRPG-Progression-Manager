@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using ProgressionManager.Models.Skills;
@@ -11,7 +8,9 @@ using ProgressionManager.Services.Interfaces;
 
 namespace ProgressionManager.Services;
 
-public class SkillService(IFormulaValidatorService formulaValidator) : ISkillService
+public class SkillService(
+    IFormulaValidatorService formulaValidator,
+    IEmbeddedResourceService resourceService) : ISkillService
 {
     private static readonly JsonSerializerOptions _jsonOptions = new()
     {
@@ -21,19 +20,7 @@ public class SkillService(IFormulaValidatorService formulaValidator) : ISkillSer
 
     public IEnumerable<SkillDefinition> GetDefaultSkills()
     {
-        var assembly = Assembly.GetExecutingAssembly();
-        using var stream = assembly.GetManifestResourceStream("ProgressionManager.Data.DefaultSkills.json");
-
-        if (stream == null)
-        {
-            throw new InvalidOperationException("Could not find embedded resource: DefaultSkills.json");
-        }
-
-        using var reader = new StreamReader(stream);
-        var json = reader.ReadToEnd();
-
-        var skills = JsonSerializer.Deserialize<List<SkillDefinition>>(json, _jsonOptions);
-
+        var skills = resourceService.LoadResourceAsJson<List<SkillDefinition>>("DefaultSkills.json", _jsonOptions);
         return skills ?? [];
     }
 

@@ -1,34 +1,18 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Text.Json;
 using ProgressionManager.Models.WorldRules;
 using ProgressionManager.Services.Interfaces;
 
 namespace ProgressionManager.Services;
 
-public class StatService(IFormulaValidatorService formulaValidator) : IStatService
+public class StatService(
+    IFormulaValidatorService formulaValidator,
+    IEmbeddedResourceService resourceService) : IStatService
 {
     public IEnumerable<StatDefinition> GetDefaultStats()
     {
-        var assembly = Assembly.GetExecutingAssembly();
-        using var stream = assembly.GetManifestResourceStream("ProgressionManager.Data.DefaultStats.json");
-
-        if (stream == null)
-        {
-            throw new InvalidOperationException("Could not find embedded resource: DefaultStats.json");
-        }
-
-        using var reader = new StreamReader(stream);
-        var json = reader.ReadToEnd();
-
-        var stats = JsonSerializer.Deserialize<List<StatDefinition>>(json, new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        });
-
+        var stats = resourceService.LoadResourceAsJson<List<StatDefinition>>("DefaultStats.json");
         return stats ?? [];
     }
 

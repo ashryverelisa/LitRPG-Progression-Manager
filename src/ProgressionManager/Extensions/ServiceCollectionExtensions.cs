@@ -11,6 +11,7 @@ public static class ServiceCollectionExtensions
     {
         public void AddCommonServices()
         {
+            services.AddSingleton<IEmbeddedResourceService, EmbeddedResourceService>();
             services.AddScoped<IFormulaValidatorService, FormulaValidatorService>();
             services.AddScoped<IStatService, StatService>();
             services.AddScoped<IXpCurveCalculatorService, XpCurveCalculatorServiceService>();
