@@ -98,5 +98,49 @@
     "CurrentRank": 1,
     "PassiveEffectFormula": "INT * 0.15 * SkillRank",
     "RequiredLevel": 10
+  },
+  {
+    "Name": "Block",
+    "Description": "Raises shield to block incoming attacks, reducing damage taken",
+    "SkillType": "Active",
+    "MaxRank": 10,
+    "CurrentRank": 1,
+    "DamageFormula": "(VIT * 1.5) + SkillRank * 8",
+    "ManaCostFormula": "15 + SkillRank * 2",
+    "CooldownFormula": "Max(1, 5 - SkillRank * 0.3)",
+    "RequiredLevel": 1
+  },
+  {
+    "Name": "Mana Shield",
+    "Description": "Creates a protective barrier that absorbs damage using mana",
+    "SkillType": "Active",
+    "MaxRank": 10,
+    "CurrentRank": 1,
+    "DamageFormula": "(INT * 3) + SkillRank * 15",
+    "ManaCostFormula": "50 + SkillRank * 10",
+    "CooldownFormula": "Max(5, 20 - SkillRank)",
+    "RequiredLevel": 1
+  },
+  {
+    "Name": "Backstab",
+    "Description": "A devastating attack from behind that deals critical damage",
+    "SkillType": "Active",
+    "MaxRank": 10,
+    "CurrentRank": 1,
+    "DamageFormula": "(AGI * 2.5) + (STR * 1.5) + SkillRank * 12",
+    "ManaCostFormula": "25 + SkillRank * 4",
+    "CooldownFormula": "Max(2, 10 - SkillRank * 0.5)",
+    "RequiredLevel": 1
+  },
+  {
+    "Name": "Stealth",
+    "Description": "Becomes invisible to enemies, increasing next attack damage",
+    "SkillType": "Active",
+    "MaxRank": 10,
+    "CurrentRank": 1,
+    "DamageFormula": "(AGI * 2) + SkillRank * 10",
+    "ManaCostFormula": "30 + SkillRank * 5",
+    "CooldownFormula": "Max(5, 15 - SkillRank)",
+    "RequiredLevel": 1
   }
 ]
