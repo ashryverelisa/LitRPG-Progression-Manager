@@ -133,7 +133,7 @@ public partial class ClassesViewModel : ViewModelBase, IRecipient<StatsChangedMe
 
     private void LoadDefaultClasses()
     {
-        var classes = _classService.GetDefaultClasses(AvailableStats);
+        var classes = _classService.GetDefaultClasses(AvailableStats, AvailableSkills);
         foreach (var classTemplate in classes)
         {
             ClassTemplates.Add(classTemplate);

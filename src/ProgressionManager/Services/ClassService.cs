@@ -1,8 +1,9 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using ProgressionManager.Models.ClassesRaces;
+using ProgressionManager.Models.Skills;
 using ProgressionManager.Models.WorldRules;
 using ProgressionManager.Services.Interfaces;
 
@@ -20,12 +21,13 @@ public class ClassService(IEmbeddedResourceService resourceService) : IClassServ
         return config ?? new StatColorConfig();
     }
 
-    public IEnumerable<ClassTemplate> GetDefaultClasses(IEnumerable<StatDefinition> availableStats)
+    public IEnumerable<ClassTemplate> GetDefaultClasses(IEnumerable<StatDefinition> availableStats, IEnumerable<SkillDefinition> availableSkills)
     {
         var classes = resourceService.LoadResourceAsJson<List<ClassTemplate>>("DefaultClasses.json");
         if (classes == null) return [];
 
         var statsList = availableStats.Where(s => !s.IsDerived).ToList();
+        var skillsList = availableSkills.ToList();
 
         // Map loaded stat modifiers to the actual stats from WorldRules
         foreach (var classTemplate in classes)
@@ -45,6 +47,20 @@ public class ClassService(IEmbeddedResourceService resourceService) : IClassServ
             }
 
             classTemplate.StatModifiers = mappedModifiers;
+
+            // Map loaded starting skills to the actual skill IDs
+            foreach (var startingSkill in classTemplate.StartingSkills)
+            {
+                // Find the matching skill by name (case-insensitive)
+                var matchingSkill = skillsList.FirstOrDefault(s =>
+                    s.Name.Equals(startingSkill.SkillName, StringComparison.OrdinalIgnoreCase));
+
+                if (matchingSkill != null)
+                {
+                    startingSkill.SkillId = matchingSkill.Id;
+                    startingSkill.SkillName = matchingSkill.Name;
+                }
+            }
         }
 
         return classes;

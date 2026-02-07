@@ -1,12 +1,13 @@
-﻿using System.Collections.Generic;
+﻿﻿using System.Collections.Generic;
 using ProgressionManager.Models.ClassesRaces;
+using ProgressionManager.Models.Skills;
 using ProgressionManager.Models.WorldRules;
 
 namespace ProgressionManager.Services.Interfaces;
 
 public interface IClassService
 {
-    IEnumerable<ClassTemplate> GetDefaultClasses(IEnumerable<StatDefinition> availableStats);
+    IEnumerable<ClassTemplate> GetDefaultClasses(IEnumerable<StatDefinition> availableStats, IEnumerable<SkillDefinition> availableSkills);
     ClassTemplate CreateClass(IEnumerable<StatDefinition> availableStats, string name = "New Class");
     ClassTemplate CloneClass(ClassTemplate classTemplate);
     StatModifier CreateStatModifier(StatDefinition stat, int value = 0);
