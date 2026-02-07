@@ -23,25 +23,25 @@ public static class ServiceCollectionExtensions
 
         public void AddViewModels()
         {
-            services.AddScoped<MainWindowViewModel>();
-            services.AddScoped<WorldRulesViewModel>();
-            services.AddScoped<CharactersViewModel>();
-            services.AddScoped<ClassesViewModel>();
-            services.AddScoped<RacesViewModel>();
-            services.AddScoped<SkillsViewModel>();
-            services.AddScoped<TimelineViewModel>();
-            services.AddScoped<ValidationViewModel>();
+            services.AddSingleton<MainWindowViewModel>();
+            services.AddSingleton<WorldRulesViewModel>();
+            services.AddSingleton<CharactersViewModel>();
+            services.AddSingleton<ClassesViewModel>();
+            services.AddSingleton<RacesViewModel>();
+            services.AddSingleton<SkillsViewModel>();
+            services.AddSingleton<TimelineViewModel>();
+            services.AddSingleton<ValidationViewModel>();
         }
 
         public void AddViews()
         {
-            services.AddTransient<WorldRulesView>();
-            services.AddTransient<CharactersView>();
-            services.AddTransient<ClassesView>();
-            services.AddTransient<RacesView>();
-            services.AddTransient<SkillsView>();
-            services.AddTransient<TimelineView>();
-            services.AddTransient<ValidationView>();
+            services.AddSingleton<WorldRulesView>();
+            services.AddSingleton<CharactersView>();
+            services.AddSingleton<ClassesView>();
+            services.AddSingleton<RacesView>();
+            services.AddSingleton<SkillsView>();
+            services.AddSingleton<TimelineView>();
+            services.AddSingleton<ValidationView>();
         }
     }
 }
