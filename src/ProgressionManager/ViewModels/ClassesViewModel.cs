@@ -1,15 +1,20 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using ProgressionManager.Messages;
 using ProgressionManager.Models.ClassesRaces;
+using ProgressionManager.Models.WorldRules;
 using ProgressionManager.Services.Interfaces;
 
 namespace ProgressionManager.ViewModels;
 
-public partial class ClassesViewModel : ViewModelBase
+public partial class ClassesViewModel : ViewModelBase, IRecipient<StatsChangedMessage>
 {
     private readonly IEquipmentService _equipmentService = null!;
+    private readonly IStatService _statService = null!;
 
     /// <summary>
     /// All defined class templates.
@@ -20,6 +25,11 @@ public partial class ClassesViewModel : ViewModelBase
     /// Available equipment categories for class restrictions.
     /// </summary>
     public ObservableCollection<EquipmentCategory> EquipmentCategories { get; } = [];
+
+    /// <summary>
+    /// Available stats from World Rules for stat modifiers.
+    /// </summary>
+    public ObservableCollection<StatDefinition> AvailableStats { get; } = [];
 
     /// <summary>
     /// The currently selected class template for editing.
@@ -44,11 +54,39 @@ public partial class ClassesViewModel : ViewModelBase
         LoadDefaultClasses();
     }
 
-    public ClassesViewModel(IEquipmentService equipmentService)
+    public ClassesViewModel(IEquipmentService equipmentService, IStatService statService)
     {
         _equipmentService = equipmentService;
+        _statService = statService;
+
         LoadEquipmentCategories();
+        LoadAvailableStats();
         LoadDefaultClasses();
+
+        // Subscribe to stat changes from World Rules
+        Messenger.Register<StatsChangedMessage>(this);
+    }
+
+    /// <summary>
+    /// Handle stats changed message from World Rules.
+    /// </summary>
+    public void Receive(StatsChangedMessage message)
+    {
+        // Update available stats when they change in World Rules
+        AvailableStats.Clear();
+        foreach (var stat in message.Stats)
+        {
+            AvailableStats.Add(stat);
+        }
+    }
+
+    private void LoadAvailableStats()
+    {
+        var stats = _statService.GetDefaultStats();
+        foreach (var stat in stats)
+        {
+            AvailableStats.Add(stat);
+        }
     }
 
     private void LoadEquipmentCategories()
@@ -62,17 +100,39 @@ public partial class ClassesViewModel : ViewModelBase
 
     private void LoadDefaultClasses()
     {
-        // Create sample class templates based on README examples
+        // Get stat colors from available stats, or use defaults
+        string GetStatColor(string statName)
+        {
+            // Default color mapping for common stats
+            return statName.ToUpperInvariant() switch
+            {
+                "STR" or "STRENGTH" => "#F7768E",
+                "VIT" or "VITALITY" or "CON" or "CONSTITUTION" => "#FF9E64",
+                "INT" or "INTELLIGENCE" => "#7AA2F7",
+                "AGI" or "AGILITY" or "DEX" or "DEXTERITY" => "#9ECE6A",
+                "WIS" or "WISDOM" => "#BB9AF7",
+                "LUK" or "LUCK" => "#E0AF68",
+                _ => "#C0CAF5"
+            };
+        }
+
+        // Get stat names from available stats if loaded, otherwise use defaults
+        var statNames = AvailableStats.Count > 0
+            ? AvailableStats.Where(s => !s.IsDerived).Select(s => s.Name).ToList()
+            : new List<string> { "STR", "VIT", "INT", "AGI", "WIS", "LUK" };
+
+        // Create sample class templates using available stats
         var warrior = new ClassTemplate
         {
             Name = "Warrior",
             Description = "A stalwart defender and powerful melee combatant. Warriors excel at physical combat and can wear heavy armor.",
-            StatModifiers =
-            [
-                new StatModifier { StatName = "STR", Value = 5, Color = "#F7768E" },
-                new StatModifier { StatName = "VIT", Value = 3, Color = "#FF9E64" },
-                new StatModifier { StatName = "INT", Value = -2, Color = "#7AA2F7" }
-            ],
+            StatModifiers = new ObservableCollection<StatModifier>(
+                CreateStatModifiersFromNames(statNames, new Dictionary<string, int>
+                {
+                    { "STR", 5 }, { "STRENGTH", 5 },
+                    { "VIT", 3 }, { "VITALITY", 3 }, { "CON", 3 }, { "CONSTITUTION", 3 },
+                    { "INT", -2 }, { "INTELLIGENCE", -2 }
+                }, GetStatColor)),
             StartingSkills =
             [
                 new StartingSkill { SkillName = "Power Strike", StartingRank = 1 },
@@ -90,12 +150,13 @@ public partial class ClassesViewModel : ViewModelBase
         {
             Name = "Mage",
             Description = "A master of arcane arts who wields devastating magical spells. Mages have high intelligence but low physical stats.",
-            StatModifiers =
-            [
-                new StatModifier { StatName = "INT", Value = 6, Color = "#7AA2F7" },
-                new StatModifier { StatName = "STR", Value = -3, Color = "#F7768E" },
-                new StatModifier { StatName = "VIT", Value = -2, Color = "#FF9E64" }
-            ],
+            StatModifiers = new ObservableCollection<StatModifier>(
+                CreateStatModifiersFromNames(statNames, new Dictionary<string, int>
+                {
+                    { "INT", 6 }, { "INTELLIGENCE", 6 },
+                    { "STR", -3 }, { "STRENGTH", -3 },
+                    { "VIT", -2 }, { "VITALITY", -2 }, { "CON", -2 }, { "CONSTITUTION", -2 }
+                }, GetStatColor)),
             StartingSkills =
             [
                 new StartingSkill { SkillName = "Fireball", StartingRank = 1 },
@@ -113,12 +174,13 @@ public partial class ClassesViewModel : ViewModelBase
         {
             Name = "Rogue",
             Description = "A swift and deadly assassin who strikes from the shadows. Rogues excel at agility and critical strikes.",
-            StatModifiers =
-            [
-                new StatModifier { StatName = "AGI", Value = 6, Color = "#9ECE6A" },
-                new StatModifier { StatName = "STR", Value = 2, Color = "#F7768E" },
-                new StatModifier { StatName = "VIT", Value = -2, Color = "#FF9E64" }
-            ],
+            StatModifiers = new ObservableCollection<StatModifier>(
+                CreateStatModifiersFromNames(statNames, new Dictionary<string, int>
+                {
+                    { "AGI", 6 }, { "AGILITY", 6 }, { "DEX", 6 }, { "DEXTERITY", 6 },
+                    { "STR", 2 }, { "STRENGTH", 2 },
+                    { "VIT", -2 }, { "VITALITY", -2 }, { "CON", -2 }, { "CONSTITUTION", -2 }
+                }, GetStatColor)),
             StartingSkills =
             [
                 new StartingSkill { SkillName = "Backstab", StartingRank = 1 },
@@ -139,6 +201,34 @@ public partial class ClassesViewModel : ViewModelBase
         SelectedClass = warrior;
 
         UpdateFilteredClasses();
+    }
+
+    /// <summary>
+    /// Creates stat modifiers based on available stat names and a modifier map.
+    /// </summary>
+    private static List<StatModifier> CreateStatModifiersFromNames(
+        List<string> availableStatNames,
+        Dictionary<string, int> modifierMap,
+        System.Func<string, string> getColor)
+    {
+        var result = new List<StatModifier>();
+
+        foreach (var statName in availableStatNames)
+        {
+            // Check if this stat has a modifier defined (case-insensitive)
+            var upperName = statName.ToUpperInvariant();
+            if (modifierMap.TryGetValue(upperName, out var value))
+            {
+                result.Add(new StatModifier
+                {
+                    StatName = statName,
+                    Value = value,
+                    Color = getColor(statName)
+                });
+            }
+        }
+
+        return result;
     }
 
     partial void OnSearchTextChanged(string value)
@@ -235,11 +325,27 @@ public partial class ClassesViewModel : ViewModelBase
     {
         if (SelectedClass == null) return;
 
+        // Use the first available stat from World Rules, or a default
+        var firstStat = AvailableStats.FirstOrDefault(s => !s.IsDerived);
+        var statName = firstStat?.Name ?? "NEW";
+
+        // Get color for the stat
+        var color = statName.ToUpperInvariant() switch
+        {
+            "STR" or "STRENGTH" => "#F7768E",
+            "VIT" or "VITALITY" or "CON" or "CONSTITUTION" => "#FF9E64",
+            "INT" or "INTELLIGENCE" => "#7AA2F7",
+            "AGI" or "AGILITY" or "DEX" or "DEXTERITY" => "#9ECE6A",
+            "WIS" or "WISDOM" => "#BB9AF7",
+            "LUK" or "LUCK" => "#E0AF68",
+            _ => "#C0CAF5"
+        };
+
         SelectedClass.StatModifiers.Add(new StatModifier
         {
-            StatName = "NEW",
+            StatName = statName,
             Value = 0,
-            Color = "#C0CAF5"
+            Color = color
         });
     }
 

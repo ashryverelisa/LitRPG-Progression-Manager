@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:ProgressionManager.ViewModels"
              xmlns:models="using:ProgressionManager.Models.ClassesRaces"
+             xmlns:worldModels="using:ProgressionManager.Models.WorldRules"
              xmlns:local="using:ProgressionManager.Converters"
              mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="800"
              x:DataType="vm:ClassesViewModel"
@@ -223,12 +224,15 @@
                                     <DataTemplate x:DataType="models:StatModifier">
                                         <Border Classes="StatBadge" Margin="0,0,8,8">
                                             <StackPanel Orientation="Horizontal" Spacing="8">
-                                                <TextBox Text="{Binding StatName}"
-                                                         Width="50"
-                                                         Padding="2"
-                                                         FontWeight="SemiBold"
-                                                         Background="Transparent"
-                                                         BorderThickness="0"/>
+                                                <ComboBox ItemsSource="{Binding $parent[ItemsControl].((vm:ClassesViewModel)DataContext).AvailableStats}"
+                                                          SelectedValue="{Binding StatName}"
+                                                          SelectedValueBinding="{Binding Name}"
+                                                          DisplayMemberBinding="{Binding Name}"
+                                                          Width="80"
+                                                          Padding="4,2"
+                                                          FontWeight="SemiBold"
+                                                          Background="#1A1B26"
+                                                          BorderThickness="0"/>
                                                 <NumericUpDown Value="{Binding Value}"
                                                                Width="70"
                                                                Minimum="-100"
