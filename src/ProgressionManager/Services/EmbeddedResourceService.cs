@@ -9,11 +9,11 @@ namespace ProgressionManager.Services;
 public class EmbeddedResourceService : IEmbeddedResourceService
 {
     private readonly Assembly _assembly = Assembly.GetExecutingAssembly();
-    private readonly string _resourcePrefix = "ProgressionManager.Data.";
+    private const string ResourcePrefix = "ProgressionManager.Data.";
 
     public string LoadResourceAsString(string resourceName)
     {
-        var fullResourceName = _resourcePrefix + resourceName;
+        var fullResourceName = ResourcePrefix + resourceName;
         using var stream = _assembly.GetManifestResourceStream(fullResourceName);
 
         if (stream == null)
